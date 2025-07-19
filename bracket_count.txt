@@ -1,0 +1,149 @@
+15:class FarmProfileScreen extends StatefulWidget {
+18:  const FarmProfileScreen({
+21:  }) : super(key: key);
+25:}
+27:class _FarmProfileScreenState extends State<FarmProfileScreen> {
+54:  void initState() {
+57:  }
+60:  void dispose() {
+71:  }
+74:  Future<Farm?> _loadFarm() async {
+75:    try {
+77:    } catch (e) {
+80:    }
+81:  }
+84:  bool _isFarmVerified(Farm farm) {
+92:  }
+95:  void _showNotification({required String title, required String message, bool isError = false}) {
+102:  }
+105:  Future<void> _updateBasicInfo(Farm farm) async {
+106:    setState(() {
+108:    });
+110:    try {
+125:      setState(() {
+127:      });
+135:    } catch (e) {
+142:    } finally {
+143:      setState(() {
+145:      });
+146:    }
+147:  }
+150:  Future<void> _updateOperationalInfo(Farm farm) async {
+151:    setState(() {
+153:    });
+155:    try {
+158:      if (_totalAreaController.text.isNotEmpty) {
+160:        if (totalArea == null) {
+162:        }
+163:      }
+174:      setState(() {
+176:      });
+184:    } catch (e) {
+191:    } finally {
+192:      setState(() {
+194:      });
+195:    }
+196:  }
+199:  Future<void> _updateTechnicalInfo(Farm farm) async {
+200:    setState(() {
+202:    });
+204:    try {
+215:      setState(() {
+217:      });
+225:    } catch (e) {
+232:    } finally {
+233:      setState(() {
+235:      });
+236:    }
+237:  }
+240:  Future<void> _updateLogo(String farmId) async {
+241:    try {
+247:      if (pickedFile != null) {
+250:        final farmLogoDir = Directory('${appDir.path}/farm_logos');
+253:        if (!await farmLogoDir.exists()) {
+255:        }
+258:        final fileName = 'farm_${farmId}_logo_${DateTime.now().millisecondsSinceEpoch}.jpg';
+259:        final savedImage = File('${farmLogoDir.path}/$fileName');
+261:        print('Caminho da imagem salva: ${savedImage.path}');
+267:        if (!await savedImage.exists()) {
+269:        }
+274:        if (farm != null) {
+276:          if (farm.logoUrl != null && farm.logoUrl!.isNotEmpty) {
+277:            try {
+279:              if (await oldLogoFile.exists()) {
+281:              }
+282:            } catch (e) {
+284:            }
+285:          }
+300:          final uploadResult = {
+304:          };
+319:          if (uploadResult['success'] == true) {
+321:            if (uploadResult.containsKey('url') && uploadResult['url'] != null) {
+328:            }
+334:          } else {
+335:            print('Upload do logo falhou: ${uploadResult['error']}');
+338:              message: 'Logo atualizado localmente, mas falha na sincronização: ${uploadResult['error']}',
+341:          }
+344:          setState(() {
+346:          });
+347:        }
+348:      }
+349:    } catch (e) {
+356:    }
+357:  }
+360:  Widget _buildInfoRow(String label, String value) {
+383:  }
+388:  Widget _buildEditDialog(Farm farm) {
+451:  }
+454:  Widget _buildOperationalEditDialog(Farm farm) {
+491:  }
+494:  Widget _buildTechnicalEditDialog(Farm farm) {
+536:  }
+539:    Widget _buildSection(String title, IconData icon, Widget content) {
+593:    }
+596:  Widget build(BuildContext context) {
+610:                    builder: (context, snapshot) {
+611:                      if (snapshot.connectionState == ConnectionState.waiting) {
+613:                      } else if (snapshot.hasError) {
+619:                                'Erro ao carregar dados: ${snapshot.error}',
+625:                                onPressed: () {
+626:                                  setState(() {
+628:                                  });
+629:                                },
+641:                      } else if (!snapshot.hasData || snapshot.data == null) {
+645:                      } else {
+707:                                                child: Builder(builder: (context) {
+708:                                                  try {
+712:                                                      errorBuilder: (context, error, stackTrace) {
+719:                                                      },
+721:                                                  } catch (e) {
+728:                                                  }
+729:                                                }),
+825:                                          onPressed: () {
+830:                                          },
+847:                                    _buildInfoRow('📋 Tamanho Total:', '${farm.totalArea.toStringAsFixed(2)} hectares'),
+848:                                    _buildInfoRow('🧩 Talhões Cadastrados:', '${farm.plotsCount} talhões'),
+864:                                          onPressed: () {
+869:                                          },
+899:                                          onPressed: () {
+904:                                          },
+950:                                                          errorBuilder: (context, error, stackTrace) {
+955:                                                          },
+996:                                      builder: (context, snapshot) {
+997:                                        if (snapshot.hasData && snapshot.data != null) {
+1001:                                            onCancel: () {
+1006:                                            },
+1008:                                        }
+1010:                                      },
+1027:                                            onPressed: () {
+1033:                                            },
+1058:                                      onPressed: () {
+1064:                                      },
+1072:                                      onPressed: () {
+1078:                                      },
+1086:                                      onPressed: () {
+1092:                                      },
+1100:                      }
+1101:                    },
+1106:    }
+1107:  }
