@@ -1,0 +1,141 @@
+Para gerar a tela "Novo Talhão Premium" no Figma, você pode seguir este passo a passo detalhado, replicando fielmente o visual e a experiência idealizada para o FortSmart. Abaixo está a estrutura com componentes, hierarquia, cores, interações e dicas de organização no Figma:
+
+✅ ESTRUTURA COMPLETA FORTSMART – NOVO TALHÃO (FIGMA)
+1. 📐 FRAME PRINCIPAL
+Dispositivo: Mobile (Android – Pixel 6 ou iPhone 13 Pro como base)
+
+Tamanho sugerido: 390 x 844 px (ou 360x800 padrão Material 3)
+
+Nome do frame: Novo Talhão – FortSmart
+
+🧱 2. COMPONENTES NO TOPO
+📘 Campo: Nome do Talhão
+Tipo: Text Field Filled
+
+Label: “Nome do Talhão”
+
+Placeholder: “Talhão 2”
+
+📘 Dropdown: Safra
+Tipo: Dropdown
+
+Label: “Safra”
+
+Placeholder: “2024/25”
+
+Com ícone de seta para baixo à direita
+
+📘 Dropdown: Cultura
+Tipo: Dropdown with Icon
+
+Label: “Cultura”
+
+Valor selecionado: “🌾 Trigo”
+
+Tag auxiliar abaixo:
+🟢 Cultura importada do módulo Culturas e Pragas
+(Fonte italic, cor #757575)
+
+🌍 3. ÁREA DE MAPA (SATÉLITE)
+🗺️ Base do Mapa
+Usar imagem raster da região agrícola (satélite real ou simulado)
+
+Inserir como imagem dentro de um Container de 350px altura
+
+Aplique Overlay semi-transparente #00000010 para dar contraste
+
+🟨 Polígonos desenhados (já existentes)
+Use Componentes de polígonos com:
+
+Cor da cultura (gerada automaticamente)
+
+Borda sólida
+
+Pontos com círculos (Custom Painter)
+
+🏷️ Cards Flutuantes sobre cada polígono
+Exemplo:
+
+css
+Copiar
+Editar
+[🌱 Ícone] Talhão 74 – Soja
+Área: 181 ha
+Fundo: mesma cor da cultura
+
+Borda arredondada
+
+Fonte bold para nome do talhão, regular para área
+
+➕ 4. BOTÃO FLUTUANTE (FAB – SpeedDial)
+Ícone: +
+Tipo: SpeedDial Floating Action Button
+
+Ao clicar, abrir opções:
+
+Ícone	Função	Cor Fundo
+✏️	Desenho Manual	#4CAF50
+🚶‍♂️	Caminhada GPS	#42A5F5
+📂	Importar Arquivo	#7E57C2
+📍	Centralizar GPS	#29B6F6
+🗑️	Deletar desenho atual	#E53935
+
+Cada ícone deve ser um Component com label flutuante ao lado.
+
+✅ 5. BOTÕES DE AÇÃO (INFERIOR)
+Salvar Talhão (visível apenas com 3+ pontos ou após GPS)
+Texto: Salvar Talhão
+
+Cor: #2E7D32 (verde)
+
+Tipo: Botão com ícone disquete
+
+Cancelar (Modo Caminhada ou Desenho)
+Texto: Cancelar
+
+Tipo: Outlined Button
+
+Cor: #757575
+
+🎯 6. LÓGICA E INTERATIVIDADE NO FIGMA
+Use os recursos de prototipagem do Figma para:
+
+Trocar entre modos ao clicar no botão +
+
+Exibir botão “Salvar” apenas se count(pontos) >= 3
+
+Exibir popup ao clicar em polígono com:
+
+Nome do Talhão
+
+Cultura + Ícone
+
+Área
+
+Safra
+
+Botões “Editar” e “Excluir”
+
+🎨 7. CORES GERADAS AUTOMATICAMENTE (por Cultura)
+Plugin sugerido: [Random Color Generator], com entrada baseada em nome.hashCode
+
+Armazene no estilo: Cultura - Soja, Cultura - Milho, etc.
+
+Salvar o valor da cor no campo cor_hex do banco.
+
+💾 8. SUGESTÃO DE ORGANIZAÇÃO NO FIGMA
+Página: FortSmart
+
+Frames: Novo Talhão (v1), Polígono desenhado, Popup Polígono, Modo Caminhada, etc.
+
+Use AutoLayout + Variants para os botões e ícones
+
+🧠 PLUGINS ÚTEIS
+Map Maker: simular mapas com imagem real
+
+Blush: ícones de agricultura
+
+Content Reel: simular dados de talhões
+
+Color Generator: gerar cor com hash de string
+
