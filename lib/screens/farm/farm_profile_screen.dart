@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import '../../models/farm.dart';
 import '../../services/farm_service.dart';
 import '../../repositories/talhao_repository.dart';
-import '../../services/base44_sync_service.dart';
+import '../../services/fortsmart_sync_service.dart';
 import '../../utils/logger.dart';
 import '../../utils/snackbar_helper.dart';
 import '../../utils/app_colors.dart';
 
 /// Tela de Perfil da Fazenda - Criação e Visualização
-/// Preparada para sincronização com o sistema Base44
+/// Sincronização com servidor próprio no Render
 class FarmProfileScreen extends StatefulWidget {
   final String? farmId;
 
@@ -26,7 +26,7 @@ class _FarmProfileScreenState extends State<FarmProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _farmService = FarmService();
   final _talhaoRepository = TalhaoRepository();
-  final _base44SyncService = Base44SyncService();
+  final _syncService = FortSmartSyncService();
 
   // Controllers para os campos
   final _nameController = TextEditingController();
@@ -232,8 +232,8 @@ class _FarmProfileScreenState extends State<FarmProfileScreen> {
     }
   }
 
-  /// Sincroniza com o Base44
-  Future<void> _syncWithBase44() async {
+  /// Sincroniza com o servidor
+  Future<void> _syncWithServer() async {
     if (_farm == null) {
       SnackbarHelper.showWarning(context, 'Salve a fazenda antes de sincronizar');
       return;
@@ -241,21 +241,52 @@ class _FarmProfileScreenState extends State<FarmProfileScreen> {
 
     setState(() => _isSyncing = true);
 
-    try {
-      Logger.info('🔄 Iniciando sincronização com Base44...');
+    // Mostrar loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Sincronizando com servidor...'),
+            SizedBox(height: 8),
+            Text(
+              'Primeira conexão pode demorar até 1 minuto',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
 
-      final result = await _base44SyncService.syncFarm(_farm!);
+    try {
+      Logger.info('🔄 Iniciando sincronização com servidor...');
+
+      final result = await _syncService.syncFarm(_farm!);
+
+      // Fechar loading
+      if (mounted) Navigator.pop(context);
 
       if (result['success'] == true) {
-        Logger.info('✅ Sincronização com Base44 concluída');
+        Logger.info('✅ Sincronização concluída');
         if (mounted) {
-          SnackbarHelper.showSuccess(context, 'Sincronização concluída com sucesso!');
+          SnackbarHelper.showSuccess(context, '✅ Fazenda sincronizada com sucesso!');
         }
       } else {
         throw Exception(result['message'] ?? 'Erro desconhecido');
       }
     } catch (e) {
-      Logger.error('❌ Erro ao sincronizar com Base44: $e');
+      Logger.error('❌ Erro ao sincronizar: $e');
+      
+      // Fechar loading se ainda estiver aberto
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+      
       if (mounted) {
         SnackbarHelper.showError(context, 'Erro ao sincronizar: $e');
       }
@@ -442,7 +473,7 @@ class _FarmProfileScreenState extends State<FarmProfileScreen> {
 
               if (_farm != null && !_isEditing) ...[
                 ElevatedButton.icon(
-                  onPressed: _isSyncing ? null : _syncWithBase44,
+                  onPressed: _isSyncing ? null : _syncWithServer,
                   icon: _isSyncing
                       ? const SizedBox(
                           width: 20,
@@ -452,8 +483,8 @@ class _FarmProfileScreenState extends State<FarmProfileScreen> {
                             valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
-                      : const Icon(Icons.sync),
-                  label: Text(_isSyncing ? 'Sincronizando...' : 'Sincronizar com Base44'),
+                      : const Icon(Icons.cloud_upload),
+                  label: Text(_isSyncing ? 'Sincronizando...' : 'Sincronizar com Servidor'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
@@ -465,9 +496,9 @@ class _FarmProfileScreenState extends State<FarmProfileScreen> {
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
-                  onPressed: () => _showSyncHistory(),
-                  icon: const Icon(Icons.history),
-                  label: const Text('Histórico de Sincronização'),
+                  onPressed: () => _showServerInfo(),
+                  icon: const Icon(Icons.info_outline),
+                  label: const Text('Informações do Servidor'),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -662,21 +693,61 @@ class _FarmProfileScreenState extends State<FarmProfileScreen> {
     );
   }
 
-  /// Mostra o histórico de sincronização
-  void _showSyncHistory() {
+  /// Mostra informações do servidor
+  void _showServerInfo() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Histórico de Sincronização'),
-        content: const Text(
-          'Funcionalidade em desenvolvimento.\n\n'
-          'Aqui você poderá ver todo o histórico de sincronizações com o sistema Base44.',
+        title: Row(
+          children: [
+            Icon(Icons.cloud, color: Colors.blue),
+            SizedBox(width: 8),
+            Text('Servidor'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Backend Próprio no Render',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12),
+            _buildInfoRow('Tipo:', 'Node.js + PostgreSQL'),
+            _buildInfoRow('Status:', 'Online'),
+            _buildInfoRow('Plano:', 'Free'),
+            SizedBox(height: 12),
+            Text(
+              'Dados sincronizados:',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            ),
+            SizedBox(height: 4),
+            Text('• Informações da fazenda', style: TextStyle(fontSize: 12)),
+            Text('• Talhões e culturas', style: TextStyle(fontSize: 12)),
+            Text('• Dados de monitoramento', style: TextStyle(fontSize: 12)),
+            Text('• Relatórios agronômicos', style: TextStyle(fontSize: 12)),
+            Text('• Mapas térmicos', style: TextStyle(fontSize: 12)),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Fechar'),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(color: Colors.grey, fontSize: 12)),
+          Text(value, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12)),
         ],
       ),
     );
