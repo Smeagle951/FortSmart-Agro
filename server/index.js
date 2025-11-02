@@ -2,22 +2,118 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
-const axios = require('axios');
+const { Pool } = require('pg');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Middlewares de segurança e performance
+// Configuração do PostgreSQL (Render fornece automaticamente)
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+});
+
+// Middlewares
 app.use(helmet());
 app.use(compression());
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// URL da API Base44
-const BASE44_API_URL = process.env.BASE44_API_URL || 'https://api.base44.com.br/v1';
-const BASE44_TOKEN = process.env.BASE44_TOKEN || '';
+// ============================================================================
+// INICIALIZAÇÃO DO BANCO DE DADOS
+// ============================================================================
+
+async function initDatabase() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS farms (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        address TEXT,
+        municipality TEXT,
+        state TEXT,
+        owner_name TEXT,
+        document_number TEXT,
+        phone TEXT,
+        email TEXT,
+        total_area DECIMAL(10,2),
+        plots_count INTEGER,
+        cultures JSONB,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS plots (
+        id TEXT PRIMARY KEY,
+        farm_id TEXT REFERENCES farms(id),
+        name TEXT NOT NULL,
+        area DECIMAL(10,2),
+        polygon JSONB,
+        culture_id TEXT,
+        culture_name TEXT,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS monitorings (
+        id TEXT PRIMARY KEY,
+        farm_id TEXT REFERENCES farms(id),
+        plot_id TEXT REFERENCES plots(id),
+        date TIMESTAMP NOT NULL,
+        crop_name TEXT,
+        plot_name TEXT,
+        points JSONB,
+        weather_data JSONB,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS infestation_data (
+        id TEXT PRIMARY KEY,
+        monitoring_id TEXT REFERENCES monitorings(id),
+        organism_id TEXT,
+        organism_name TEXT,
+        severity DECIMAL(5,2),
+        quantity INTEGER,
+        latitude DECIMAL(10,8),
+        longitude DECIMAL(11,8),
+        date TIMESTAMP,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS agronomic_reports (
+        id TEXT PRIMARY KEY,
+        farm_id TEXT REFERENCES farms(id),
+        plot_id TEXT REFERENCES plots(id),
+        report_type TEXT,
+        period_start DATE,
+        period_end DATE,
+        summary JSONB,
+        monitoring_data JSONB,
+        infestation_analysis JSONB,
+        heatmap_data JSONB,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    console.log('✅ Banco de dados inicializado com sucesso');
+  } catch (error) {
+    console.error('❌ Erro ao inicializar banco de dados:', error);
+  }
+}
+
+// Inicializar banco ao startar
+initDatabase();
 
 // ============================================================================
 // ROUTES - HEALTH CHECK
@@ -27,53 +123,92 @@ app.get('/', (req, res) => {
   res.json({
     status: 'online',
     service: 'FortSmart Agro API',
-    version: '1.0.0',
+    version: '2.0.0',
+    backend: 'Render + PostgreSQL',
     timestamp: new Date().toISOString(),
   });
 });
 
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// ============================================================================
-// ROUTES - SINCRONIZAÇÃO COM BASE44
-// ============================================================================
-
-// Sincronizar fazenda
-app.post('/api/sync/farm', async (req, res) => {
+app.get('/health', async (req, res) => {
   try {
-    console.log('📡 [SYNC] Sincronizando fazenda com Base44...');
-    
-    const farmData = req.body;
-    
-    // Enviar para Base44
-    const response = await axios.post(
-      `${BASE44_API_URL}/farms/sync`,
-      farmData,
-      {
-        headers: {
-          'Authorization': `Bearer ${BASE44_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 30000,
-      }
-    );
-    
-    console.log('✅ [SYNC] Fazenda sincronizada com sucesso');
-    
+    await pool.query('SELECT 1');
     res.json({
-      success: true,
-      message: 'Fazenda sincronizada com Base44',
-      data: response.data,
+      status: 'healthy',
+      database: 'connected',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('❌ [SYNC] Erro ao sincronizar fazenda:', error.message);
+    res.status(500).json({
+      status: 'unhealthy',
+      database: 'disconnected',
+      error: error.message,
+    });
+  }
+});
+
+// ============================================================================
+// ROUTES - FAZENDAS
+// ============================================================================
+
+// Criar/Atualizar fazenda
+app.post('/api/farms/sync', async (req, res) => {
+  try {
+    console.log('🏡 [FARM] Sincronizando fazenda...');
     
+    const { farm, plots } = req.body;
+
+    // Upsert fazenda
+    await pool.query(`
+      INSERT INTO farms (id, name, address, municipality, state, owner_name, 
+                         document_number, phone, email, total_area, plots_count, cultures)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      ON CONFLICT (id) DO UPDATE SET
+        name = EXCLUDED.name,
+        address = EXCLUDED.address,
+        municipality = EXCLUDED.municipality,
+        state = EXCLUDED.state,
+        owner_name = EXCLUDED.owner_name,
+        document_number = EXCLUDED.document_number,
+        phone = EXCLUDED.phone,
+        email = EXCLUDED.email,
+        total_area = EXCLUDED.total_area,
+        plots_count = EXCLUDED.plots_count,
+        cultures = EXCLUDED.cultures,
+        updated_at = NOW()
+    `, [
+      farm.id, farm.name, farm.address, farm.city, farm.state,
+      farm.owner, farm.document, farm.phone, farm.email,
+      farm.total_area, farm.plots_count, JSON.stringify(farm.cultures)
+    ]);
+
+    // Sincronizar talhões
+    if (plots && plots.length > 0) {
+      for (const plot of plots) {
+        await pool.query(`
+          INSERT INTO plots (id, farm_id, name, area, polygon, culture_id, culture_name)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+          ON CONFLICT (id) DO UPDATE SET
+            name = EXCLUDED.name,
+            area = EXCLUDED.area,
+            culture_name = EXCLUDED.culture_name,
+            updated_at = NOW()
+        `, [
+          plot.id, farm.id, plot.name, plot.area,
+          JSON.stringify(plot.polygon), plot.culture_id, plot.culture_name
+        ]);
+      }
+    }
+
+    console.log('✅ [FARM] Fazenda sincronizada');
+
+    res.json({
+      success: true,
+      message: 'Fazenda sincronizada com sucesso',
+      farm_id: farm.id,
+    });
+  } catch (error) {
+    console.error('❌ [FARM] Erro:', error);
     res.status(500).json({
       success: false,
       message: 'Erro ao sincronizar fazenda',
@@ -82,189 +217,347 @@ app.post('/api/sync/farm', async (req, res) => {
   }
 });
 
-// Sincronizar relatório agronômico
-app.post('/api/sync/agronomic-report', async (req, res) => {
+// Buscar fazenda
+app.get('/api/farms/:farmId', async (req, res) => {
   try {
-    console.log('🌾 [SYNC] Sincronizando relatório agronômico...');
+    const { farmId } = req.params;
     
-    const reportData = req.body;
+    const farmResult = await pool.query('SELECT * FROM farms WHERE id = $1', [farmId]);
     
-    // Validar dados
-    if (!reportData.farm_id || !reportData.talhao_id) {
-      return res.status(400).json({
+    if (farmResult.rows.length === 0) {
+      return res.status(404).json({
         success: false,
-        message: 'farm_id e talhao_id são obrigatórios',
+        message: 'Fazenda não encontrada',
       });
     }
+
+    const plotsResult = await pool.query('SELECT * FROM plots WHERE farm_id = $1', [farmId]);
+
+    res.json({
+      success: true,
+      farm: farmResult.rows[0],
+      plots: plotsResult.rows,
+    });
+  } catch (error) {
+    console.error('❌ [FARM] Erro ao buscar:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// ============================================================================
+// ROUTES - RELATÓRIOS AGRONÔMICOS
+// ============================================================================
+
+// Sincronizar relatório agronômico completo
+app.post('/api/reports/agronomic', async (req, res) => {
+  try {
+    console.log('🌾 [REPORT] Sincronizando relatório agronômico...');
     
-    // Enviar para Base44
-    const response = await axios.post(
-      `${BASE44_API_URL}/agronomic-reports/sync`,
-      reportData,
-      {
-        headers: {
-          'Authorization': `Bearer ${BASE44_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 60000,
+    const {
+      farm_id,
+      plot_id,
+      report_type,
+      period,
+      monitoring_data,
+      infestation_analysis,
+      heatmap_data,
+    } = req.body;
+
+    // Salvar monitoramentos
+    if (monitoring_data && monitoring_data.length > 0) {
+      for (const monitoring of monitoring_data) {
+        await pool.query(`
+          INSERT INTO monitorings (id, farm_id, plot_id, date, crop_name, plot_name, points, weather_data)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          ON CONFLICT (id) DO UPDATE SET
+            points = EXCLUDED.points,
+            weather_data = EXCLUDED.weather_data,
+            updated_at = NOW()
+        `, [
+          monitoring.id,
+          farm_id,
+          plot_id,
+          monitoring.date,
+          monitoring.crop_name,
+          monitoring.plot_name,
+          JSON.stringify(monitoring.points || []),
+          JSON.stringify(monitoring.weather_data || {})
+        ]);
       }
-    );
-    
-    console.log('✅ [SYNC] Relatório agronômico sincronizado');
-    
+    }
+
+    // Salvar relatório completo
+    const reportResult = await pool.query(`
+      INSERT INTO agronomic_reports 
+        (id, farm_id, plot_id, report_type, period_start, period_end, 
+         summary, monitoring_data, infestation_analysis, heatmap_data)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING id
+    `, [
+      `report_${Date.now()}`,
+      farm_id,
+      plot_id,
+      report_type || 'agronomic_complete',
+      period?.start_date,
+      period?.end_date,
+      JSON.stringify(req.body.summary || {}),
+      JSON.stringify(monitoring_data || []),
+      JSON.stringify(infestation_analysis || {}),
+      JSON.stringify(heatmap_data || [])
+    ]);
+
+    console.log('✅ [REPORT] Relatório salvo');
+
     res.json({
       success: true,
       message: 'Relatório agronômico sincronizado',
-      report_id: response.data.report_id,
-      data: response.data,
+      report_id: reportResult.rows[0].id,
     });
   } catch (error) {
-    console.error('❌ [SYNC] Erro ao sincronizar relatório:', error.message);
-    
+    console.error('❌ [REPORT] Erro:', error);
     res.status(500).json({
       success: false,
-      message: 'Erro ao sincronizar relatório',
       error: error.message,
     });
   }
 });
 
-// Sincronizar dados de infestação
-app.post('/api/sync/infestation', async (req, res) => {
+// Buscar relatórios de uma fazenda
+app.get('/api/reports/farm/:farmId', async (req, res) => {
   try {
-    console.log('🐛 [SYNC] Sincronizando dados de infestação...');
+    const { farmId } = req.params;
     
-    const infestationData = req.body;
+    const result = await pool.query(`
+      SELECT * FROM agronomic_reports 
+      WHERE farm_id = $1 
+      ORDER BY created_at DESC
+    `, [farmId]);
+
+    res.json({
+      success: true,
+      reports: result.rows,
+    });
+  } catch (error) {
+    console.error('❌ [REPORT] Erro:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// ============================================================================
+// ROUTES - INFESTAÇÃO E HEATMAP
+// ============================================================================
+
+// Sincronizar dados de infestação
+app.post('/api/infestation/sync', async (req, res) => {
+  try {
+    console.log('🐛 [INFESTATION] Sincronizando infestação...');
     
-    // Enviar para Base44
-    const response = await axios.post(
-      `${BASE44_API_URL}/infestation/sync`,
-      infestationData,
-      {
-        headers: {
-          'Authorization': `Bearer ${BASE44_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 30000,
+    const { monitoring_id, points } = req.body;
+
+    if (points && points.length > 0) {
+      for (const point of points) {
+        await pool.query(`
+          INSERT INTO infestation_data 
+            (id, monitoring_id, organism_id, organism_name, severity, 
+             quantity, latitude, longitude, date)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+          ON CONFLICT (id) DO UPDATE SET
+            severity = EXCLUDED.severity,
+            quantity = EXCLUDED.quantity
+        `, [
+          point.id || `inf_${Date.now()}_${Math.random()}`,
+          monitoring_id,
+          point.organism_id,
+          point.organism_name,
+          point.severity,
+          point.quantity,
+          point.latitude,
+          point.longitude,
+          point.date
+        ]);
       }
-    );
-    
-    console.log('✅ [SYNC] Infestação sincronizada');
-    
+    }
+
+    console.log('✅ [INFESTATION] Dados sincronizados');
+
     res.json({
       success: true,
       message: 'Dados de infestação sincronizados',
-      data: response.data,
+      points_count: points?.length || 0,
     });
   } catch (error) {
-    console.error('❌ [SYNC] Erro ao sincronizar infestação:', error.message);
-    
+    console.error('❌ [INFESTATION] Erro:', error);
     res.status(500).json({
       success: false,
-      message: 'Erro ao sincronizar infestação',
       error: error.message,
     });
   }
 });
 
-// Sincronizar mapa térmico
-app.post('/api/sync/heatmap', async (req, res) => {
+// Buscar dados de infestação
+app.get('/api/infestation/plot/:plotId', async (req, res) => {
   try {
-    console.log('🗺️ [SYNC] Sincronizando mapa térmico...');
+    const { plotId } = req.params;
+    const { startDate, endDate } = req.query;
+
+    let query = `
+      SELECT i.*, m.date as monitoring_date, m.crop_name
+      FROM infestation_data i
+      JOIN monitorings m ON i.monitoring_id = m.id
+      WHERE m.plot_id = $1
+    `;
     
-    const heatmapData = req.body;
+    const params = [plotId];
+
+    if (startDate) {
+      query += ` AND m.date >= $2`;
+      params.push(startDate);
+    }
     
-    // Enviar para Base44
-    const response = await axios.post(
-      `${BASE44_API_URL}/heatmap/sync`,
-      heatmapData,
-      {
-        headers: {
-          'Authorization': `Bearer ${BASE44_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 30000,
-      }
-    );
-    
-    console.log('✅ [SYNC] Heatmap sincronizado');
-    
+    if (endDate) {
+      const dateParamNum = params.length + 1;
+      query += ` AND m.date <= $${dateParamNum}`;
+      params.push(endDate);
+    }
+
+    query += ` ORDER BY m.date DESC`;
+
+    const result = await pool.query(query, params);
+
     res.json({
       success: true,
-      message: 'Mapa térmico sincronizado',
-      points_count: heatmapData.heatmap_points?.length || 0,
-      data: response.data,
+      data: result.rows,
     });
   } catch (error) {
-    console.error('❌ [SYNC] Erro ao sincronizar heatmap:', error.message);
-    
+    console.error('❌ [INFESTATION] Erro:', error);
     res.status(500).json({
       success: false,
-      message: 'Erro ao sincronizar mapa térmico',
       error: error.message,
     });
   }
 });
 
-// Verificar status de sincronização
-app.get('/api/sync/status/:farmId', async (req, res) => {
+// Gerar heatmap
+app.get('/api/heatmap/plot/:plotId', async (req, res) => {
+  try {
+    const { plotId } = req.params;
+    
+    const result = await pool.query(`
+      SELECT 
+        latitude,
+        longitude,
+        AVG(severity) as avg_severity,
+        COUNT(*) as occurrence_count,
+        array_agg(DISTINCT organism_name) as organisms
+      FROM infestation_data i
+      JOIN monitorings m ON i.monitoring_id = m.id
+      WHERE m.plot_id = $1
+      GROUP BY latitude, longitude
+    `, [plotId]);
+
+    // Processar heatmap
+    const heatmapPoints = result.rows.map(row => {
+      const avgSeverity = parseFloat(row.avg_severity);
+      const intensity = avgSeverity / 100.0;
+      
+      let color, level;
+      if (avgSeverity >= 75) {
+        color = '#FF0000';
+        level = 'critical';
+      } else if (avgSeverity >= 50) {
+        color = '#FF9800';
+        level = 'high';
+      } else if (avgSeverity >= 25) {
+        color = '#FFEB3B';
+        level = 'medium';
+      } else {
+        color = '#4CAF50';
+        level = 'low';
+      }
+
+      return {
+        latitude: parseFloat(row.latitude),
+        longitude: parseFloat(row.longitude),
+        intensity,
+        severity: avgSeverity,
+        color,
+        level,
+        occurrence_count: parseInt(row.occurrence_count),
+        organisms: row.organisms,
+      };
+    });
+
+    res.json({
+      success: true,
+      heatmap_points: heatmapPoints,
+    });
+  } catch (error) {
+    console.error('❌ [HEATMAP] Erro:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// ============================================================================
+// ROUTES - ESTATÍSTICAS E ANÁLISES
+// ============================================================================
+
+// Dashboard de estatísticas
+app.get('/api/dashboard/farm/:farmId', async (req, res) => {
   try {
     const { farmId } = req.params;
-    
-    console.log(`🔍 [SYNC] Verificando status da fazenda: ${farmId}`);
-    
-    const response = await axios.get(
-      `${BASE44_API_URL}/farms/${farmId}/sync-status`,
-      {
-        headers: {
-          'Authorization': `Bearer ${BASE44_TOKEN}`,
-        },
-        timeout: 15000,
-      }
-    );
-    
-    res.json({
-      success: true,
-      data: response.data,
-    });
-  } catch (error) {
-    console.error('❌ [SYNC] Erro ao verificar status:', error.message);
-    
-    res.status(500).json({
-      success: false,
-      message: 'Erro ao verificar status',
-      error: error.message,
-    });
-  }
-});
 
-// Histórico de sincronizações
-app.get('/api/sync/history/:farmId', async (req, res) => {
-  try {
-    const { farmId } = req.params;
-    
-    console.log(`📜 [SYNC] Buscando histórico da fazenda: ${farmId}`);
-    
-    const response = await axios.get(
-      `${BASE44_API_URL}/farms/${farmId}/sync-history`,
-      {
-        headers: {
-          'Authorization': `Bearer ${BASE44_TOKEN}`,
-        },
-        timeout: 15000,
-      }
+    // Total de talhões
+    const plotsResult = await pool.query(
+      'SELECT COUNT(*) as total, SUM(area) as total_area FROM plots WHERE farm_id = $1',
+      [farmId]
     );
-    
+
+    // Total de monitoramentos
+    const monitoringsResult = await pool.query(
+      'SELECT COUNT(*) as total FROM monitorings WHERE farm_id = $1',
+      [farmId]
+    );
+
+    // Infestações por organismo
+    const infestationsResult = await pool.query(`
+      SELECT 
+        organism_name,
+        COUNT(*) as count,
+        AVG(severity) as avg_severity
+      FROM infestation_data i
+      JOIN monitorings m ON i.monitoring_id = m.id
+      WHERE m.farm_id = $1
+      GROUP BY organism_name
+      ORDER BY count DESC
+      LIMIT 10
+    `, [farmId]);
+
     res.json({
       success: true,
-      history: response.data,
+      statistics: {
+        plots: {
+          total: parseInt(plotsResult.rows[0].total),
+          total_area: parseFloat(plotsResult.rows[0].total_area || 0),
+        },
+        monitorings: {
+          total: parseInt(monitoringsResult.rows[0].total),
+        },
+        top_organisms: infestationsResult.rows,
+      },
     });
   } catch (error) {
-    console.error('❌ [SYNC] Erro ao buscar histórico:', error.message);
-    
+    console.error('❌ [DASHBOARD] Erro:', error);
     res.status(500).json({
       success: false,
-      message: 'Erro ao buscar histórico',
       error: error.message,
     });
   }
@@ -291,9 +584,9 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log('🚀 ========================================');
   console.log(`🚀 FortSmart Agro API rodando na porta ${PORT}`);
   console.log(`🚀 Ambiente: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🚀 Base44 URL: ${BASE44_API_URL}`);
+  console.log(`🚀 Database: PostgreSQL no Render`);
+  console.log(`🚀 Backend: Próprio (sem Base44)`);
   console.log('🚀 ========================================');
 });
 
 module.exports = app;
-

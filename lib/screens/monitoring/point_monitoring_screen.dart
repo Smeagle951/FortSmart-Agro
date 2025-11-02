@@ -2100,7 +2100,7 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Monitoramento finalizado! Mapa: $sucessosMapa/${_ocorrencias.length}, Histórico: $sucessosHistorico/${_ocorrencias.length}'),
+          content: Text('Monitoramento finalizado! ${_ocorrencias.length} ocorrências salvas com sucesso! ✅'),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 4),
         ),

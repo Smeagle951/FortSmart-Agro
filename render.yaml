@@ -9,10 +9,12 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: BASE44_API_URL
-        value: https://api.base44.com.br/v1
-      - key: BASE44_TOKEN
-        sync: false  # Configure manualmente no painel do Render
     healthCheckPath: /health
     autoDeploy: true
+
+databases:
+  - name: fortsmart-agro-db
+    databaseName: fortsmart_agro
+    user: fortsmart_user
+    plan: free
 

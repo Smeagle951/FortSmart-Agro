@@ -1,23 +1,23 @@
 {
   "name": "fortsmart-agro-api",
-  "version": "1.0.0",
-  "description": "API Backend para FortSmart Agro - Integração com Base44",
+  "version": "2.0.0",
+  "description": "API Backend para FortSmart Agro - PostgreSQL no Render",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "keywords": ["fortsmart", "agro", "base44", "api"],
+  "keywords": ["fortsmart", "agro", "postgresql", "api"],
   "author": "FortSmart Team",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "axios": "^1.6.0",
     "dotenv": "^16.3.1",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
-    "helmet": "^7.1.0"
+    "helmet": "^7.1.0",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
