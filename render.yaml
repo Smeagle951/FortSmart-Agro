@@ -1,0 +1,18 @@
+# Configuração do Render para FortSmart Agro API
+
+services:
+  - type: web
+    name: fortsmart-agro-api
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BASE44_API_URL
+        value: https://api.base44.com.br/v1
+      - key: BASE44_TOKEN
+        sync: false  # Configure manualmente no painel do Render
+    healthCheckPath: /health
+    autoDeploy: true
+

@@ -438,27 +438,30 @@ class MonitoringCardDataService {
     return organismos;
   }
   
-  /// Conta total de fotos
+  /// Conta total de fotos (APENAS válidas!)
   Future<int> _countPhotos(Database db, String sessionId) async {
     try {
       final occurrences = await db.query(
         'monitoring_occurrences',
         columns: ['foto_paths'],
-        where: 'session_id = ? AND foto_paths IS NOT NULL',
+        where: 'session_id = ? AND foto_paths IS NOT NULL AND foto_paths != \'\' AND foto_paths != \'[]\' AND foto_paths != \'[""]\'',
         whereArgs: [sessionId],
       );
       
       int total = 0;
       for (final occ in occurrences) {
         final fotoPaths = occ['foto_paths']?.toString();
-        if (fotoPaths != null && fotoPaths.isNotEmpty) {
+        if (fotoPaths != null && fotoPaths.isNotEmpty && fotoPaths != '[]' && fotoPaths != '[""]') {
           try {
             final List<dynamic> paths = jsonDecode(fotoPaths);
-            total += paths.length;
+            // ✅ FILTRAR strings vazias ao contar
+            final pathsValidos = paths.where((p) => p != null && p.toString().trim().isNotEmpty).toList();
+            total += pathsValidos.length;
           } catch (_) {}
         }
       }
       
+      Logger.info('📸 [$_tag] Total de fotos VÁLIDAS: $total');
       return total;
     } catch (e) {
       Logger.warning('⚠️ [$_tag] Erro ao contar fotos: $e');

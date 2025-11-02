@@ -1,0 +1,15 @@
+# Configuração da API FortSmart Agro
+# Renomeie este arquivo para .env e configure os valores
+
+# Porta do servidor (Render usa PORT automático)
+PORT=10000
+
+# URL da API Base44
+BASE44_API_URL=https://api.base44.com.br/v1
+
+# Token de autenticação Base44
+BASE44_TOKEN=seu_token_base44_aqui
+
+# Ambiente
+NODE_ENV=production
+

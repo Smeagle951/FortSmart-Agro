@@ -108,7 +108,29 @@ class DirectOccurrenceService {
         Logger.info('✅ [$_tag] Ponto $pointId já existe');
       }
 
-      // 3. Gerar ID único
+      // 3. ✅ VERIFICAR SE JÁ EXISTE OCORRÊNCIA DUPLICADA
+      final existingOcc = await db.query(
+        'monitoring_occurrences',
+        where: 'session_id = ? AND point_id = ? AND organism_name = ? AND tipo = ?',
+        whereArgs: [sessionId, pointId, subtipo, tipo],
+        limit: 1,
+      );
+      
+      if (existingOcc.isNotEmpty) {
+        Logger.warning('⚠️ [$_tag] ============================================');
+        Logger.warning('⚠️ [$_tag] OCORRÊNCIA DUPLICADA DETECTADA!');
+        Logger.warning('⚠️ [$_tag] Session: $sessionId');
+        Logger.warning('⚠️ [$_tag] Point: $pointId');
+        Logger.warning('⚠️ [$_tag] Organism: $subtipo');
+        Logger.warning('⚠️ [$_tag] Tipo: $tipo');
+        Logger.warning('⚠️ [$_tag] ID existente: ${existingOcc.first['id']}');
+        Logger.warning('⚠️ [$_tag] PULANDO salvamento para evitar duplicação!');
+        Logger.warning('⚠️ [$_tag] ============================================');
+        return true; // ✅ Retornar sucesso (já existe)
+      }
+      Logger.info('✅ [$_tag] Nenhuma duplicata encontrada, prosseguindo...');
+      
+      // 4. Gerar ID único
       final occId = '${DateTime.now().millisecondsSinceEpoch}_${pointId}_${tipo}_${subtipo}';
       Logger.info('✅ [$_tag] ID gerado: $occId');
 

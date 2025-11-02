@@ -1755,7 +1755,8 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
       }
 
       // Salvar todas as ocorrências do ponto atual antes de avançar
-      await _saveAllCurrentOccurrences();
+      // ❌ REMOVIDO: Salvamento duplicado (já salvou via DirectOccurrenceService)
+      // await _saveAllCurrentOccurrences();
       
       // Marcar fim do ponto atual
       if (_currentPoint != null) {
@@ -1843,7 +1844,8 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
       }
 
       // Salvar todas as ocorrências do ponto atual antes de avançar
-      await _saveAllCurrentOccurrences();
+      // ❌ REMOVIDO: Salvamento duplicado (já salvou via DirectOccurrenceService)
+      // await _saveAllCurrentOccurrences();
       
       // Marcar fim do ponto atual
       if (_currentPoint != null) {
@@ -2020,7 +2022,8 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
       Logger.info('🏁 [FINISH] ==========================================');
       
       // Salvar todas as ocorrências do ponto atual antes de finalizar
-      await _saveAllCurrentOccurrences();
+      // ❌ REMOVIDO: Salvamento duplicado (já salvou via DirectOccurrenceService)
+      // await _saveAllCurrentOccurrences();
       
       // ✅ VERIFICAR QUANTAS OCORRÊNCIAS ESTÃO NO BANCO AGORA
       Logger.info('🔍 [FINISH] Executando verificação do banco...');
@@ -2060,20 +2063,21 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
         }
       }
       
+      // ❌ REMOVIDO: Salvamento duplicado no histórico (já salvou via DirectOccurrenceService)
       // Salvar todas as ocorrências no histórico de monitoramento
       // // Log removido
-      int sucessosHistorico = 0;
-      int errosHistorico = 0;
-      for (final ocorrencia in _ocorrencias) {
-        try {
-          await _saveToMonitoringHistory(ocorrencia);
-          sucessosHistorico++;
-          // // Log removido
-        } catch (e) {
-          errosHistorico++;
-          // // Log removido
-        }
-      }
+      // int sucessosHistorico = 0;
+      // int errosHistorico = 0;
+      // for (final ocorrencia in _ocorrencias) {
+      //   try {
+      //     await _saveToMonitoringHistory(ocorrencia);
+      //     sucessosHistorico++;
+      //     // // Log removido
+      //   } catch (e) {
+      //     errosHistorico++;
+      //     // // Log removido
+      //   }
+      // }
       
       // Salvar sessão completa no MonitoringHistoryService
       await _saveCompleteSessionToHistory();
