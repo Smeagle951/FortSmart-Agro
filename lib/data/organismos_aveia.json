@@ -1,0 +1,483 @@
+{
+  "cultura": "Aveia",
+  "nome_cientifico": "Avena sativa",
+  "versao": "4.0",
+  "data_atualizacao": "2024-12-19T00:00:00Z",
+  "funcionalidades_extras": {
+    "fases_desenvolvimento": true,
+    "tamanhos_mm": true,
+    "severidade_detalhada": true,
+    "condicoes_favoraveis": true,
+    "manejo_integrado": true,
+    "limiares_especificos": true,
+    "niveis_infestacao": true,
+    "niveis_severidade": true,
+    "sintomas_detalhados": true
+  },
+  "organismos": [
+    {
+      "id": "aveia_pulgoes",
+      "nome": "Pulgões (Rhopalosiphum padi, Sitobion avenae)",
+      "nome_cientifico": "Rhopalosiphum padi, Sitobion avenae",
+      "categoria": "Praga",
+      "cultura_id": "aveia",
+      "sintomas": [
+        "Redução no crescimento, transmissão de viroses como o nanismo amarelo da cevada (BYDV)"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% em infestações severas",
+      "partes_afetadas": ["Folhas", "Grãos"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8"],
+      "fases_fenologicas_detalhadas": {
+        "V1": "Primeira folha - Primeira folha verdadeira",
+        "V2": "Segunda folha - Segunda folha verdadeira",
+        "V3": "Terceira folha - Terceira folha verdadeira",
+        "V4": "Quarta folha - Quarta folha verdadeira",
+        "V5": "Quinta folha - Quinta folha verdadeira",
+        "V6": "Sexta folha - Sexta folha verdadeira",
+        "R1": "Início do emborrachamento - Emborrachamento iniciado",
+        "R2": "Emborrachamento pleno - Emborrachamento completo",
+        "R3": "Início do espigamento - Espigamento iniciado",
+        "R4": "Espigamento pleno - Espigamento completo",
+        "R5": "Início do enchimento - Enchimento iniciado",
+        "R6": "Enchimento pleno - Enchimento completo",
+        "R7": "Maturação fisiológica - Grãos maduros",
+        "R8": "Maturação comercial - Pronto para colheita"
+      },
+      "nivel_acao": "10 pulgões por planta",
+      "manejo_quimico": [
+        "Imidacloprido - 0,2-0,3 L/ha",
+        "Tiametoxam - 0,3-0,4 L/ha",
+        "Acetamiprido - 0,15-0,25 L/ha"
+      ],
+      "doses_defensivos": {
+        "imidacloprido": {
+          "dose": "0,2-0,3 L/ha",
+          "concentracao": "240 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        },
+        "tiametoxam": {
+          "dose": "0,3-0,4 L/ha",
+          "concentracao": "250 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        },
+        "acetamiprido": {
+          "dose": "0,15-0,25 L/ha",
+          "concentracao": "200 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Controle biológico com parasitoides"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas hospedeiras",
+        "Controle de plantas daninhas"
+      ],
+      "observacoes": "Vetor importante de vírus",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "1-2",
+          "danos": "Sucção de seiva, enrolamento de folhas, excreção de honeydew que favorece fumagina",
+          "duracao_dias": "5-7",
+          "caracteristicas": "Ninfas pequenas, cor variada"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "2-3",
+          "danos": "Redução no crescimento, transmissão de viroses como o nanismo amarelo da cevada (BYDV)",
+          "duracao_dias": "15-20",
+          "caracteristicas": "Adultos pequenos, cor variada"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 5 pulgões por planta",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-10 pulgões por planta",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 10 pulgões por planta",
+          "perda_produtividade": "26-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "10 pulgões por planta",
+        "floracao": "10 pulgões por planta",
+        "enchimento": "10 pulgões por planta"
+      }
+    },
+    {
+      "id": "aveia_lagarta_cartucho",
+      "nome": "Lagarta-do-cartucho (Spodoptera frugiperda)",
+      "nome_cientifico": "Spodoptera frugiperda",
+      "categoria": "Praga",
+      "cultura_id": "aveia",
+      "sintomas": [
+        "Corte de plântulas, perfurações profundas e redução drástica de área foliar"
+      ],
+      "dano_economico": "Pode causar perdas de até 50% em infestações severas",
+      "partes_afetadas": ["Folhas", "Cartucho"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "2 lagartas por metro quadrado",
+      "manejo_quimico": [
+        "Clorantraniliprole",
+        "Espinetoram",
+        "Indoxacarbe"
+      ],
+      "manejo_biologico": [
+        "Trichogramma pretiosum",
+        "Vírus de poliedrose nuclear"
+      ],
+      "manejo_cultural": [
+        "Monitoramento constante",
+        "Controle biológico natural"
+      ],
+      "observacoes": "Praga importante que pode causar perdas significativas",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Neonata",
+          "tamanho_mm": "1-2",
+          "danos": "Perfurações pequenas em folhas jovens",
+          "duracao_dias": "2-3",
+          "caracteristicas": "Lagartas pequenas, cor clara"
+        },
+        {
+          "fase": "Lagarta média",
+          "tamanho_mm": "10-15",
+          "danos": "Desfolha intensa, raspagens em folhas e ataque ao cartucho",
+          "duracao_dias": "8-10",
+          "caracteristicas": "Lagartas com listras longitudinais"
+        },
+        {
+          "fase": "Lagarta adulta",
+          "tamanho_mm": "30-40",
+          "danos": "Corte de plântulas, perfurações profundas e redução drástica de área foliar",
+          "duracao_dias": "5-7",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 1 lagarta por metro quadrado",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "2-3 lagartas por metro quadrado",
+          "perda_produtividade": "16-35%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 3 lagartas por metro quadrado",
+          "perda_produtividade": "36-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "2 lagartas por metro quadrado",
+        "floracao": "2 lagartas por metro quadrado",
+        "enchimento": "2 lagartas por metro quadrado"
+      }
+    },
+    {
+      "id": "aveia_percevejo_marrom",
+      "nome": "Percevejo-marrom (Euschistus heros)",
+      "nome_cientifico": "Euschistus heros",
+      "categoria": "Praga",
+      "cultura_id": "aveia",
+      "sintomas": [
+        "Sucção em grãos em formação, enrugamento e perda de peso"
+      ],
+      "dano_economico": "Pode causar perdas de até 35% em infestações severas",
+      "partes_afetadas": ["Folhas", "Grãos"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "2 percevejos por metro quadrado",
+      "manejo_quimico": [
+        "Fipronil",
+        "Lambda-cialotrina",
+        "Tiametoxam"
+      ],
+      "manejo_biologico": [
+        "Monitoramento constante",
+        "Uso de inseticidas específicos"
+      ],
+      "manejo_cultural": [
+        "Controle de plantas daninhas",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Vetor importante de viroses",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "3-6",
+          "danos": "Sucção em folhas, causando manchas necróticas localizadas",
+          "duracao_dias": "15-20",
+          "caracteristicas": "Ninfas pequenas, cor marrom clara"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "10-12",
+          "danos": "Sucção em grãos em formação, enrugamento e perda de peso",
+          "duracao_dias": "30-45",
+          "caracteristicas": "Adultos marrons, formato oval"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 1 percevejo por metro quadrado",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "2-3 percevejos por metro quadrado",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 3 percevejos por metro quadrado",
+          "perda_produtividade": "26-35%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "2 percevejos por metro quadrado",
+        "floracao": "2 percevejos por metro quadrado",
+        "enchimento": "2 percevejos por metro quadrado"
+      }
+    },
+    {
+      "id": "aveia_ferrugem_aveia",
+      "nome": "Ferrugem-da-aveia (Puccinia coronata f.sp. avenae)",
+      "nome_cientifico": "Puccinia coronata f.sp. avenae",
+      "categoria": "Doença",
+      "cultura_id": "aveia",
+      "sintomas": [
+        "Pústulas alaranjadas a marrons na face superior das folhas, coalescendo em casos severos"
+      ],
+      "dano_economico": "Pode causar perdas de até 60% em infestações severas",
+      "partes_afetadas": ["Folhas", "Colmos"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5% das plantas com sintomas",
+      "manejo_quimico": [
+        "Fungicidas preventivos"
+      ],
+      "manejo_biologico": [
+        "Uso de cultivares resistentes"
+      ],
+      "manejo_cultural": [
+        "Rotação de culturas",
+        "Aplicação de fungicidas preventivos em condições favoráveis"
+      ],
+      "observacoes": "Alta umidade e temperaturas moderadas (15–22 °C)",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 5% da área foliar com sintomas",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "5-20% da área foliar afetada",
+          "perda_produtividade": "21-40%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Mais de 20% da área foliar comprometida, desfolha e perdas significativas",
+          "perda_produtividade": "41-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Alta umidade e temperaturas moderadas (15–22 °C)",
+        "umidade": "Umidade relativa alta (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% das plantas com sintomas",
+        "floracao": "5% das plantas com sintomas",
+        "enchimento": "5% das plantas com sintomas"
+      }
+    },
+    {
+      "id": "aveia_helmintosporiose",
+      "nome": "Helmintosporiose (Drechslera avenae)",
+      "nome_cientifico": "Drechslera avenae",
+      "categoria": "Doença",
+      "cultura_id": "aveia",
+      "sintomas": [
+        "Lesões alongadas de cor marrom a cinza com halo amarelo nas folhas"
+      ],
+      "dano_economico": "Pode causar perdas de até 45% em infestações severas",
+      "partes_afetadas": ["Folhas", "Colmos"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5% das plantas com sintomas",
+      "manejo_quimico": [
+        "Fungicidas"
+      ],
+      "manejo_biologico": [
+        "Sementes tratadas com fungicida"
+      ],
+      "manejo_cultural": [
+        "Rotação com espécies não hospedeiras",
+        "Eliminação de restos culturais infectados"
+      ],
+      "observacoes": "Clima úmido e temperaturas entre 18–25 °C",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 3 lesões por folha",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Lesões em 30% das folhas",
+          "perda_produtividade": "16-30%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Mais de 50% das folhas com necrose, comprometendo a fotossíntese",
+          "perda_produtividade": "31-45%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Clima úmido e temperaturas entre 18–25 °C",
+        "umidade": "Umidade relativa alta (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% das plantas com sintomas",
+        "floracao": "5% das plantas com sintomas",
+        "enchimento": "5% das plantas com sintomas"
+      }
+    },
+    {
+      "id": "aveia_ferrugem_folha",
+      "nome": "Ferrugem da folha (Puccinia recondita f.sp. avenae)",
+      "nome_cientifico": "Puccinia recondita f.sp. avenae",
+      "categoria": "Doença",
+      "cultura_id": "aveia",
+      "sintomas": [
+        "Pústulas pequenas e arredondadas, de cor ferrugem, dispersas em folhas"
+      ],
+      "dano_economico": "Pode causar perdas de até 50% em infestações severas",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5% das plantas com sintomas",
+      "manejo_quimico": [
+        "Controle químico em surtos fortes"
+      ],
+      "manejo_biologico": [
+        "Cultivares resistentes"
+      ],
+      "manejo_cultural": [
+        "Monitoramento em condições de risco"
+      ],
+      "observacoes": "Alta umidade relativa e temperaturas entre 15–20 °C",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 10% de folhas com sintomas",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "10-30% de folhas atacadas",
+          "perda_produtividade": "21-35%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Mais de 40% de área foliar perdida",
+          "perda_produtividade": "36-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Alta umidade relativa e temperaturas entre 15–20 °C",
+        "umidade": "Umidade relativa alta (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% das plantas com sintomas",
+        "floracao": "5% das plantas com sintomas",
+        "enchimento": "5% das plantas com sintomas"
+      }
+    }
+  ]
+}

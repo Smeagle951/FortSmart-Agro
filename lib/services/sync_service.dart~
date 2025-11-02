@@ -1,0 +1,251 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+
+import '../repositories/soil_sample_repository.dart';
+import '../services/image_service.dart';
+import '../utils/logger.dart';
+import '../utils/enums.dart';
+import '../config/app_config.dart';
+import '../models/soil_sample.dart';
+
+/// Enum que representa o status de sincronização
+enum SyncStatus {
+  pending,
+  syncing,
+  completed,
+  error,
+  partialError,
+  permanentError,
+  notStarted
+}
+
+/// Classe que representa o status de sincronização
+class SyncStatus {
+  final bool isSyncing;
+  final int syncedCount;
+  final int pendingCount;
+  final String message;
+  final SyncStatus? status;
+
+  SyncStatus(this.isSyncing, this.syncedCount, this.pendingCount, this.message, {this.status});
+
+  // Status pré-definidos
+  static final SyncStatus syncing = SyncStatus(true, 0, 0, 'Sincronização em andamento...', status: SyncStatus.syncing);
+  static final SyncStatus completed = SyncStatus(false, 0, 0, 'Todos os dados estão sincronizados', status: SyncStatus.completed);
+  static final SyncStatus error = SyncStatus(false, 0, 0, 'Erro durante a sincronização', status: SyncStatus.error);
+  static final SyncStatus partialError = SyncStatus(false, 0, 0, 'Sincronização parcial com erros', status: SyncStatus.partialError);
+  static final SyncStatus permanentError = SyncStatus(false, 0, 0, 'Erro permanente de sincronização', status: SyncStatus.permanentError);
+}
+
+/// Serviço responsável pela sincronização de dados com o servidor
+class SyncService {
+  final SoilSampleRepository _soilSampleRepository;
+  final ImageService _imageService;
+  final String _apiUrl;
+  final String _apiKey;
+  bool _isSyncing = false;
+
+  SyncService({
+    required SoilSampleRepository soilSampleRepository,
+    required String apiUrl,
+    required String apiKey,
+  }) : 
+    _soilSampleRepository = soilSampleRepository,
+    _imageService = ImageService(),
+    _apiUrl = apiUrl,
+    _apiKey = apiKey;
+
+  /// Sincroniza amostras de solo pendentes
+  Future<SyncStatus> syncSoilSamples() async {
+    if (_isSyncing) {
+      return SyncStatus.syncing;
+    }
+
+    try {
+      _isSyncing = true;
+      Logger.log('Iniciando sincronização de amostras de solo');
+      
+      // Obter IDs de amostras pendentes
+      final pendingSampleIds = await _soilSampleRepository.getPendingSampleIds();
+      
+      if (pendingSampleIds.isEmpty) {
+        _isSyncing = false;
+        return SyncStatus.completed;
+      }
+      
+      int syncedCount = 0;
+      int errorCount = 0;
+      
+      // Processar cada amostra pendente
+      for (final sampleId in pendingSampleIds) {
+        try {
+          // Atualizar status para sincronizando
+          await _soilSampleRepository.updateSyncStatus(sampleId, SyncStatus.syncing);
+          
+          // Obter dados da amostra
+          final sampleData = await _soilSampleRepository.getSoilSampleAsMap(sampleId);
+          final pointsData = await _soilSampleRepository.getSamplePointsAsMapList(sampleId);
+          
+          // Preparar dados para envio
+          final payload = {
+            'sample': sampleData,
+            'points': pointsData,
+          };
+          
+          // Enviar dados para o servidor
+          final response = await http.post(
+            Uri.parse('$_apiUrl/soil-samples'),
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': _apiKey,
+            },
+            body: jsonEncode(payload),
+          );
+          
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            // Processar resposta
+            final responseData = jsonDecode(response.body);
+            
+            // Atualizar ID remoto
+            if (responseData['id'] != null) {
+              await _soilSampleRepository.updateSamplePointFromMap(
+                sampleId, 
+                {'remoteId': responseData['id']}
+              );
+            }
+            
+            // Fazer upload das imagens dos pontos
+            final allImagesUploaded = await _uploadPointImages(pointsData, sampleId);
+            
+            if (allImagesUploaded) {
+              // Atualizar status para sincronizado
+              await _soilSampleRepository.updateSyncStatus(sampleId, SyncStatus.completed);
+              syncedCount++;
+            } else {
+              // Atualizar status para erro parcial
+              await _soilSampleRepository.updateSyncStatus(sampleId, SyncStatus.partialError);
+              errorCount++;
+            }
+          } else {
+            // Erro na sincronização
+            Logger.error('Erro ao sincronizar amostra $sampleId: ${response.body}');
+            await _soilSampleRepository.updateSyncStatus(sampleId, SyncStatus.error);
+            errorCount++;
+          }
+        } catch (e) {
+          Logger.error('Exceção ao processar amostra $sampleId: $e');
+          await _soilSampleRepository.updateSyncStatus(sampleId, SyncStatus.error);
+          errorCount++;
+        }
+      }
+      
+      _isSyncing = false;
+      
+      // Retornar status final
+      if (errorCount == 0 && syncedCount > 0) {
+        return SyncStatus(false, syncedCount, 0, 'Sincronização concluída com sucesso');
+      } else if (errorCount > 0 && syncedCount > 0) {
+        return SyncStatus(false, syncedCount, errorCount, 'Sincronização parcial com $errorCount erros');
+      } else {
+        return SyncStatus.error;
+      }
+    } catch (e) {
+      _isSyncing = false;
+      Logger.error('Erro geral na sincronização: $e');
+      return SyncStatus.error;
+    }
+  }
+
+  /// Faz upload das imagens dos pontos de amostra
+  Future<bool> _uploadPointImages(List<Map<String, dynamic>> points, String sampleId) async {
+    try {
+      bool allUploaded = true;
+      
+      for (final pointMap in points) {
+        final pointId = pointMap['id'];
+        final photoPath = pointMap['localPhotoPath'];
+        
+        if (photoPath == null || photoPath.isEmpty) {
+          continue; // Ponto sem imagem
+        }
+        
+        final imageFile = File(photoPath);
+        
+        // Validar imagem
+        final validationResult = await _imageService.validateImage(imageFile);
+        
+        if (!validationResult.isValid) {
+          Logger.error('Imagem inválida para o ponto $pointId: ${validationResult.message}');
+          allUploaded = false;
+          continue;
+        }
+        
+        // Comprimir imagem se necessário
+        if (validationResult.sizeKB != null && validationResult.sizeKB! > 1024) {
+          final compressionResult = await _imageService.compressImage(imageFile);
+          if (!compressionResult.success) {
+            Logger.error('Falha ao comprimir imagem do ponto $pointId: ${compressionResult.message}');
+          }
+        }
+        
+        // Fazer upload da imagem
+        final uri = Uri.parse('$_apiUrl/soil-samples/$sampleId/points/$pointId/image');
+        final request = http.MultipartRequest('POST', uri)
+          ..headers.addAll({
+            'X-API-Key': _apiKey,
+          })
+          ..files.add(await http.MultipartFile.fromPath(
+            'image',
+            imageFile.path,
+          ));
+        
+        final response = await request.send();
+        
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          // Atualizar URL da imagem remota
+          final responseData = jsonDecode(await response.stream.bytesToString());
+          
+          if (responseData['imageUrl'] != null) {
+            await _soilSampleRepository.updateSamplePointFromMap(
+              sampleId, 
+              {
+                'id': pointId,
+                'remotePhotoUrl': responseData['imageUrl'],
+                'isSynced': 1
+              }
+            );
+          }
+        } else {
+          // Falha no upload da imagem
+          final responseText = await response.stream.bytesToString();
+          Logger.error('Falha ao enviar imagem do ponto $pointId: $responseText');
+          allUploaded = false;
+        }
+      }
+      
+      return allUploaded;
+    } catch (e) {
+      Logger.error('Erro ao fazer upload de imagens: $e');
+      return false;
+    }
+  }
+
+  // Obtém o status atual da sincronização
+  Future<SyncStatus> getCurrentStatus() async {
+    if (_isSyncing) {
+      return SyncStatus.syncing;
+    } else {
+      final pendingCount = await _soilSampleRepository.countPendingSamples();
+      if (pendingCount > 0) {
+        return SyncStatus(false, 0, pendingCount, '$pendingCount itens pendentes de sincronização');
+      } else {
+        return SyncStatus.completed;
+      }
+    }
+  }
+}

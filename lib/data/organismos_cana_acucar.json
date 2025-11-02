@@ -1,0 +1,837 @@
+{
+  "cultura": "Cana-de-açúcar",
+  "nome_cientifico": "Saccharum officinarum",
+  "versao": "4.0",
+  "data_atualizacao": "2024-12-19T00:00:00Z",
+  "funcionalidades_extras": {
+    "fases_desenvolvimento": true,
+    "tamanhos_mm": true,
+    "severidade_detalhada": true,
+    "condicoes_favoraveis": true,
+    "manejo_integrado": true,
+    "limiares_especificos": true,
+    "niveis_infestacao": true,
+    "niveis_severidade": true,
+    "sintomas_detalhados": true
+  },
+  "organismos": [
+    {
+      "id": "cana_broca_da_cana",
+      "nome": "Broca-da-cana",
+      "nome_cientifico": "Diatraea saccharalis",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "cana_acucar",
+      "sintomas": [
+        "Orifícios na base dos colmos",
+        "Presença de serragem",
+        "Murcha das folhas",
+        "Quebra dos colmos"
+      ],
+      "dano_economico": "Pode causar perdas de até 30% da produtividade e redução do teor de açúcar",
+      "partes_afetadas": ["Colmos", "Base da planta"],
+      "fenologia": ["PC", "PD", "PE", "PF", "PG", "PH", "PI", "PJ", "PK", "PL", "PM", "PN", "PO", "PP", "PQ", "PR", "PS", "PT", "PU", "PV", "PW", "PX", "PY", "PZ"],
+      "fases_fenologicas_detalhadas": {
+        "PC": "Plantio - Estabelecimento inicial",
+        "PD": "Perfilhamento inicial - Primeiros perfilhos",
+        "PE": "Perfilhamento ativo - Muitos perfilhos",
+        "PF": "Crescimento vegetativo - Desenvolvimento das folhas",
+        "PG": "Crescimento vegetativo - Desenvolvimento dos colmos",
+        "PH": "Crescimento vegetativo - Colmos em desenvolvimento",
+        "PI": "Crescimento vegetativo - Colmos médios",
+        "PJ": "Crescimento vegetativo - Colmos grandes",
+        "PK": "Crescimento vegetativo - Colmos quase maduros",
+        "PL": "Início da maturação - Colmos começando a amadurecer",
+        "PM": "Maturação - Colmos em maturação",
+        "PN": "Maturação plena - Colmos maduros",
+        "PO": "Maturação completa - Pronto para colheita",
+        "PP": "Pós-colheita - Rebrotas",
+        "PQ": "Rebrota - Primeiros brotos",
+        "PR": "Rebrota - Desenvolvimento inicial",
+        "PS": "Rebrota - Crescimento vegetativo",
+        "PT": "Rebrota - Desenvolvimento dos colmos",
+        "PU": "Rebrota - Colmos em desenvolvimento",
+        "PV": "Rebrota - Colmos médios",
+        "PW": "Rebrota - Colmos grandes",
+        "PX": "Rebrota - Colmos quase maduros",
+        "PY": "Rebrota - Maturação",
+        "PZ": "Rebrota - Pronto para colheita"
+      },
+      "nivel_acao": "5% dos colmos atacados",
+      "niveis_infestacao": {
+        "baixo": "1-3% dos colmos atacados",
+        "medio": "4-8% dos colmos atacados",
+        "alto": "9-15% dos colmos atacados",
+        "critico": ">15% dos colmos atacados"
+      },
+      "manejo_quimico": [
+        "Clorantraniliprole - 0,15-0,25 L/ha",
+        "Tebufenozida - 0,2-0,3 L/ha",
+        "Spinosad - 0,08-0,12 L/ha"
+      ],
+      "doses_defensivos": {
+        "clorantraniliprole": {
+          "dose": "0,15-0,25 L/ha",
+          "concentracao": "200 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        },
+        "tebufenozida": {
+          "dose": "0,2-0,3 L/ha",
+          "concentracao": "240 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        },
+        "spinosad": {
+          "dose": "0,08-0,12 L/ha",
+          "concentracao": "240 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Trichogramma galloi",
+        "Cotesia flavipes",
+        "Bacillus thuringiensis"
+      ],
+      "manejo_cultural": [
+        "Eliminação de restos culturais",
+        "Plantio na época recomendada",
+        "Cultivares resistentes"
+      ],
+      "manejo": {
+        "cultural": ["Eliminação de restos culturais", "Plantio na época recomendada", "Cultivares resistentes"],
+        "biologico": ["Trichogramma galloi", "Cotesia flavipes", "Bacillus thuringiensis"],
+        "quimico": ["Clorantraniliprole (IRAC 28)", "Tebufenozida (IRAC 18)", "Spinosad (IRAC 5)"]
+      },
+      "observacoes": "Principal praga da cana-de-açúcar no Brasil. Causa danos diretos e indiretos.",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.8",
+          "tamanho": "0,8 mm",
+          "danos": "Postura nas folhas",
+          "dano": "Postura nas folhas, sem danos diretos.",
+          "duracao_dias": "5-7",
+          "duracao": "5-7 dias",
+          "caracteristicas": "Postura em massas, cor esbranquiçada"
+        },
+        {
+          "fase": "Lagarta pequena",
+          "tamanho_mm": "2-5",
+          "tamanho": "2-5 mm",
+          "danos": "Perfuração inicial dos colmos",
+          "dano": "Perfuração inicial dos colmos, início dos danos.",
+          "duracao_dias": "7-10",
+          "duracao": "7-10 dias",
+          "caracteristicas": "Lagartas pequenas, cor clara"
+        },
+        {
+          "fase": "Lagarta média",
+          "tamanho_mm": "8-15",
+          "tamanho": "8-15 mm",
+          "danos": "Danos internos nos colmos",
+          "dano": "Danos internos nos colmos, redução da qualidade.",
+          "duracao_dias": "10-15",
+          "duracao": "10-15 dias",
+          "caracteristicas": "Lagartas com faixas longitudinais"
+        },
+        {
+          "fase": "Lagarta grande",
+          "tamanho_mm": "20-30",
+          "tamanho": "20-30 mm",
+          "danos": "Danos severos nos colmos",
+          "dano": "Danos severos nos colmos, quebra e perdas de até 30%.",
+          "duracao_dias": "15-20",
+          "duracao": "15-20 dias",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-3% dos colmos atacados",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "4-8% dos colmos atacados",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "9-15% dos colmos atacados",
+          "perda_produtividade": "21-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Alta umidade relativa (>70%)",
+        "chuva": "Períodos de chuva frequente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos úmidos e bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% dos colmos atacados",
+        "floracao": "5% dos colmos atacados",
+        "maturacao": "5% dos colmos atacados"
+      }
+    },
+    {
+      "id": "cana_cigarrinha_marrom",
+      "nome": "Cigarrinha-marrom",
+      "nome_cientifico": "Mahanarva fimbriolata",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "cana_acucar",
+      "sintomas": [
+        "Amarelecimento das folhas",
+        "Secamento das folhas",
+        "Redução do crescimento",
+        "Morte das raízes"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% da produtividade",
+      "partes_afetadas": ["Raízes", "Folhas"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "10% das plantas com sintomas",
+      "niveis_infestacao": {
+        "baixo": "1-5 cigarrinhas por planta",
+        "medio": "6-15 cigarrinhas por planta",
+        "alto": "16-30 cigarrinhas por planta",
+        "critico": ">30 cigarrinhas por planta"
+      },
+      "manejo_quimico": [
+        "Imidacloprido",
+        "Tiametoxam",
+        "Acetamiprido"
+      ],
+      "manejo_biologico": [
+        "Metarhizium anisopliae",
+        "Beauveria bassiana"
+      ],
+      "manejo_cultural": [
+        "Irrigação adequada",
+        "Manejo de restos culturais",
+        "Cultivares resistentes"
+      ],
+      "manejo": {
+        "cultural": ["Irrigação adequada", "Manejo de restos culturais", "Cultivares resistentes"],
+        "biologico": ["Metarhizium anisopliae", "Beauveria bassiana"],
+        "quimico": ["Imidacloprido", "Tiametoxam", "Acetamiprido"]
+      },
+      "observacoes": "Praga importante que causa danos nas raízes e redução da produtividade.",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.5",
+          "tamanho": "0,5 mm",
+          "danos": "Postura no solo",
+          "dano": "Postura no solo, sem danos diretos.",
+          "duracao_dias": "10-15",
+          "duracao": "10-15 dias",
+          "caracteristicas": "Postura no solo, cor esbranquiçada"
+        },
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "2-8",
+          "tamanho": "2-8 mm",
+          "danos": "Sucção da seiva das raízes",
+          "dano": "Sucção da seiva das raízes, injeção de toxinas.",
+          "duracao_dias": "30-45",
+          "duracao": "30-45 dias",
+          "caracteristicas": "Ninfas brancas, vivem no solo"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "10-15",
+          "tamanho": "10-15 mm",
+          "danos": "Sucção da seiva das raízes",
+          "dano": "Sucção da seiva das raízes, injeção de toxinas, perdas de até 40%.",
+          "duracao_dias": "15-30",
+          "duracao": "15-30 dias",
+          "caracteristicas": "Adultos marrons, saltam quando perturbados"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5 cigarrinhas por planta",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-15 cigarrinhas por planta",
+          "perda_produtividade": "16-30%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "16-30 cigarrinhas por planta",
+          "perda_produtividade": "31-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-35°C",
+        "umidade": "Solo úmido",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos úmidos e bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "10% das plantas com sintomas",
+        "floracao": "10% das plantas com sintomas",
+        "maturacao": "10% das plantas com sintomas"
+      }
+    },
+    {
+      "id": "cana_ferrugem_alaranjada",
+      "nome": "Ferrugem-alaranjada",
+      "nome_cientifico": "Puccinia kuehnii",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "cana_acucar",
+      "sintomas": [
+        "Pústulas alaranjadas nas folhas",
+        "Amarelecimento das folhas",
+        "Secamento precoce",
+        "Redução da fotossíntese"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Pequenas pústulas alaranjadas na face inferior das folhas.",
+        "avancados": "Pústulas grandes, amarelecimento e secamento das folhas."
+      },
+      "dano_economico": "Pode causar perdas de até 50% da produtividade",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "1-5% das folhas afetadas",
+        "medio": "6-20% das folhas afetadas",
+        "alto": "21-40% das folhas afetadas",
+        "critico": ">40% das folhas afetadas"
+      },
+      "manejo_quimico": [
+        "Triazóis",
+        "Estrobilurinas",
+        "Carboxamidas"
+      ],
+      "manejo_biologico": [
+        "Uso de fungos antagônicos"
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Eliminação de restos culturais",
+        "Manejo de irrigação"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Eliminação de restos culturais", "Manejo de irrigação"],
+        "biologico": ["Uso de fungos antagônicos"],
+        "quimico": ["Triazóis", "Estrobilurinas", "Carboxamidas"]
+      },
+      "observacoes": "Doença importante da cana-de-açúcar, especialmente em regiões úmidas.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5% das folhas afetadas",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-20% das folhas afetadas",
+          "perda_produtividade": "16-35%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "21-40% das folhas afetadas",
+          "perda_produtividade": "36-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "maturacao": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "cana_carvao",
+      "nome": "Carvão",
+      "nome_cientifico": "Sporisorium scitamineum",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "cana_acucar",
+      "sintomas": [
+        "Formação de estruturas pretas",
+        "Deformação dos colmos",
+        "Redução do crescimento",
+        "Perda de produtividade"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Formação de estruturas pretas (cariósporos) nas folhas.",
+        "avancados": "Deformação dos colmos, redução do crescimento, perda de produtividade."
+      },
+      "dano_economico": "Pode causar perdas de até 60% da produtividade",
+      "partes_afetadas": ["Colmos", "Folhas"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "1-5% das plantas afetadas",
+        "medio": "6-20% das plantas afetadas",
+        "alto": "21-40% das plantas afetadas",
+        "critico": ">40% das plantas afetadas"
+      },
+      "manejo_quimico": [
+        "Fungicidas sistêmicos",
+        "Tratamento de sementes"
+      ],
+      "manejo_biologico": [
+        "Uso de fungos antagônicos"
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Eliminação de plantas doentes",
+        "Manejo de restos culturais"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Eliminação de plantas doentes", "Manejo de restos culturais"],
+        "biologico": ["Uso de fungos antagônicos"],
+        "quimico": ["Fungicidas sistêmicos", "Tratamento de sementes"]
+      },
+      "observacoes": "Doença sistêmica que pode causar perdas severas na produtividade.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5% das plantas afetadas",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-20% das plantas afetadas",
+          "perda_produtividade": "21-40%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "21-40% das plantas afetadas",
+          "perda_produtividade": "41-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-35°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "maturacao": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "cana_deficiencia_nitrogenio",
+      "nome": "Deficiência de Nitrogênio",
+      "nome_cientifico": "Deficiência nutricional",
+      "categoria": "Deficiência Nutricional",
+      "tipo": "DEFICIENCIA_NUTRICIONAL",
+      "cultura_id": "cana_acucar",
+      "sintomas": [
+        "Amarelecimento das folhas mais velhas",
+        "Redução do crescimento",
+        "Baixa produtividade",
+        "Redução do teor de açúcar"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Amarelecimento uniforme das folhas mais velhas, começando pelas pontas.",
+        "avancados": "Folhas completamente amarelas, redução do crescimento, baixa produtividade."
+      },
+      "dano_economico": "Pode causar perdas de até 40% da produtividade",
+      "partes_afetadas": ["Folhas velhas", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiros sintomas visíveis",
+      "niveis_severidade": {
+        "baixo": "Amarelecimento leve das folhas velhas",
+        "medio": "Amarelecimento moderado com redução de crescimento",
+        "alto": "Amarelecimento intenso e paralisação do crescimento",
+        "critico": "Necrose e morte das folhas"
+      },
+      "manejo_quimico": [
+        "Ureia",
+        "Sulfato de amônio",
+        "Nitrato de amônio"
+      ],
+      "manejo_biologico": [
+        "Adubação verde",
+        "Rotação com leguminosas"
+      ],
+      "manejo_cultural": [
+        "Adubação de base adequada",
+        "Adubação de cobertura",
+        "Análise de solo"
+      ],
+      "manejo": {
+        "cultural": ["Adubação de base adequada", "Adubação de cobertura", "Análise de solo"],
+        "biologico": ["Adubação verde", "Rotação com leguminosas"],
+        "quimico": ["Ureia", "Sulfato de amônio", "Nitrato de amônio"]
+      },
+      "observacoes": "Deficiência mais comum na cana-de-açúcar. Afeta o crescimento e teor de açúcar.",
+      "icone": "🌿",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Amarelecimento leve das folhas velhas",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento e adubação preventiva"
+        },
+        "medio": {
+          "descricao": "Amarelecimento moderado com redução de crescimento",
+          "perda_produtividade": "16-30%",
+          "cor_alerta": "#FF9800",
+          "acao": "Adubação de cobertura imediata"
+        },
+        "alto": {
+          "descricao": "Amarelecimento intenso e paralisação do crescimento",
+          "perda_produtividade": "31-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Adubação de emergência"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Qualquer temperatura",
+        "umidade": "Solo com baixa capacidade de retenção",
+        "chuva": "Lixiviação por chuvas intensas",
+        "vento": "Não aplicável",
+        "solo": "Solos arenosos e com baixo teor de matéria orgânica"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiros sintomas visíveis",
+        "floracao": "Primeiros sintomas visíveis",
+        "maturacao": "Primeiros sintomas visíveis"
+      }
+    },
+    {
+      "id": "cana_deficiencia_potassio",
+      "nome": "Deficiência de Potássio",
+      "nome_cientifico": "Deficiência nutricional",
+      "categoria": "Deficiência Nutricional",
+      "tipo": "DEFICIENCIA_NUTRICIONAL",
+      "cultura_id": "cana_acucar",
+      "sintomas": [
+        "Amarelecimento das bordas das folhas",
+        "Necrose das pontas das folhas",
+        "Redução do crescimento",
+        "Baixa resistência a pragas"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Amarelecimento das bordas das folhas mais velhas.",
+        "avancados": "Necrose das pontas das folhas, redução do crescimento, baixa resistência."
+      },
+      "dano_economico": "Pode causar perdas de até 35% da produtividade",
+      "partes_afetadas": ["Folhas velhas", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiros sintomas visíveis",
+      "niveis_severidade": {
+        "baixo": "Amarelecimento leve das bordas das folhas",
+        "medio": "Amarelecimento moderado com necrose das pontas",
+        "alto": "Necrose intensa e paralisação do crescimento",
+        "critico": "Morte das folhas"
+      },
+      "manejo_quimico": [
+        "Cloreto de potássio",
+        "Sulfato de potássio",
+        "Nitrato de potássio"
+      ],
+      "manejo_biologico": [
+        "Adubação com cinza vegetal",
+        "Rotação com culturas que reciclam potássio"
+      ],
+      "manejo_cultural": [
+        "Adubação de base adequada",
+        "Adubação de cobertura",
+        "Análise de solo"
+      ],
+      "manejo": {
+        "cultural": ["Adubação de base adequada", "Adubação de cobertura", "Análise de solo"],
+        "biologico": ["Adubação com cinza vegetal", "Rotação com culturas que reciclam potássio"],
+        "quimico": ["Cloreto de potássio", "Sulfato de potássio", "Nitrato de potássio"]
+      },
+      "observacoes": "Deficiência importante que afeta a resistência a pragas e doenças.",
+      "icone": "🌿",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Amarelecimento leve das bordas das folhas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento e adubação preventiva"
+        },
+        "medio": {
+          "descricao": "Amarelecimento moderado com necrose das pontas",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Adubação de cobertura imediata"
+        },
+        "alto": {
+          "descricao": "Necrose intensa e paralisação do crescimento",
+          "perda_produtividade": "26-35%",
+          "cor_alerta": "#F44336",
+          "acao": "Adubação de emergência"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Qualquer temperatura",
+        "umidade": "Solo com baixa capacidade de retenção",
+        "chuva": "Lixiviação por chuvas intensas",
+        "vento": "Não aplicável",
+        "solo": "Solos arenosos e com baixo teor de matéria orgânica"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiros sintomas visíveis",
+        "floracao": "Primeiros sintomas visíveis",
+        "maturacao": "Primeiros sintomas visíveis"
+      }
+    },
+    {
+      "id": "cana_cigarrinha_verde",
+      "nome": "Cigarrinha-verde",
+      "nome_cientifico": "Mahanarva posticata",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "cana_acucar",
+      "sintomas": [
+        "Pontuações escuras nas folhas",
+        "Murcha das folhas",
+        "Redução do crescimento",
+        "Secamento das pontas das folhas"
+      ],
+      "dano_economico": "Pode causar perdas de até 25% da produtividade",
+      "partes_afetadas": ["Folhas", "Colmo"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5 ninfas por folha",
+      "niveis_infestacao": {
+        "baixo": "1-2 ninfas por folha",
+        "medio": "3-5 ninfas por folha",
+        "alto": "6-10 ninfas por folha",
+        "critico": ">10 ninfas por folha"
+      },
+      "manejo_quimico": [
+        "Imidacloprido (IRAC 4A)",
+        "Tiametoxam (IRAC 4A)",
+        "Acetamiprido (IRAC 4A)"
+      ],
+      "manejo_biologico": [
+        "Metarhizium anisopliae",
+        "Beauveria bassiana"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas hospedeiras",
+        "Controle de plantas daninhas",
+        "Rotação de culturas"
+      ],
+      "manejo": {
+        "cultural": ["Eliminação de plantas hospedeiras", "Controle de plantas daninhas", "Rotação de culturas"],
+        "biologico": ["Metarhizium anisopliae", "Beauveria bassiana"],
+        "quimico": ["Imidacloprido (IRAC 4A)", "Tiametoxam (IRAC 4A)", "Acetamiprido (IRAC 4A)"]
+      },
+      "observacoes": "Praga importante em regiões tropicais e subtropicais.",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {"fase": "Ovo", "tamanho_mm": "0.5", "tamanho": "0,5 mm", "danos": "Postura em folhas", "dano": "Postura em folhas, sem danos diretos.", "duracao_dias": "5-7", "duracao": "5-7 dias", "caracteristicas": "Postura em massas, cor esbranquiçada"},
+        {"fase": "Ninfa", "tamanho_mm": "1-3", "tamanho": "1-3 mm", "danos": "Sucção de seiva", "dano": "Sucção de seiva, redução do crescimento.", "duracao_dias": "15-20", "duracao": "15-20 dias", "caracteristicas": "Ninfas verdes, móveis"},
+        {"fase": "Adulto", "tamanho_mm": "3-5", "tamanho": "3-5 mm", "danos": "Sucção de seiva e transmissão de vírus", "dano": "Sucção de seiva e transmissão de vírus importantes.", "duracao_dias": "30-45", "duracao": "30-45 dias", "caracteristicas": "Adultos verdes, voam quando perturbados"}
+      ],
+      "severidade": {
+        "baixo": {"descricao": "1-2 ninfas por folha", "perda_produtividade": "0-10%", "cor_alerta": "#4CAF50", "acao": "Monitoramento intensificado"},
+        "medio": {"descricao": "3-5 ninfas por folha", "perda_produtividade": "11-20%", "cor_alerta": "#FF9800", "acao": "Aplicação de inseticida"},
+        "alto": {"descricao": "6-10 ninfas por folha", "perda_produtividade": "21-25%", "cor_alerta": "#F44336", "acao": "Aplicação imediata de inseticida"}
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de seca",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5 ninfas por folha",
+        "floracao": "5 ninfas por folha",
+        "maturacao": "5 ninfas por folha"
+      }
+    },
+    {
+      "id": "cana_ferrugem_marrom",
+      "nome": "Ferrugem-marrom",
+      "nome_cientifico": "Puccinia melanocephala",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "cana_acucar",
+      "sintomas": [
+        "Pústulas marrons nas folhas",
+        "Amarelamento das folhas",
+        "Necrose e desfolha precoce",
+        "Redução da área fotossintética"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Pústulas marrons pequenas nas folhas.",
+        "avancados": "Amarelamento, necrose, desfolha precoce."
+      },
+      "dano_economico": "Pode causar perdas de até 40% da produtividade",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "1-2 pústulas por folha",
+        "medio": "10-20% da área foliar afetada",
+        "alto": "20-40% da área foliar afetada",
+        "critico": ">40% da área foliar afetada"
+      },
+      "manejo_quimico": [
+        "Triazóis",
+        "Estrobilurinas",
+        "Carboxamidas"
+      ],
+      "manejo_biologico": [
+        "Uso de fungos antagônicos"
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Eliminação de plantas voluntárias"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Eliminação de plantas voluntárias"],
+        "biologico": ["Uso de fungos antagônicos"],
+        "quimico": ["Triazóis", "Estrobilurinas", "Carboxamidas"]
+      },
+      "observacoes": "Doença importante em regiões tropicais e subtropicais.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {"descricao": "1-2 pústulas por folha", "perda_produtividade": "0-15%", "cor_alerta": "#4CAF50", "acao": "Monitoramento intensificado"},
+        "medio": {"descricao": "10-20% da área foliar afetada", "perda_produtividade": "16-30%", "cor_alerta": "#FF9800", "acao": "Aplicação de fungicida"},
+        "alto": {"descricao": "20-40% da área foliar afetada", "perda_produtividade": "31-40%", "cor_alerta": "#F44336", "acao": "Aplicação imediata de fungicida"}
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-28°C",
+        "umidade": "Alta umidade (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "maturacao": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "cana_mosaico",
+      "nome": "Mosaico da cana",
+      "nome_cientifico": "Sugarcane mosaic virus",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "cana_acucar",
+      "sintomas": [
+        "Mosaico nas folhas",
+        "Clorose entre as nervuras",
+        "Redução do crescimento",
+        "Encurvamento das folhas"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Mosaico leve nas folhas.",
+        "avancados": "Clorose intensa, redução do crescimento."
+      },
+      "dano_economico": "Pode causar perdas de até 30% da produtividade",
+      "partes_afetadas": ["Folhas", "Colmo"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "Mosaico leve em poucas folhas",
+        "medio": "Mosaico em 10-20% das folhas",
+        "alto": "Mosaico em 20-40% das folhas",
+        "critico": "Mosaico em >40% das folhas"
+      },
+      "manejo_quimico": [
+        "Controle de vetores",
+        "Eliminação de plantas infectadas"
+      ],
+      "manejo_biologico": [
+        "Uso de plantas resistentes"
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Eliminação de plantas infectadas",
+        "Controle de vetores"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Eliminação de plantas infectadas", "Controle de vetores"],
+        "biologico": ["Uso de plantas resistentes"],
+        "quimico": ["Controle de vetores", "Eliminação de plantas infectadas"]
+      },
+      "observacoes": "Vírus transmitido por afídeos. Controle preventivo é fundamental.",
+      "icone": "🦠",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {"descricao": "Mosaico leve em poucas folhas", "perda_produtividade": "0-10%", "cor_alerta": "#4CAF50", "acao": "Monitoramento intensificado"},
+        "medio": {"descricao": "Mosaico em 10-20% das folhas", "perda_produtividade": "11-20%", "cor_alerta": "#FF9800", "acao": "Eliminação de plantas infectadas"},
+        "alto": {"descricao": "Mosaico em 20-40% das folhas", "perda_produtividade": "21-30%", "cor_alerta": "#F44336", "acao": "Eliminação imediata de plantas infectadas"}
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de seca",
+        "vento": "Vento para dispersão de vetores",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "maturacao": "Primeiro sintoma detectado"
+      }
+    }
+  ]
+}

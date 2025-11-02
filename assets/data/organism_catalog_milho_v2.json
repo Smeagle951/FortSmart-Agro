@@ -1,0 +1,319 @@
+{
+  "version": "2.0",
+  "last_updated": "2025-10-17",
+  "culture": "milho",
+  "culture_id": "custom_milho",
+  "scientific_name": "Zea mays",
+  "common_name": "Milho",
+  
+  "phenological_stages": {
+    "vegetative": ["VE", "V1", "V2", "V3", "V4", "V6", "V8", "V10", "V12", "V14", "VT"],
+    "reproductive": ["R1", "R2", "R3", "R4", "R5", "R6"],
+    "critical_stages": ["V8", "VT", "R1", "R2"]
+  },
+  
+  "susceptibility_curve": {
+    "VE": { "damage_potential": 90, "recovery_capacity": 10 },
+    "V3": { "damage_potential": 70, "recovery_capacity": 40 },
+    "V6": { "damage_potential": 50, "recovery_capacity": 60 },
+    "V8": { "damage_potential": 70, "recovery_capacity": 40 },
+    "VT": { "damage_potential": 85, "recovery_capacity": 20 },
+    "R1": { "damage_potential": 90, "recovery_capacity": 15 },
+    "R2": { "damage_potential": 95, "recovery_capacity": 10 },
+    "R4": { "damage_potential": 60, "recovery_capacity": 5 },
+    "R6": { "damage_potential": 20, "recovery_capacity": 0 }
+  },
+  
+  "organisms": {
+    "pests": [
+      {
+        "id": "milho_lagarta_cartucho",
+        "name": "Lagarta-do-cartucho",
+        "scientific_name": "Spodoptera frugiperda",
+        "unit": "lagartas/planta",
+        "monitoring_method": "Contagem em 20 plantas/ponto",
+        
+        "phenological_thresholds": {
+          "VE-V3": {
+            "low": 0.5,
+            "medium": 1,
+            "high": 2,
+            "critical": 3,
+            "damage_potential": 95,
+            "damage_type": "Destruição do cartucho - morte da planta",
+            "economic_loss": "30-50%",
+            "action_window_hours": 24
+          },
+          "V4-V8": {
+            "low": 1,
+            "medium": 2,
+            "high": 3,
+            "critical": 4,
+            "damage_potential": 80,
+            "damage_type": "Desfolha severa - redução de área fotossintética",
+            "economic_loss": "20-40%",
+            "action_window_hours": 48
+          },
+          "V10-VT": {
+            "low": 2,
+            "medium": 4,
+            "high": 6,
+            "critical": 8,
+            "damage_potential": 60,
+            "damage_type": "Dano foliar - planta ainda se recupera parcialmente",
+            "economic_loss": "10-20%",
+            "action_window_hours": 72
+          },
+          "R1-R3": {
+            "low": 3,
+            "medium": 6,
+            "high": 10,
+            "critical": 15,
+            "damage_potential": 40,
+            "damage_type": "Desfolha tardia - baixo impacto na produtividade",
+            "economic_loss": "< 10%"
+          }
+        },
+        
+        "environmental_conditions": {
+          "optimal_for_pest": {
+            "temperature": { "min": 25, "max": 30 },
+            "humidity": { "min": 70, "max": 90 },
+            "rainfall_mm": { "max": 100 }
+          },
+          "risk_multiplier": {
+            "hot_humid": 2.0,
+            "warm_moderate": 1.3,
+            "cool_dry": 0.6
+          }
+        },
+        
+        "management_recommendations": {
+          "VE-V3": {
+            "action": "Aplicação urgente em até 24h",
+            "products": [
+              {
+                "active_ingredient": "Chlorantraniliprole",
+                "dose": "30-40 ml/ha",
+                "spray_volume": "150-200 L/ha",
+                "application_window": "24h",
+                "reentry_interval": "24h",
+                "notes": "Aplicar com volume alto de calda para atingir o cartucho"
+              },
+              {
+                "active_ingredient": "Spinetoram",
+                "dose": "50-60 ml/ha",
+                "spray_volume": "150-200 L/ha",
+                "application_window": "24h"
+              }
+            ],
+            "alternative_management": [
+              "Biológico: Bacillus thuringiensis (Bt) - 500g/ha",
+              "MIP: Liberação de Trichogramma pretiosum",
+              "Cultural: Rotação com culturas não hospedeiras"
+            ]
+          },
+          "V4-V8": {
+            "action": "Aplicação recomendada em 48h",
+            "products": [
+              {
+                "active_ingredient": "Metaflumizone",
+                "dose": "140-200 ml/ha",
+                "spray_volume": "150 L/ha"
+              }
+            ]
+          }
+        },
+        
+        "bt_resistance_considerations": {
+          "note": "Resistência crescente em áreas com histórico de milho Bt",
+          "threshold_adjustment": 0.7,
+          "monitoring_frequency": "2-3x por semana",
+          "rotation_strategy": "Alternar com milho convencional a cada 2 anos"
+        },
+        
+        "regional_variations": {
+          "brazil_central": {
+            "base_threshold_multiplier": 1.0,
+            "notes": "Alta pressão - 3-4 gerações/safra"
+          },
+          "south": {
+            "base_threshold_multiplier": 0.8,
+            "notes": "Pressão moderada - clima mais ameno"
+          },
+          "northeast": {
+            "base_threshold_multiplier": 1.3,
+            "notes": "Pressão altíssima - condições ótimas o ano todo"
+          }
+        }
+      },
+      {
+        "id": "milho_percevejo_barriga_verde",
+        "name": "Percevejo-barriga-verde",
+        "scientific_name": "Dichelops melacanthus",
+        "unit": "adultos/m²",
+        "monitoring_method": "Contagem em 1m² nos primeiros 30 dias",
+        
+        "phenological_thresholds": {
+          "VE-V4": {
+            "low": 0.5,
+            "medium": 1,
+            "high": 2,
+            "critical": 3,
+            "damage_potential": 90,
+            "damage_type": "Perfura base da planta - morte ou perfilhamento anormal",
+            "economic_loss": "20-40%",
+            "action_window_hours": 48
+          },
+          "V6-V10": {
+            "low": 2,
+            "medium": 4,
+            "high": 6,
+            "critical": 8,
+            "damage_potential": 50,
+            "damage_type": "Dano reduzido - planta já estabelecida",
+            "economic_loss": "< 10%"
+          },
+          "VT-R2": {
+            "low": 5,
+            "medium": 10,
+            "high": 15,
+            "critical": 20,
+            "damage_potential": 20,
+            "damage_type": "Impacto mínimo em espigas",
+            "economic_loss": "< 5%"
+          }
+        },
+        
+        "environmental_conditions": {
+          "optimal_for_pest": {
+            "temperature": { "min": 20, "max": 28 },
+            "humidity": { "min": 60, "max": 80 }
+          }
+        },
+        
+        "management_recommendations": {
+          "VE-V4": {
+            "action": "Aplicação em até 48h ou tratamento de sementes preventivo",
+            "products": [
+              {
+                "active_ingredient": "Imidacloprid + Thiodicarb",
+                "dose": "600 ml/ha",
+                "spray_volume": "150 L/ha"
+              }
+            ],
+            "preventive": {
+              "seed_treatment": "Thiamethoxam 350 FS - 200ml/100kg sementes",
+              "effectiveness": "Proteção até V4"
+            }
+          }
+        },
+        
+        "regional_variations": {
+          "brazil_central": {
+            "base_threshold_multiplier": 1.2,
+            "notes": "Problema crescente no plantio direto"
+          },
+          "south": {
+            "base_threshold_multiplier": 1.5,
+            "notes": "Principal praga inicial do milho - alta infestação"
+          }
+        }
+      },
+      {
+        "id": "milho_cigarrinha_milho",
+        "name": "Cigarrinha-do-milho",
+        "scientific_name": "Dalbulus maidis",
+        "unit": "adultos/planta",
+        "monitoring_method": "Contagem visual em 20 plantas",
+        
+        "phenological_thresholds": {
+          "VE-V6": {
+            "low": 0.5,
+            "medium": 1,
+            "high": 2,
+            "critical": 3,
+            "damage_potential": 85,
+            "damage_type": "Transmissão de enfezamentos e mosaico",
+            "economic_loss": "30-70%",
+            "action_window_hours": 24,
+            "notes": "Controle preventivo é fundamental"
+          },
+          "V8-VT": {
+            "low": 1,
+            "medium": 2,
+            "high": 4,
+            "critical": 6,
+            "damage_potential": 60,
+            "damage_type": "Transmissão ainda preocupante",
+            "economic_loss": "15-30%"
+          }
+        },
+        
+        "disease_vector_risk": {
+          "enfezamento_pale": "Altíssimo",
+          "enfezamento_vermelho": "Altíssimo",
+          "mosaico_comum": "Alto",
+          "prevention_critical": true
+        },
+        
+        "management_recommendations": {
+          "VE-V6": {
+            "action": "Controle preventivo obrigatório - aplicações sequenciais",
+            "products": [
+              {
+                "active_ingredient": "Thiamethoxam",
+                "dose": "150 ml/ha",
+                "applications": "3-4 aplicações sequenciais a cada 7-10 dias",
+                "spray_volume": "150 L/ha"
+              }
+            ],
+            "preventive": {
+              "seed_treatment": "Obrigatório em áreas de alto risco",
+              "elimination_hosts": "Destruir plantas tiguera de milho",
+              "planting_window": "Respeitar vazio sanitário"
+            }
+          }
+        }
+      }
+    ],
+    
+    "diseases": [
+      {
+        "id": "milho_enfezamento",
+        "name": "Enfezamento-pálido e vermelho",
+        "pathogen": "Spiroplasma kunkelii / Maize bushy stunt phytoplasma",
+        "vector": "Cigarrinha-do-milho (Dalbulus maidis)",
+        "monitoring": "Visualização de sintomas + controle do vetor",
+        
+        "critical_stages": ["VE", "V4", "V8"],
+        
+        "management": {
+          "preventive": [
+            "Tratamento de sementes com inseticida sistêmico",
+            "Aplicações foliares preventivas contra cigarrinha",
+            "Eliminação de plantas tiguera",
+            "Respeito ao vazio sanitário",
+            "Uso de híbridos tolerantes"
+          ],
+          "reactive": "Sem controle curativo - prevenção é obrigatória"
+        }
+      }
+    ]
+  },
+  
+  "general_recommendations": {
+    "monitoring_frequency": {
+      "VE-V8": "2-3x por semana",
+      "V10-VT": "1-2x por semana",
+      "R1-R6": "1x por semana"
+    },
+    "critical_notes": [
+      "Monitoramento de cigarrinha é prioritário para prevenção de enfezamentos",
+      "Lagarta-do-cartucho exige ação rápida em estádios iniciais",
+      "Percevejo-barriga-verde: considerar tratamento de sementes em áreas de risco",
+      "Resistência a inseticidas: rotacionar mecanismos de ação"
+    ]
+  }
+}
+

@@ -1,0 +1,351 @@
+{
+  "cultura": "Girassol",
+  "nome_cientifico": "Helianthus annuus",
+  "versao": "4.0",
+  "data_atualizacao": "2024-12-19T00:00:00Z",
+  "funcionalidades_extras": {
+    "fases_desenvolvimento": true,
+    "tamanhos_mm": true,
+    "severidade_detalhada": true,
+    "condicoes_favoraveis": true,
+    "manejo_integrado": true,
+    "limiares_especificos": true,
+    "niveis_infestacao": true,
+    "niveis_severidade": true,
+    "sintomas_detalhados": true
+  },
+  "organismos": [
+    {
+      "id": "girassol_lagarta_soja",
+      "nome": "Lagarta-da-soja",
+      "nome_cientifico": "Anticarsia gemmatalis",
+      "categoria": "Praga",
+      "cultura_id": "girassol",
+      "sintomas": [
+        "Desfolha intensa",
+        "Folhas com bordas irregulares",
+        "Redução da área fotossintética"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% na produtividade devido à desfolha severa",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9"],
+      "fases_fenologicas_detalhadas": {
+        "V1": "Primeira folha - Primeira folha verdadeira",
+        "V2": "Segunda folha - Segunda folha verdadeira",
+        "V3": "Terceira folha - Terceira folha verdadeira",
+        "V4": "Quarta folha - Quarta folha verdadeira",
+        "V5": "Quinta folha - Quinta folha verdadeira",
+        "V6": "Sexta folha - Sexta folha verdadeira",
+        "V7": "Sétima folha - Sétima folha verdadeira",
+        "V8": "Oitava folha - Oitava folha verdadeira",
+        "V9": "Nona folha - Nona folha verdadeira",
+        "V10": "Décima folha - Décima folha verdadeira",
+        "V11": "Décima primeira folha - Décima primeira folha verdadeira",
+        "V12": "Décima segunda folha - Décima segunda folha verdadeira",
+        "R1": "Botão floral - Botão floral visível",
+        "R2": "Início da floração - Primeiras flores abertas",
+        "R3": "Floração plena - Muitas flores abertas",
+        "R4": "Início da formação de aquênios - Primeiros aquênios visíveis",
+        "R5": "Formação de aquênios - Aquênios em desenvolvimento",
+        "R6": "Enchimento de aquênios - Aquênios com grãos em desenvolvimento",
+        "R7": "Aquênios cheios - Aquênios completamente formados",
+        "R8": "Início da maturação - Aquênios começando a escurecer",
+        "R9": "Maturação completa - Pronto para colheita"
+      },
+      "nivel_acao": "Desfolha ≥ 30% no estágio vegetativo",
+      "manejo_quimico": [
+        "Clorantraniliprole - 0,15-0,25 L/ha",
+        "Spinosad - 0,08-0,12 L/ha"
+      ],
+      "doses_defensivos": {
+        "clorantraniliprole": {
+          "dose": "0,15-0,25 L/ha",
+          "concentracao": "200 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        },
+        "spinosad": {
+          "dose": "0,08-0,12 L/ha",
+          "concentracao": "240 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Trichogramma pretiosum",
+        "Bacillus thuringiensis"
+      ],
+      "manejo_cultural": [
+        "Rotação de culturas",
+        "Plantio na época recomendada",
+        "Destruição de restos culturais"
+      ],
+      "observacoes": "Importante realizar monitoramento constante para controle no início da infestação",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.6",
+          "danos": "Postura em folhas",
+          "duracao_dias": "3-5",
+          "caracteristicas": "Postura em folhas, cor esbranquiçada"
+        },
+        {
+          "fase": "Larva inicial",
+          "tamanho_mm": "2-5",
+          "danos": "Pequenas perfurações em folhas",
+          "duracao_dias": "3-5",
+          "caracteristicas": "Lagartas pequenas, cor verde"
+        },
+        {
+          "fase": "Larva média",
+          "tamanho_mm": "15-25",
+          "danos": "Destruição parcial das folhas",
+          "duracao_dias": "8-12",
+          "caracteristicas": "Lagartas com listras longitudinais"
+        },
+        {
+          "fase": "Larva adulta",
+          "tamanho_mm": "35-45",
+          "danos": "Desfolha intensa",
+          "duracao_dias": "5-8",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        },
+        {
+          "fase": "Pupa",
+          "tamanho_mm": "20",
+          "danos": "Não causa danos diretos",
+          "duracao_dias": "8-12",
+          "caracteristicas": "Pupas no solo, cor marrom"
+        },
+        {
+          "fase": "Mariposa",
+          "tamanho_mm": "35-40",
+          "danos": "Somente reprodução",
+          "duracao_dias": "10-15",
+          "caracteristicas": "Mariposas marrons, formato triangular"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 10% de desfolha",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "11-30% de desfolha",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 30% de desfolha",
+          "perda_produtividade": "26-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "30% de desfolha",
+        "floracao": "15% de desfolha",
+        "enchimento": "10% de desfolha"
+      }
+    },
+    {
+      "id": "girassol_lagarta_medideira",
+      "nome": "Lagarta-medideira",
+      "nome_cientifico": "Chrysodeixis includens",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "girassol",
+      "sintomas": [
+        "Folhas com recortes irregulares",
+        "Presença de lagartas \"esticadas\" e ágeis",
+        "Desfolha progressiva"
+      ],
+      "dano_economico": "Redução da área foliar e potencial produtivo",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V4", "R5"],
+      "nivel_acao": "20 lagartas por pano de batida",
+      "niveis_infestacao": {
+        "baixo": "1-5 lagartas por pano de batida",
+        "medio": "6-15 lagartas por pano de batida",
+        "alto": "16-30 lagartas por pano de batida",
+        "critico": ">30 lagartas por pano de batida"
+      },
+      "manejo_quimico": [
+        "Metaflumizona (IRAC 22A)",
+        "Clorantraniliprole"
+      ],
+      "manejo_biologico": [
+        "Beauveria bassiana"
+      ],
+      "manejo_cultural": [
+        "Semeadura recomendada",
+        "Eliminação de soqueiras"
+      ],
+      "observacoes": "Muito comum em regiões tropicais, especialmente em cultivos sem rotação",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.4",
+          "tamanho": "0,4 mm",
+          "danos": "Postura em folhas",
+          "dano": "Postura em folhas, sem danos diretos.",
+          "duracao_dias": "2-4",
+          "duracao": "2-4 dias",
+          "caracteristicas": "Postura em folhas"
+        },
+        {
+          "fase": "Neonata",
+          "tamanho_mm": "1-3",
+          "tamanho": "1-3 mm",
+          "danos": "Lagartas pequenas, cor clara",
+          "dano": "Lagartas pequenas, cor clara.",
+          "duracao_dias": "2-3",
+          "duracao": "2-3 dias",
+          "caracteristicas": "Lagartas pequenas, cor clara"
+        },
+        {
+          "fase": "Média",
+          "tamanho_mm": "15-25",
+          "tamanho": "15-25 mm",
+          "danos": "Lagartas com padrão característico",
+          "dano": "Lagartas com padrão característico.",
+          "duracao_dias": "8-10",
+          "duracao": "8-10 dias",
+          "caracteristicas": "Lagartas com padrão característico"
+        },
+        {
+          "fase": "Adulta",
+          "tamanho_mm": "35-45",
+          "tamanho": "35-45 mm",
+          "danos": "Lagartas grandes, alta voracidade",
+          "dano": "Lagartas grandes, alta voracidade.",
+          "duracao_dias": "5-7",
+          "duracao": "5-7 dias",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 5 lagartas por pano de batida",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-15 lagartas por pano de batida",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 15 lagartas por pano de batida",
+          "perda_produtividade": "26-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "20 lagartas por pano de batida",
+        "floracao": "20 lagartas por pano de batida",
+        "enchimento": "20 lagartas por pano de batida"
+      }
+    },
+    {
+      "id": "girassol_mofo_branco",
+      "nome": "Mofo-branco",
+      "nome_cientifico": "Sclerotinia sclerotiorum",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "girassol",
+      "sintomas": [
+        "Murcha repentina",
+        "Podridão branca com micélio algodonoso",
+        "Escleródios pretos"
+      ],
+      "dano_economico": "Altamente destrutiva, pode dizimar áreas inteiras",
+      "partes_afetadas": ["Haste", "Ramos", "Capítulos"],
+      "fenologia": ["R1", "R4"],
+      "nivel_acao": "Histórico da área e alta umidade + florescimento",
+      "niveis_severidade": {
+        "baixo": "Poucas plantas afetadas",
+        "medio": "Moderada incidência",
+        "alto": "Alta incidência",
+        "critico": "Quase todas as plantas afetadas"
+      },
+      "manejo_quimico": [
+        "Fluazinam",
+        "Procidimona"
+      ],
+      "manejo_biologico": [
+        "Trichoderma harzianum",
+        "Coniothyrium minitans"
+      ],
+      "manejo_cultural": [
+        "Redução da densidade de plantas",
+        "Rotação com gramíneas"
+      ],
+      "observacoes": "Presente em regiões mais frias e úmidas",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Poucas plantas afetadas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Moderada incidência",
+          "perda_produtividade": "11-30%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Alta incidência",
+          "perda_produtividade": "31-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "15-25°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Períodos de chuva frequente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Histórico da área e alta umidade",
+        "floracao": "Histórico da área e alta umidade",
+        "enchimento": "Histórico da área e alta umidade"
+      }
+    }
+  ]
+}

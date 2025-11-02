@@ -1,0 +1,182 @@
+{
+  "id": "soja_lagarta_falsamedideira",
+  "nome": "Lagarta falsa-medideira",
+  "nome_cientifico": "Chrysodeixis includens",
+  "categoria": "Praga",
+  "culturas_afetadas": ["Soja"],
+  "versao": "3.0",
+  "data_criacao": "2025-10-28",
+  "data_atualizacao": "2025-10-28",
+  
+  "caracteristicas_visuais": {
+    "cores_predominantes": ["verde", "marrom"],
+    "padroes": ["listra lateral clara", "movimento tipo medidor"],
+    "tamanho_medio_mm": {
+      "larva": 25,
+      "adulto": 15
+    },
+    "formato_corpo": "cilindrico",
+    "textura": "lisa",
+    "marcadores_visualizacao": {
+      "ovos": "brancos_arredondados_0.5mm_folhas",
+      "lagartas_pequenas": "verde_claro_1_3mm_raspagem",
+      "lagartas_medias": "verde_escuro_listra_branca_10_15mm",
+      "lagartas_grandes": "verde_marrom_25mm_desfolha_intensa"
+    }
+  },
+  
+  "sintomas": [
+    "Folhas com recortes irregulares",
+    "Presença de lagartas \"esticadas\" e ágeis",
+    "Raspagem de folhas sem perfuração total",
+    "Desfolha intensa em infestações severas",
+    "Redução da área fotossintética"
+  ],
+  
+  "dano_economico": "Redução da área foliar e potencial produtivo. Pode causar perdas de até 40% na produtividade devido à desfolha severa, especialmente nos estágios V4-V6 e R3-R5",
+  
+  "partes_afetadas": ["Folhas"],
+  
+  "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "R1", "R2", "R3", "R4", "R5"],
+  
+  "nivel_acao": "20 lagartas por pano de batida ou desfolha ≥ 30% no estágio vegetativo",
+  
+  "condicoes_climaticas": {
+    "temperatura_min": 20,
+    "temperatura_max": 32,
+    "umidade_min": 60,
+    "umidade_max": 90,
+    "previsao_risco": {
+      "alta_probabilidade": {
+        "temperatura": "22-28°C durante 5 dias consecutivos",
+        "umidade": ">70% por 3 dias",
+        "precipitacao": "chuva leve a moderada"
+      }
+    }
+  },
+  
+  "ciclo_vida": {
+    "ovos_dias": 3,
+    "larva_dias": 14,
+    "pupa_dias": 7,
+    "adulto_dias": 10,
+    "geracoes_por_ano": 6,
+    "diapausa": false,
+    "duracao_total_dias": 34
+  },
+  
+  "rotacao_resistencia": {
+    "grupos_irac": ["18", "28"],
+    "estrategias": [
+      "Alternar modos de ação entre aplicações",
+      "Uso máximo 2x por safra do mesmo grupo IRAC",
+      "Respeitar intervalo mínimo de 14 dias entre aplicações do mesmo grupo"
+    ],
+    "intervalo_minimo_dias": 14
+  },
+  
+  "distribuicao_geografica": ["Sul", "Centro-Oeste", "Sudeste", "Norte"],
+  
+  "economia_agronomica": {
+    "custo_nao_controle_por_ha": 180,
+    "custo_controle_por_ha": 60,
+    "roi_medio": 3.0,
+    "momento_otimo_aplicacao": "Estágios V4-V6 ou início de infestação detectada"
+  },
+  
+  "controle_biologico": {
+    "predadores": ["Chrysoperla sp."],
+    "parasitoides": ["Trichogramma pretiosum"],
+    "entomopatogenos": ["Beauveria bassiana"],
+    "doses_biocontrole": {
+      "trichogramma": "50.000-100.000 parasitoides/ha, 3 liberações com intervalo de 7 dias",
+      "beauveria": "1-2 kg/ha de produto formulado"
+    }
+  },
+  
+  "diagnostico_diferencial": {
+    "confundidores": ["Anticarsia gemmatalis (Lagarta-da-soja)", "Spodoptera frugiperda"],
+    "sintomas_chave": [
+      "Raspagem de folhas sem perfuração total (diferencia de Anticarsia)",
+      "Lagartas mais esticadas e ágeis",
+      "Listra lateral branca característica"
+    ]
+  },
+  
+  "tendencias_sazonais": {
+    "pico_meses": ["Janeiro", "Fevereiro", "Março"],
+    "correlacao_elnino": "aumento",
+    "graus_dia_media": 450,
+    "previsao_sazonal": {
+      "verao": "Alto risco - temperatura e umidade favoráveis",
+      "inverno": "Baixo risco - temperatura abaixo do ideal",
+      "primavera": "Moderado risco - início da safra"
+    }
+  },
+  
+  "features_ia": {
+    "keywords_comportamentais": [
+      "desfolha_intensa",
+      "noctuideo",
+      "movimento_medidor",
+      "raspagem_folhas"
+    ],
+    "marcadores_visuais": [
+      "listra_branca_lateral",
+      "movimento_medidor",
+      "lagarta_verde_marrom",
+      "folhas_recortes_irregulares"
+    ]
+  },
+  
+  "manejo_quimico": [
+    "Metaflumizona (IRAC 22A) - 0,08-0,12 L/ha",
+    "Clorantraniliprole (IRAC 28) - 0,15-0,25 L/ha",
+    "Spinosad (IRAC 5) - 0,08-0,12 L/ha"
+  ],
+  
+  "doses_defensivos": {
+    "metaflumizona": {
+      "dose": "0,08-0,12 L/ha",
+      "concentracao": "240 g/L",
+      "volume_calda": "200-300 L/ha",
+      "intervalo_seguranca": "7 dias",
+      "epoca_aplicacao": "V4-V6 e R1-R5",
+      "condicoes_climaticas": "Temperatura < 30°C, sem chuva por 2h",
+      "equipamento": "Pulverizador com bicos de jato cônico",
+      "adjuvante": "Óleo mineral 0,5%",
+      "observacoes": "Eficaz contra lagartas pequenas. Aplicar no início da infestação.",
+      "custo_aproximado": "R$ 30-45/ha"
+    },
+    "clorantraniliprole": {
+      "dose": "0,15-0,25 L/ha",
+      "concentracao": "200 g/L",
+      "volume_calda": "200-300 L/ha",
+      "intervalo_seguranca": "14 dias",
+      "epoca_aplicacao": "V4-V6 e R1-R5",
+      "condicoes_climaticas": "Temperatura < 30°C, umidade 60-80%",
+      "equipamento": "Pulverizador com bicos de jato cônico",
+      "adjuvante": "Óleo mineral 0,5% ou silicone 0,1%",
+      "observacoes": "Controle eficaz. Respeitar rotação de modos de ação.",
+      "custo_aproximado": "R$ 45-65/ha"
+    }
+  },
+  
+  "manejo_biologico": [
+    "Trichogramma pretiosum - 50.000-100.000 parasitoides/ha",
+    "Beauveria bassiana - 1-2 kg/ha",
+    "Chrysoperla sp. - Conservação de populações naturais"
+  ],
+  
+  "manejo_cultural": [
+    "Semeadura recomendada para a região",
+    "Eliminação de soqueiras e plantas voluntárias",
+    "Rotação de culturas com gramíneas",
+    "Muito comum em cultivos sem rotação"
+  ],
+  
+  "observacoes": "Muito comum em regiões tropicais, especialmente em cultivos sem rotação. Importante diferenciar de Anticarsia gemmatalis (lagarta-da-soja) que causa perfuração completa das folhas.",
+  "icone": "🐛",
+  "ativo": true
+}
+

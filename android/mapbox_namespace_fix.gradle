@@ -1,0 +1,20 @@
+// Fix simplificado para o plugin mapbox_gl com Java 17 e Android Gradle Plugin 8.x
+
+// Desativa a verificação de namespace para todos os projetos
+System.setProperty("android.enableNamespaceCheck", "false")
+
+// Aplicar namespace diretamente para o plugin mapbox_gl
+allprojects {
+    afterEvaluate { project ->
+        if (project.name == 'mapbox_gl') {
+            try {
+                project.android {
+                    logger.lifecycle("Aplicando namespace com.mapbox.mapboxgl ao plugin mapbox_gl")
+                    project.android.namespace = 'com.mapbox.mapboxgl'
+                }
+            } catch (Exception e) {
+                logger.warn("Erro ao aplicar namespace para mapbox_gl: ${e.message}")
+            }
+        }
+    }
+}

@@ -4,15 +4,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:uuid/uuid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../models/talhoes/talhao_safra_model.dart';
 // Removendo imports duplicados - os modelos já estão disponíveis via talhao_safra_model.dart
 import '../../../services/database_service.dart';
 // Removendo dependência das tabelas antigas - usando apenas as novas tabelas talhao_safra
-import '../../../utils/talhao_calculator.dart';
+import '../../../services/precise_geo_calculator.dart';
 import '../../../repositories/talhoes/talhao_safra_repository.dart';
 import '../../../services/talhao_unified_service.dart';
 import '../../../services/data_cache_service.dart';
 import '../../../services/cultura_service.dart';
+import '../../../services/talhao_cache_service.dart';
 import '../../../modules/offline_maps/services/talhao_integration_service.dart';
 
 
@@ -56,11 +58,9 @@ class TalhaoProvider extends ChangeNotifier {
     int retries = 0;
     while (retries < maxRetries) {
       try {
-        print('🔍 DEBUG: Tentativa ${retries + 1} de $maxRetries');
         return await operation();
       } catch (e) {
         retries++;
-        print('🔍 DEBUG: Erro na tentativa $retries: $e');
         if (retries >= maxRetries) {
           rethrow;
         }
@@ -70,69 +70,48 @@ class TalhaoProvider extends ChangeNotifier {
     throw Exception('Falha após $maxRetries tentativas');
   }
   
-  /// Carrega todos os talhões do banco de dados local
+  /// Carrega todos os talhões do banco de dados local (OTIMIZADO)
   Future<List<TalhaoSafraModel>> carregarTalhoes({String? idFazenda}) async {
     try {
-      print('🔍 DEBUG: Iniciando carregamento de talhões');
       _isLoading = true;
       _errorMessage = null;
+      // OTIMIZAÇÃO: Notificar apenas uma vez no início
       notifyListeners();
       
-      // LIMPAR CACHES CONFLITANTES antes de carregar
-      await _limparCachesConflitantes();
+      // OTIMIZAÇÃO: Limpar caches em background para não bloquear
+      Future.microtask(() => _limparCachesConflitantes());
       
-      // Primeiro, tentar corrigir problemas de cultura
-      print('🔍 DEBUG: Tentando corrigir problemas de cultura...');
-      try {
-        await _talhaoSafraRepository.corrigirCulturasTalhoes();
-      } catch (e) {
-        print('⚠️ Erro ao corrigir culturas: $e');
-      }
+      // OTIMIZAÇÃO: Correção de culturas em background (não é crítica)
+      Future.microtask(() async {
+        try {
+          await _talhaoSafraRepository.corrigirCulturasTalhoes();
+        } catch (e) {
+          // Silencioso em background
+        }
+      });
       
       // Carregar talhões diretamente do repositório
-      print('🔍 DEBUG: Carregando talhões diretamente do repositório');
       final talhoesSafra = await _talhaoSafraRepository.forcarAtualizacaoTalhoes();
       
-      print('🔍 DEBUG: Talhões carregados do repositório: ${talhoesSafra.length}');
-      
-      // Atualizar lista local
-      _talhoes.clear();
-      _talhoes.addAll(talhoesSafra);
-      
-      print('🔍 DEBUG: ${_talhoes.length} talhões carregados com sucesso');
-      
-      // Verificar e preservar culturas personalizadas
-      await _preservarCulturasPersonalizadas();
-      
-      // Log detalhado para debug
-      for (final talhao in _talhoes) {
-        print('📋 Talhão: ${talhao.nome}');
-        print('  - ID: ${talhao.id}');
-        print('  - Polígonos: ${talhao.poligonos.length}');
-        print('  - Safras: ${talhao.safras.length}');
-        
-        for (final safra in talhao.safras) {
-          print('🔍 DEBUG CULTURA - Safra carregada:');
-          print('    - culturaNome: "${safra.culturaNome}"');
-          print('    - idCultura: "${safra.idCultura}"');
-          print('    - culturaCor: ${safra.culturaCor}');
-          print('    - idSafra: "${safra.idSafra}"');
-        }
-        
-        for (final poligono in talhao.poligonos) {
-          print('    - Polígono: ${poligono.pontos.length} pontos');
-        }
+      // OTIMIZAÇÃO: Validação mais rápida - só verificar se a lista mudou
+      if (idFazenda != null) {
+        _talhoes = talhoesSafra.where((t) => t.idFazenda == idFazenda).toList();
+      } else {
+        _talhoes.clear();
+        _talhoes.addAll(talhoesSafra);
       }
       
+      // OTIMIZAÇÃO: Preservar culturas personalizadas em background
+      Future.microtask(() => _preservarCulturasPersonalizadas());
+      
       _isLoading = false;
-      // CORREÇÃO: Notificar apenas uma vez no final
+      // OTIMIZAÇÃO: Notificar apenas uma vez no final
       notifyListeners();
       return List<TalhaoSafraModel>.from(_talhoes);
     } catch (e) {
       _isLoading = false;
       _errorMessage = 'Erro ao carregar talhões: $e';
       notifyListeners();
-      print('❌ Erro ao carregar talhões: $e');
       return [];
     }
   }
@@ -140,7 +119,6 @@ class TalhaoProvider extends ChangeNotifier {
   /// Obtém um talhão pelo ID
   TalhaoSafraModel? obterTalhaoPorId(String id) {
     try {
-      if (_talhoes.isEmpty) return null;
       return _talhoes.firstWhere((t) => t.id == id);
     } catch (e) {
       return null;
@@ -156,9 +134,10 @@ class TalhaoProvider extends ChangeNotifier {
       final dataCacheService = DataCacheService();
       dataCacheService.clearPlotCache();
       
-      // Limpar cache do TalhaoUnifiedService
-      final talhaoUnifiedService = TalhaoUnifiedService();
-      await talhaoUnifiedService.forcarAtualizacaoGlobal();
+      // CORREÇÃO: NÃO chamar forcarAtualizacaoGlobal() após remoção
+      // Isso estava recarregando os dados do banco e sobrescrevendo a lista local
+      // final talhaoUnifiedService = TalhaoUnifiedService();
+      // await talhaoUnifiedService.forcarAtualizacaoGlobal();
       
       // Limpar cache do CulturaService
       final culturaService = CulturaService();
@@ -171,37 +150,114 @@ class TalhaoProvider extends ChangeNotifier {
     }
   }
 
-  /// Verifica e preserva culturas personalizadas dos talhões
+  /// Limpa TODOS os caches incluindo SharedPreferences para garantir persistência correta
+  Future<void> _limparTodosOsCaches() async {
+    try {
+      // Limpar cache do DataCacheService
+      final dataCacheService = DataCacheService();
+      dataCacheService.clearPlotCache();
+      
+      // Limpar cache do CulturaService
+      final culturaService = CulturaService();
+      culturaService.clearCache();
+      
+      // CORREÇÃO CRÍTICA: Limpar cache do SharedPreferences
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('talhao_cache_data');
+        await prefs.remove('talhao_cache_time');
+        // Limpar TODAS as chaves relacionadas a talhões
+        final keys = prefs.getKeys();
+        for (final key in keys) {
+          if (key.contains('talhao') || key.contains('plot')) {
+            await prefs.remove(key);
+          }
+        }
+      } catch (e) {
+        // Silencioso
+      }
+      
+      // Limpar cache do TalhaoUnifiedService
+      try {
+        final talhaoUnifiedService = TalhaoUnifiedService();
+        talhaoUnifiedService.limparCache(); // Método retorna void, não precisa await
+      } catch (e) {
+        // Silencioso
+      }
+      
+      // NOVO: Limpar cache do TalhaoCacheService
+      try {
+        final talhaoCacheService = TalhaoCacheService();
+        await talhaoCacheService.clearCache();
+      } catch (e) {
+        // Silencioso
+      }
+    } catch (e) {
+      print('⚠️ Erro ao limpar todos os caches: $e');
+      // Não falhar a operação por erro no cache
+    }
+  }
+
+  /// Verifica e normaliza culturas personalizadas dos talhões (CORRIGIDO)
   Future<void> _preservarCulturasPersonalizadas() async {
     try {
       print('🔍 DEBUG CULTURA - Verificando culturas personalizadas...');
       
+      final culturaService = CulturaService();
+      final culturasDisponiveis = await culturaService.loadCulturas();
+      
       for (final talhao in _talhoes) {
         for (final safra in talhao.safras) {
-          // Verificar se a cultura é personalizada (não existe no módulo Culturas da Fazenda)
-          final culturaService = CulturaService();
+          // Verificar se a cultura existe no módulo Culturas da Fazenda
           final culturaEncontrada = await culturaService.loadCulturaById(safra.idCultura);
           
           if (culturaEncontrada == null) {
-            print('🔍 DEBUG CULTURA - Cultura personalizada detectada: "${safra.culturaNome}" (ID: ${safra.idCultura})');
-            print('🔍 DEBUG CULTURA - Preservando cultura personalizada...');
+            print('🔍 DEBUG CULTURA - Cultura não encontrada com ID: "${safra.idCultura}"');
+            print('🔍 DEBUG CULTURA - Nome da cultura: "${safra.culturaNome}"');
             
-            // Marcar como cultura personalizada para evitar sobrescrita
-            // Isso pode ser feito adicionando um prefixo ou marcador especial
-            if (!safra.idCultura.startsWith('custom_')) {
-              print('🔍 DEBUG CULTURA - Aplicando prefixo custom_ ao ID da cultura');
-              safra.idCultura = 'custom_${safra.idCultura}';
+            // CORREÇÃO: Tentar mapear pelo nome para uma cultura existente
+            final culturaMapeada = culturasDisponiveis.firstWhere(
+              (c) => c.name.toLowerCase() == safra.culturaNome.toLowerCase() ||
+                     c.name.toLowerCase().contains(safra.culturaNome.toLowerCase()) ||
+                     safra.culturaNome.toLowerCase().contains(c.name.toLowerCase()),
+              orElse: () => culturasDisponiveis.firstWhere(
+                (c) => c.id == safra.idCultura.replaceFirst('custom_', ''),
+                orElse: () => culturasDisponiveis.first,
+              ),
+            );
+            
+            if (culturaMapeada != null) {
+              print('🔍 DEBUG CULTURA - Mapeando "${safra.culturaNome}" para cultura existente: "${culturaMapeada.name}"');
               
-              // Atualizar no banco se necessário
+              // Atualizar safra com dados da cultura mapeada
+              safra.idCultura = culturaMapeada.id;
+              safra.culturaNome = culturaMapeada.name;
+              safra.culturaCor = culturaMapeada.color;
+              
+              // Atualizar no banco
               await _talhaoSafraRepository.atualizarSafraTalhao(safra);
+              
+              print('✅ DEBUG CULTURA - Cultura normalizada: ${safra.idCultura} - ${safra.culturaNome}');
+            } else {
+              print('⚠️ DEBUG CULTURA - Não foi possível mapear cultura: ${safra.culturaNome}');
+              // Manter como está, não alterar
             }
           } else {
-            print('🔍 DEBUG CULTURA - Cultura encontrada no módulo Culturas da Fazenda: "${culturaEncontrada.name}"');
+            // Cultura encontrada - garantir que os dados estejam atualizados
+            if (safra.culturaNome != culturaEncontrada.name || 
+                safra.culturaCor.value != culturaEncontrada.color.value) {
+              print('🔍 DEBUG CULTURA - Atualizando dados da cultura: ${culturaEncontrada.name}');
+              safra.culturaNome = culturaEncontrada.name;
+              safra.culturaCor = culturaEncontrada.color;
+              
+              // Atualizar no banco
+              await _talhaoSafraRepository.atualizarSafraTalhao(safra);
+            }
           }
         }
       }
       
-      print('✅ DEBUG CULTURA - Verificação de culturas personalizadas concluída');
+      print('✅ DEBUG CULTURA - Verificação e normalização de culturas concluída');
     } catch (e) {
       print('⚠️ Erro ao verificar culturas personalizadas: $e');
     }
@@ -224,27 +280,16 @@ class TalhaoProvider extends ChangeNotifier {
       _errorMessage = null;
       notifyListeners();
       
-      print('🔍 DEBUG: Iniciando salvamento de talhão: $nome');
-      
       // Usar área já calculada nas métricas ou calcular se não fornecida
       double area;
       if (areaCalculada != null && areaCalculada > 0) {
         area = areaCalculada;
-        print('🔍 DEBUG: Usando área já calculada nas métricas: $area hectares');
       } else {
         // Calcular área do polígono usando cálculo preciso apenas se necessário
-        print('🔍 DEBUG: Calculando área do polígono com ${pontos.length} pontos');
-        print('🔍 DEBUG: Pontos recebidos:');
-        for (int i = 0; i < pontos.length; i++) {
-          print('  - Ponto $i: ${pontos[i].latitude}, ${pontos[i].longitude}');
-        }
-        
         area = _calcularAreaAsync(pontos);
-        print('🔍 DEBUG: Área calculada: $area hectares');
       }
       
       // Cria o polígono a partir dos pontos
-      print('🔍 DEBUG: Criando polígono');
       final talhaoId = const Uuid().v4();
       final poligono = PoligonoModel(
         id: const Uuid().v4(),
@@ -256,17 +301,8 @@ class TalhaoProvider extends ChangeNotifier {
         dataAtualizacao: DateTime.now(),
         ativo: true,
       );
-      print('🔍 DEBUG: Polígono criado com ID: ${poligono.id}');
-      print('🔍 DEBUG: Polígono tem ${poligono.pontos.length} pontos');
-      print('🔍 DEBUG: Área do polígono: ${poligono.area} m²');
       
       // Cria o modelo de safra associada ao talhão
-      print('🔍 DEBUG: Criando safra');
-      print('🔍 DEBUG CULTURA - Dados recebidos:');
-      print('  - nomeCultura: "$nomeCultura"');
-      print('  - idCultura: "$idCultura"');
-      print('  - corCultura: $corCultura');
-      
       final safra = SafraTalhaoModel(
         id: const Uuid().v4(),
         idTalhao: talhaoId,
@@ -279,15 +315,7 @@ class TalhaoProvider extends ChangeNotifier {
         dataAtualizacao: DateTime.now(),
       );
       
-      print('🔍 DEBUG: Safra criada com ID: ${safra.id}');
-      print('🔍 DEBUG: Área da safra: ${safra.area} hectares');
-      print('🔍 DEBUG CULTURA - Safra criada:');
-      print('  - culturaNome: "${safra.culturaNome}"');
-      print('  - idCultura: "${safra.idCultura}"');
-      print('  - culturaCor: ${safra.culturaCor}');
-      
       // Cria o modelo de talhão
-      print('🔍 DEBUG: Criando modelo de talhão');
       final talhao = TalhaoSafraModel(
         id: talhaoId,
         name: nome,
@@ -298,13 +326,9 @@ class TalhaoProvider extends ChangeNotifier {
         dataAtualizacao: DateTime.now(),
         area: area, // Definir área explicitamente
       );
-      print('🔍 DEBUG: Modelo de talhão criado com ID: ${talhao.id}');
-      print('🔍 DEBUG: Área do modelo: ${talhao.area} hectares');
       
       // Salva usando TalhaoSafraRepository (CORRIGIDO)
-      print('🔍 DEBUG: Salvando usando TalhaoSafraRepository...');
       final idSalvo = await _talhaoSafraRepository.adicionarTalhao(talhao);
-      print('🔍 DEBUG: Talhão salvo com ID: $idSalvo');
       
       if (idSalvo.isNotEmpty) {
         // Adiciona à lista em memória
@@ -318,47 +342,11 @@ class TalhaoProvider extends ChangeNotifier {
         // CORREÇÃO: Notificar apenas uma vez no final
         notifyListeners();
         
-        print('✅ Talhão salvo com sucesso: $nome');
-        print('📊 Total de talhões em memória: ${_talhoes.length}');
-        
         // Integrar com mapas offline
         try {
-          print('🗺️ Criando mapa offline para talhão: $nome');
           await _integrationService.createOfflineMapForTalhao(talhao);
-          print('✅ Mapa offline criado com sucesso');
         } catch (e) {
-          print('⚠️ Erro ao criar mapa offline: $e');
           // Não falhar o salvamento do talhão por erro no mapa offline
-        }
-        
-        // Verificar se os dados foram salvos corretamente
-        print('🔍 DEBUG CULTURA - Verificando dados salvos no banco...');
-        final talhaoSalvo = await _talhaoSafraRepository.buscarTalhaoPorId(idSalvo);
-        if (talhaoSalvo != null && talhaoSalvo.safras.isNotEmpty) {
-          final safraSalva = talhaoSalvo.safras.first;
-          print('🔍 DEBUG CULTURA - Dados salvos no banco:');
-          print('  - culturaNome: "${safraSalva.culturaNome}"');
-          print('  - idCultura: "${safraSalva.idCultura}"');
-          print('  - culturaCor: ${safraSalva.culturaCor}');
-          
-          // Verificar se os dados correspondem aos enviados
-          if (safraSalva.culturaNome == nomeCultura) {
-            print('✅ DEBUG CULTURA - Nome da cultura preservado corretamente');
-          } else {
-            print('❌ DEBUG CULTURA - ERRO: Nome da cultura foi alterado!');
-            print('  - Enviado: "$nomeCultura"');
-            print('  - Salvo: "${safraSalva.culturaNome}"');
-          }
-          
-          if (safraSalva.idCultura == idCultura) {
-            print('✅ DEBUG CULTURA - ID da cultura preservado corretamente');
-          } else {
-            print('❌ DEBUG CULTURA - ERRO: ID da cultura foi alterado!');
-            print('  - Enviado: "$idCultura"');
-            print('  - Salvo: "${safraSalva.idCultura}"');
-          }
-        } else {
-          print('❌ DEBUG CULTURA - ERRO: Talhão não encontrado após salvamento');
         }
         
         return true;
@@ -366,25 +354,12 @@ class TalhaoProvider extends ChangeNotifier {
         _isLoading = false;
         _errorMessage = 'Erro ao salvar talhão no banco de dados';
         notifyListeners();
-        print('❌ Erro: ID retornado vazio');
         return false;
       }
     } catch (e) {
       _isLoading = false;
       _errorMessage = 'Erro ao salvar talhão: $e';
       notifyListeners();
-      print('❌ Erro ao salvar talhão: $e');
-      print('❌ Stack trace: ${StackTrace.current}');
-      
-      // Log detalhado do erro para debug
-      if (e.toString().contains('database') || e.toString().contains('SQL')) {
-        print('❌ Erro de banco de dados detectado');
-      } else if (e.toString().contains('timeout') || e.toString().contains('Timeout')) {
-        print('❌ Erro de timeout detectado');
-      } else if (e.toString().contains('network') || e.toString().contains('connection')) {
-        print('❌ Erro de rede detectado');
-      }
-      
       return false;
     }
   }
@@ -506,51 +481,40 @@ class TalhaoProvider extends ChangeNotifier {
       print('  - Área: ${talhaoAtualizado.area}');
       print('  - Polígonos: ${talhaoAtualizado.poligonos.length}');
       
-      // Atualiza no banco de dados
-      final count = await _executeWithRetry(() async {
-        return await _databaseService.updateData(
-          'talhoes',
-          talhaoAtualizado.toMap(),
-          where: 'id = ?',
-          whereArgs: [talhao.id],
-        );
+      // CORREÇÃO: Usar TalhaoSafraRepository para atualizar corretamente
+      await _executeWithRetry(() async {
+        await _talhaoSafraRepository.atualizarTalhao(talhaoAtualizado);
       });
       
-      print('📊 Resultado da atualização: $count registros afetados');
+      // CORREÇÃO CRÍTICA: Limpar TODOS os caches para evitar restauração de dados antigos
+      await _limparTodosOsCaches();
       
-      if (count > 0) {
-        // Atualiza na lista em memória
-        final index = _talhoes.indexWhere((t) => t.id == talhao.id);
-        if (index >= 0) {
-          _talhoes[index] = talhaoAtualizado;
-        } else {
-          // Se não encontrou na lista, adiciona
-          _talhoes.add(talhaoAtualizado);
-        }
-        
-        _isLoading = false;
-        // CORREÇÃO: Notificar apenas uma vez no final
-        notifyListeners();
-        print('✅ Talhão atualizado com sucesso');
-        
-        // Integrar com mapas offline
-        try {
-          print('🗺️ Atualizando mapa offline para talhão: ${talhaoAtualizado.name}');
-          await _integrationService.updateOfflineMapForTalhao(talhaoAtualizado);
-          print('✅ Mapa offline atualizado com sucesso');
-        } catch (e) {
-          print('⚠️ Erro ao atualizar mapa offline: $e');
-          // Não falhar a atualização do talhão por erro no mapa offline
-        }
-        
-        return true;
+      // Sempre prosseguir com a atualização da lista em memória
+      // Atualiza na lista em memória
+      final index = _talhoes.indexWhere((t) => t.id == talhao.id);
+      if (index >= 0) {
+        _talhoes[index] = talhaoAtualizado;
       } else {
-        _isLoading = false;
-        _errorMessage = 'Erro ao atualizar talhão no banco de dados';
-        notifyListeners();
-        print('❌ Erro: $_errorMessage');
-        return false;
+        // Se não encontrou na lista, adiciona
+        _talhoes.add(talhaoAtualizado);
       }
+      
+      _isLoading = false;
+      // CORREÇÃO: Notificar apenas uma vez no final
+      notifyListeners();
+      print('✅ Talhão atualizado com sucesso');
+      
+      // Integrar com mapas offline
+      try {
+        print('🗺️ Atualizando mapa offline para talhão: ${talhaoAtualizado.name}');
+        await _integrationService.updateOfflineMapForTalhao(talhaoAtualizado);
+        print('✅ Mapa offline atualizado com sucesso');
+      } catch (e) {
+        print('⚠️ Erro ao atualizar mapa offline: $e');
+        // Não falhar a atualização do talhão por erro no mapa offline
+      }
+      
+      return true;
     } catch (e) {
       _isLoading = false;
       _errorMessage = 'Erro ao atualizar talhão: $e';
@@ -566,44 +530,33 @@ class TalhaoProvider extends ChangeNotifier {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
-      
-      print('🗑️ Excluindo talhão ID: $id');
-      
       // Verificar se o talhão existe
       final talhaoExistente = _talhoes.firstWhere(
         (t) => t.id == id,
         orElse: () => throw Exception('Talhão não encontrado'),
       );
       
-      print('📊 Talhão encontrado: ${talhaoExistente.name}');
-      
-      // Exclui do banco de dados com retry
-      final count = await _executeWithRetry(() async {
-        return await _databaseService.deleteData(
-          'talhoes',
-          where: 'id = ?',
-          whereArgs: [id],
-        );
-      });
+      // Exclui do banco de dados usando o repositório correto
+      await _talhaoSafraRepository.removerTalhao(id);
+      final count = 1; // Assumir sucesso se não houve exceção
       
       print('📊 Resultado da exclusão: $count registros afetados');
       
       if (count > 0) {
+        // CORREÇÃO CRÍTICA: Limpar TODOS os caches para evitar restauração de dados antigos
+        await _limparTodosOsCaches();
+        
         // Remove da lista em memória
         _talhoes.removeWhere((t) => t.id == id);
         
         _isLoading = false;
         // CORREÇÃO: Notificar apenas uma vez no final
         notifyListeners();
-        print('✅ Talhão excluído com sucesso');
         
         // Integrar com mapas offline
         try {
-          print('🗺️ Removendo mapa offline para talhão: ${talhaoExistente.name}');
           await _integrationService.removeOfflineMapForTalhao(id);
-          print('✅ Mapa offline removido com sucesso');
         } catch (e) {
-          print('⚠️ Erro ao remover mapa offline: $e');
           // Não falhar a exclusão do talhão por erro no mapa offline
         }
         
@@ -612,14 +565,12 @@ class TalhaoProvider extends ChangeNotifier {
         _isLoading = false;
         _errorMessage = 'Erro ao excluir talhão do banco de dados';
         notifyListeners();
-        print('❌ Erro: $_errorMessage');
         return false;
       }
     } catch (e) {
       _isLoading = false;
       _errorMessage = 'Erro ao excluir talhão: $e';
       notifyListeners();
-      print('❌ Erro ao excluir talhão: $e');
       return false;
     }
   }
@@ -757,6 +708,22 @@ class TalhaoProvider extends ChangeNotifier {
   Future<void> recarregarTalhoes({String? idFazenda}) async {
     await carregarTalhoes(idFazenda: idFazenda);
   }
+
+  /// Verifica se um talhão ainda existe no banco de dados
+  Future<bool> _verificarTalhaoExisteNoBanco(String talhaoId) async {
+    try {
+      final db = await _databaseService.database;
+      final result = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM talhao_safra WHERE id = ?',
+        [talhaoId],
+      );
+      final count = result.first['count'] as int;
+      return count > 0;
+    } catch (e) {
+      print('❌ DEBUG: Erro ao verificar talhão no banco: $e');
+      return false;
+    }
+  }
   
   /// Calcula área em hectares usando sistema preciso
   double _calcularAreaHectares(List<LatLng> pontos) {
@@ -773,8 +740,7 @@ class TalhaoProvider extends ChangeNotifier {
       }
       
       // Usar sistema de cálculo preciso
-      final resultado = TalhaoCalculator.calcularTalhao(pontos, geodesico: true);
-      final areaHectares = resultado['areaHa'];
+      final areaHectares = PreciseGeoCalculator.calculatePolygonAreaHectares(pontos);
       
       // Validar resultado
       if (areaHectares.isNaN || areaHectares.isInfinite || areaHectares < 0) {
@@ -932,8 +898,7 @@ class TalhaoProvider extends ChangeNotifier {
   double _calcularAreaComTimeout(List<LatLng> pontos) {
     try {
       // Usar PreciseGeoCalculator com validação adicional
-      final resultado = TalhaoCalculator.calcularTalhao(pontos, geodesico: true);
-      final area = resultado['areaHa'];
+      final area = PreciseGeoCalculator.calculatePolygonAreaHectares(pontos);
       return area;
     } catch (e) {
       print('⚠️ Erro no PreciseGeoCalculator: $e');
@@ -948,8 +913,7 @@ class TalhaoProvider extends ChangeNotifier {
       print('🔄 Calculando perímetro com PreciseGeoCalculator para ${pontos.length} pontos');
       
       // Usar PreciseGeoCalculator para cálculo preciso
-      final resultado = TalhaoCalculator.calcularTalhao(pontos, geodesico: true);
-      final perimetro = resultado['perimetroM'];
+      final perimetro = PreciseGeoCalculator.calculatePolygonPerimeter(pontos);
       return perimetro.toInt();
     } catch (e) {
       print('⚠️ Erro no cálculo preciso de perímetro, usando cálculo básico: $e');
@@ -984,7 +948,6 @@ class TalhaoProvider extends ChangeNotifier {
   /// Busca um talhão por ID
   TalhaoSafraModel? getTalhaoById(String id) {
     try {
-      if (_talhoes.isEmpty) return null;
       return _talhoes.firstWhere((talhao) => talhao.id == id);
     } catch (e) {
       return null;
@@ -1005,61 +968,63 @@ class TalhaoProvider extends ChangeNotifier {
   }
 
 
-  /// Remove um talhão pelo ID
+  /// Remove um talhão pelo ID (OTIMIZADO)
   Future<bool> removerTalhao(String talhaoId) async {
     try {
       print('🔍 DEBUG: Iniciando remoção do talhão: $talhaoId');
       _isLoading = true;
       _errorMessage = null;
+      // OTIMIZAÇÃO: Notificar apenas uma vez no início
       notifyListeners();
       
-      // Garantir que as tabelas talhao_safra existem
-      final db = await _databaseService.database;
-      // Não precisamos mais da migração das tabelas antigas
-      
-      // Remover o talhão usando método simples sem foreign keys
-      final deletedRows = await _executeWithRetry(() async {
-        // Desabilitar foreign keys para evitar problemas
-        await db.execute('PRAGMA foreign_keys = OFF');
-        
-        try {
-          // Usar raw SQL para remoção direta das tabelas talhao_safra
-          final result = await db.rawDelete(
-            'DELETE FROM talhao_safra WHERE id = ?',
-            [talhaoId],
-          );
-          return result;
-        } finally {
-          // Reabilitar foreign keys
-          await db.execute('PRAGMA foreign_keys = ON');
-        }
+      // CORREÇÃO: Usar TalhaoSafraRepository para remoção correta
+      await _executeWithRetry(() async {
+        await _talhaoSafraRepository.removerTalhao(talhaoId);
       });
       
-      if (deletedRows > 0) {
-        // Remover da lista local
-        _talhoes.removeWhere((talhao) => talhao.id == talhaoId);
-        
-        // Notificar mudanças
-        _notifyTalhoesChangedListeners();
-        notifyListeners();
-        
-        print('✅ DEBUG: Talhão removido com sucesso: $talhaoId');
-        return true;
-      } else {
-        _errorMessage = 'Talhão não encontrado ou já foi removido';
-        notifyListeners();
-        print('❌ DEBUG: Talhão não encontrado: $talhaoId');
-        return false;
-      }
+      // CORREÇÃO CRÍTICA: Limpar TODOS os caches para evitar restauração de dados antigos
+      await _limparTodosOsCaches();
+      
+      // Remover da lista local
+      _talhoes.removeWhere((talhao) => talhao.id == talhaoId);
+      
+      _isLoading = false;
+      
+      // OTIMIZAÇÃO: Notificar apenas uma vez no final com todas as mudanças
+      _notifyTalhoesChangedListeners();
+      notifyListeners();
+      
+      print('✅ DEBUG: Talhão removido com sucesso: $talhaoId');
+      print('✅ DEBUG: Lista local atualizada - ${_talhoes.length} talhões restantes');
+      return true;
     } catch (e) {
       _errorMessage = 'Erro ao remover talhão: $e';
       _isLoading = false;
       notifyListeners();
       print('❌ DEBUG: Erro ao remover talhão: $e');
       return false;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+    }
+  }
+
+
+  /// Força o reload completo dos talhões do banco de dados (OTIMIZADO)
+  Future<void> forcarReload() async {
+    try {
+      print('🔄 DEBUG: Forçando reload completo dos talhões...');
+      
+      // Limpar lista local
+      _talhoes.clear();
+      
+      // OTIMIZAÇÃO: Limpar caches em background
+      Future.microtask(() => _limparCachesConflitantes());
+      
+      // Recarregar do banco
+      await carregarTalhoes();
+      
+      print('✅ DEBUG: Reload completo concluído - ${_talhoes.length} talhões carregados');
+    } catch (e) {
+      print('❌ DEBUG: Erro ao forçar reload: $e');
+      rethrow;
     }
   }
 }

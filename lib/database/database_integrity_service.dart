@@ -1,0 +1,703 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:sqflite/sqflite.dart';
+import '../utils/logger.dart';
+import '../database/database_helper.dart';
+
+/// Serviço responsável por verificar e manter a integridade do banco de dados
+class DatabaseIntegrityService {
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  
+  // Lista de tabelas essenciais que devem existir no banco de dados
+  final List<String> essentialTables = [
+    'properties',
+    'plots',
+
+    'monitorings',
+    'monitoring_points',
+    'sync_history',
+    'users',
+    'inventory_items',
+    'pesticide_applications', // Nova tabela adicionada
+    'harvest_losses',         // Nova tabela adicionada
+    'plantings'               // Nova tabela adicionada
+  ];
+  
+  /// Acesso ao banco de dados
+  Future<Database> get database async => await _databaseHelper.database;
+
+  /// Verifica a integridade geral do banco de dados
+  Future<bool> checkDatabaseIntegrity() async {
+    try {
+      final db = await database;
+      
+      // Verificar integridade do SQLite
+      final results = await db.rawQuery('PRAGMA integrity_check');
+      final isIntegrityOk = results.isNotEmpty && 
+                            results.first.containsKey('integrity_check') && 
+                            results.first['integrity_check'] == 'ok';
+      
+      if (!isIntegrityOk) {
+        Logger.error('Falha na verificação de integridade do banco de dados: ${results.toString()}');
+      }
+      
+      return isIntegrityOk;
+    } catch (e) {
+      Logger.error('Erro ao verificar integridade do banco de dados: $e');
+      return false;
+    }
+  }
+
+  /// Verifica a integridade de uma tabela específica
+  Future<bool> checkTableIntegrity(String tableName) async {
+    try {
+      final db = await database;
+      
+      // Verificar se a tabela existe
+      final tables = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+        [tableName]
+      );
+      
+      if (tables.isEmpty) {
+        Logger.error('Tabela $tableName não existe');
+        return false;
+      }
+      
+      // Verificar estrutura da tabela
+      final columns = await db.rawQuery('PRAGMA table_info($tableName)');
+      
+      if (columns.isEmpty) {
+        Logger.error('Tabela $tableName não tem colunas definidas');
+        return false;
+      }
+      
+      return true;
+    } catch (e) {
+      Logger.error('Erro ao verificar integridade da tabela $tableName: $e');
+      return false;
+    }
+  }
+
+  /// Repara o banco de dados
+  Future<bool> repairDatabase() async {
+    try {
+      Logger.info('Iniciando reparo de banco de dados');
+      final db = await database;
+      
+      // Criar backup antes de tentar reparar
+      final backupCreated = await _createBackup();
+      if (!backupCreated) {
+        Logger.error('Não foi possível criar backup antes do reparo. Abortando para evitar perdas de dados.');
+        return false;
+      }
+      
+      // Verificar e criar tabelas essenciais
+      final tablesResult = await verifyAndCreateEssentialTables();
+      bool hasErrors = tablesResult.containsKey('error') && tablesResult['error'] == true;
+      
+      if (hasErrors) {
+        Logger.error('Falha ao verificar/criar tabelas essenciais');
+      } else {
+        // Verificar se todas as tabelas estão OK
+        bool allTablesOK = true;
+        String missingTables = "";
+        
+        tablesResult.forEach((table, exists) {
+          if (table != 'error' && !exists) {
+            allTablesOK = false;
+            missingTables += "$table, ";
+          }
+        });
+        
+        if (allTablesOK) {
+          Logger.info('Todas as tabelas essenciais verificadas e estão OK');
+        } else {
+          Logger.warn('Algumas tabelas podem não ter sido criadas corretamente: $missingTables');
+        }
+      }
+      
+      // Verificar e adicionar colunas ausentes
+      for (String tableName in essentialTables) {
+        await _verifyAndFixTableColumns(db, tableName);
+      }
+      
+      // Executar vacuum para otimizar o banco de dados
+      await db.execute('VACUUM');
+      Logger.info('VACUUM executado para otimizar o banco de dados');
+      
+      // Verificar novamente a integridade
+      final integrityOk = await checkDatabaseIntegrity();
+      Logger.info('Reparo de banco de dados concluído. Integridade: ${integrityOk ? 'OK' : 'Com problemas'}');
+      
+      return integrityOk;
+    } catch (e) {
+      Logger.error('Erro ao reparar banco de dados: $e');
+      return false;
+    }
+  }
+
+  /// Verifica e corrige as colunas de uma tabela
+  Future<bool> _verifyAndFixTableColumns(Database db, String tableName) async {
+    try {
+      // Verificar se a tabela existe
+      final tableExists = await _tableExists(db, tableName);
+      if (!tableExists) {
+        return false;
+      }
+      
+      // Obter colunas atuais
+      final columns = await db.rawQuery('PRAGMA table_info($tableName)');
+      final columnNames = columns.map((c) => c['name'] as String).toList();
+      
+      // Verificar e adicionar colunas esperadas com base no tipo de tabela
+      switch (tableName) {
+        case 'pesticide_applications':
+          _verifyColumnExists(db, tableName, columnNames, 'id', 'TEXT PRIMARY KEY');
+          _verifyColumnExists(db, tableName, columnNames, 'date', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'plot_id', 'INTEGER');
+          _verifyColumnExists(db, tableName, columnNames, 'product_id', 'INTEGER');
+          _verifyColumnExists(db, tableName, columnNames, 'dose', 'REAL');
+          _verifyColumnExists(db, tableName, columnNames, 'mixture_volume', 'REAL');
+          _verifyColumnExists(db, tableName, columnNames, 'application_type', 'INTEGER');
+          _verifyColumnExists(db, tableName, columnNames, 'responsible_person', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'created_at', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'updated_at', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'is_synced', 'INTEGER DEFAULT 0');
+          break;
+          
+        case 'harvest_losses':
+          _verifyColumnExists(db, tableName, columnNames, 'id', 'TEXT PRIMARY KEY');
+          _verifyColumnExists(db, tableName, columnNames, 'harvest_id', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'plot_id', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'loss_type', 'INTEGER');
+          _verifyColumnExists(db, tableName, columnNames, 'value', 'REAL');
+          _verifyColumnExists(db, tableName, columnNames, 'unit', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'created_at', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'updated_at', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'is_synced', 'INTEGER DEFAULT 0');
+          break;
+          
+        case 'plantings':
+          _verifyColumnExists(db, tableName, columnNames, 'id', 'TEXT PRIMARY KEY');
+          _verifyColumnExists(db, tableName, columnNames, 'plot_id', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'crop_id', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'variety_id', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'planting_date', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'created_at', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'updated_at', 'TEXT');
+          _verifyColumnExists(db, tableName, columnNames, 'is_synced', 'INTEGER DEFAULT 0');
+          break;
+          
+        // Adicionar casos para outras tabelas conforme necessário
+      }
+      
+      return true;
+    } catch (e) {
+      Logger.error('Erro ao verificar/corrigir colunas da tabela $tableName: $e');
+      return false;
+    }
+  }
+  
+  /// Verifica se uma coluna existe e a cria se necessário
+  Future<void> _verifyColumnExists(Database db, String table, List<String> existingColumns, 
+                                  String columnName, String columnType) async {
+    if (!existingColumns.contains(columnName)) {
+      try {
+        Logger.info('Adicionando coluna ausente $columnName à tabela $table');
+        await db.execute('ALTER TABLE $table ADD COLUMN $columnName $columnType');
+      } catch (e) {
+        Logger.error('Erro ao adicionar coluna $columnName à tabela $table: $e');
+      }
+    }
+  }
+
+  /// Verifica a integridade dos dados de monitoramento
+  Future<bool> checkMonitoringDataIntegrity() async {
+    try {
+      // Verificar integridade das tabelas relacionadas a monitoramento
+      final isMonitoringTableOk = await checkTableIntegrity('monitorings');
+      final isMonitoringPointsTableOk = await checkTableIntegrity('monitoring_points');
+      
+      return isMonitoringTableOk && isMonitoringPointsTableOk;
+    } catch (e) {
+      Logger.error('Erro ao verificar integridade dos dados de monitoramento: $e');
+      return false;
+    }
+  }
+
+  /// Verifica a integridade dos índices do banco de dados
+  Future<Map<String, dynamic>> checkDatabaseIndices() async {
+    try {
+      final db = await database;
+      final Map<String, dynamic> result = {
+        'isValid': true,
+        'problematicIndices': <String>[],
+        'message': 'Índices verificados com sucesso'
+      };
+      
+      // Obter todos os índices
+      final indices = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='index'");
+      
+      for (var index in indices) {
+        final indexName = index['name'] as String;
+        
+        try {
+          // Verificar se o índice está funcionando corretamente
+          await db.rawQuery('PRAGMA index_info($indexName)');
+        } catch (e) {
+          result['isValid'] = false;
+          (result['problematicIndices'] as List<String>).add(indexName);
+        }
+      }
+      
+      // Atualizar mensagem com base nos resultados
+      result['message'] = (result['problematicIndices'] as List<String>).isEmpty
+          ? 'Todos os índices estão íntegros'
+          : 'Encontrados ${(result['problematicIndices'] as List<String>).length} índices problemáticos';
+      
+      return result;
+    } catch (e) {
+      Logger.error('Erro ao verificar índices do banco de dados: $e');
+      return {
+        'isValid': false,
+        'problematicIndices': <String>[],
+        'message': 'Erro ao verificar índices: $e'
+      };
+    }
+  }
+  
+  /// Cria um backup do banco de dados
+  Future<bool> _createBackup() async {
+    try {
+      final db = await database;
+      final dbPath = await _databaseHelper.getDatabasePath();
+      final backupPath = '$dbPath.backup';
+      
+      // Fechar o banco de dados para fazer o backup
+      await db.close();
+      
+      // Copiar o arquivo do banco de dados
+      final File dbFile = File(dbPath);
+      await dbFile.copy(backupPath);
+      
+      // Reabrir o banco de dados
+      await _databaseHelper.database;
+      
+      Logger.log('Backup do banco de dados criado em $backupPath');
+      return true;
+    } catch (e) {
+      Logger.error('Erro ao criar backup do banco de dados: $e');
+      return false;
+    }
+  }
+  
+  /// Restaura o banco de dados a partir de um backup
+  Future<bool> restoreFromBackup() async {
+    try {
+      final db = await database;
+      final dbPath = await _databaseHelper.getDatabasePath();
+      final backupPath = '$dbPath.backup';
+      
+      // Verificar se o backup existe
+      if (!await File(backupPath).exists()) {
+        Logger.error('Backup não encontrado em $backupPath');
+        return false;
+      }
+      
+      // Fechar o banco de dados para fazer a restauração
+      await db.close();
+      
+      // Copiar o arquivo de backup sobre o banco de dados atual
+      final File backupFile = File(backupPath);
+      await backupFile.copy(dbPath);
+      
+      // Reabrir o banco de dados
+      await _databaseHelper.database;
+      
+      Logger.log('Banco de dados restaurado a partir do backup');
+      return true;
+    } catch (e) {
+      Logger.error('Erro ao restaurar banco de dados a partir do backup: $e');
+      return false;
+    }
+  }
+  
+  /// Verifica e cria tabelas essenciais que possam estar faltando
+  Future<Map<String, dynamic>> verifyAndCreateEssentialTables() async {
+    try {
+      final db = await database;
+      final Map<String, dynamic> result = {};
+      
+      // Verificar cada tabela e criar se não existir
+      for (final tableName in essentialTables) {
+        final tableExists = await _tableExists(db, tableName);
+        result[tableName] = tableExists;
+        
+        if (!tableExists) {
+          Logger.log('Tabela $tableName não existe. Criando...');
+          await _createMissingTable(db, tableName);
+          result[tableName] = await _tableExists(db, tableName);
+        }
+      }
+      
+      return result;
+    } catch (e) {
+      Logger.error('Erro ao verificar e criar tabelas essenciais: $e');
+      return {
+        'error': true
+      };
+    }
+  }
+  
+  /// Verifica se uma tabela existe no banco de dados
+  Future<bool> _tableExists(Database db, String tableName) async {
+    final tables = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+      [tableName]
+    );
+    return tables.isNotEmpty;
+  }
+  
+  /// Cria uma tabela que está faltando
+  Future<void> _createMissingTable(Database db, String tableName) async {
+    Logger.info('Criando tabela ausente: $tableName');
+    
+    switch (tableName) {
+      case 'pesticide_applications':
+        await db.execute('''
+          CREATE TABLE pesticide_applications (
+            id TEXT PRIMARY KEY,
+            date TEXT NOT NULL,
+            plot_id INTEGER NOT NULL,
+            plot_name TEXT,
+            product_id INTEGER NOT NULL,
+            product_name TEXT,
+            dose REAL,
+            dose_unit TEXT,
+            mixture_volume REAL,
+            mixture_volume_unit TEXT,
+            application_type INTEGER,
+            target_pest TEXT,
+            weather_conditions TEXT,
+            technology TEXT,
+            responsible_person TEXT,
+            observations TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT,
+            is_synced INTEGER DEFAULT 0,
+            device_id TEXT,
+            images TEXT,
+            FOREIGN KEY (plot_id) REFERENCES plots (id) ON DELETE CASCADE
+          )
+        ''');
+        Logger.info('Tabela pesticide_applications criada com sucesso');
+        break;
+      
+      case 'harvest_losses':
+        await db.execute('''
+          CREATE TABLE harvest_losses (
+            id TEXT PRIMARY KEY,
+            harvest_id TEXT NOT NULL,
+            plot_id TEXT NOT NULL,
+            plot_name TEXT,
+            loss_type INTEGER NOT NULL,
+            loss_description TEXT,
+            value REAL NOT NULL,
+            unit TEXT NOT NULL,
+            location TEXT,
+            latitude REAL,
+            longitude REAL,
+            observations TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT,
+            is_synced INTEGER DEFAULT 0,
+            device_id TEXT,
+            images TEXT,
+            FOREIGN KEY (harvest_id) REFERENCES harvests (id) ON DELETE CASCADE,
+            FOREIGN KEY (plot_id) REFERENCES plots (id) ON DELETE CASCADE
+          )
+        ''');
+        Logger.info('Tabela harvest_losses criada com sucesso');
+        break;
+      
+      case 'plantings':
+        await db.execute('''
+          CREATE TABLE plantings (
+            id TEXT PRIMARY KEY,
+            plot_id TEXT NOT NULL,
+            plot_name TEXT,
+            crop_id TEXT NOT NULL,
+            crop_name TEXT,
+            variety_id TEXT,
+            variety_name TEXT,
+            planting_date TEXT NOT NULL,
+            seeds_per_meter REAL,
+            row_spacing REAL,
+            planting_depth REAL,
+            seeds_per_hectare REAL,
+            seed_weight REAL,
+            fertilizer_applied TEXT,
+            machine_id TEXT,
+            machine_name TEXT,
+            tractor_id TEXT,
+            tractor_name TEXT,
+            responsible_person TEXT,
+            observations TEXT,
+            images TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT,
+            is_synced INTEGER DEFAULT 0,
+            device_id TEXT,
+            FOREIGN KEY (plot_id) REFERENCES plots (id) ON DELETE CASCADE,
+            FOREIGN KEY (crop_id) REFERENCES crops (id) ON DELETE CASCADE
+          )
+        ''');
+        Logger.info('Tabela plantings criada com sucesso');
+        break;
+        
+      case 'soil_samples':
+      case 'soil_sample_points':
+        // Tabelas removidas - não criar mais
+        Logger.info('Tabela $tableName não será mais criada (funcionalidade removida)');
+        break;
+        
+      // Outras tabelas essenciais...
+      default:
+        Logger.error('Definição para criação da tabela $tableName não encontrada');
+        break;
+    }
+  }
+  
+  /// Verifica e corrige problemas de integridade no banco de dados
+  Future<Map<String, dynamic>> verifyAndFixDatabaseIntegrity() async {
+    try {
+      Logger.info('Iniciando verificação completa de integridade do banco de dados...');
+      
+      // Resultado da verificação
+      final Map<String, dynamic> result = {
+        'integrityCheck': false,
+        'tablesCheck': false,
+        'indicesCheck': false,
+        'repairAttempted': false,
+        'repairSuccess': false,
+        'message': '',
+        'details': <String, dynamic>{}
+      };
+      
+      // Criar backup antes de qualquer operação
+      await _createBackup();
+      
+      // 1. Verificar integridade geral
+      final integrityOk = await checkDatabaseIntegrity();
+      result['integrityCheck'] = integrityOk;
+      
+      // 2. Verificar índices
+      final indicesResult = await checkDatabaseIndices();
+      result['indicesCheck'] = indicesResult['isValid'];
+      result['details']['problematicIndices'] = indicesResult['problematicIndices'];
+      
+      // 3. Verificar tabelas essenciais
+      final tablesResult = await _checkEssentialTables();
+      result['tablesCheck'] = tablesResult['allTablesOk'];
+      result['details']['missingTables'] = tablesResult['missingTables'];
+      
+      // Se houver problemas, tentar reparar
+      if (!integrityOk || !indicesResult['isValid'] || !tablesResult['allTablesOk']) {
+        Logger.info('Problemas de integridade detectados, iniciando reparo...');
+        result['repairAttempted'] = true;
+        
+        // Remover índices problemáticos
+        if (!indicesResult['isValid']) {
+          await _removeProblematicIndices(indicesResult['problematicIndices'] as List<String>);
+        }
+        
+        // Criar tabelas ausentes
+        if (!tablesResult['allTablesOk']) {
+          await _createMissingTables(tablesResult['missingTables'] as List<String>);
+        }
+        
+        // Executar vacuum para otimizar o banco
+        final db = await database;
+        await db.execute('VACUUM');
+        
+        // Verificar novamente a integridade
+        final repairSuccess = await checkDatabaseIntegrity();
+        result['repairSuccess'] = repairSuccess;
+        
+        result['message'] = repairSuccess 
+            ? 'Banco de dados reparado com sucesso' 
+            : 'Tentativa de reparo realizada, mas problemas persistem';
+      } else {
+        result['message'] = 'Banco de dados íntegro, nenhum reparo necessário';
+      }
+      
+      Logger.info('Verificação de integridade concluída: ${result['message']}');
+      return result;
+    } catch (e) {
+      Logger.error('Erro durante verificação e reparo do banco de dados: $e');
+      return {
+        'integrityCheck': false,
+        'tablesCheck': false,
+        'indicesCheck': false,
+        'repairAttempted': true,
+        'repairSuccess': false,
+        'message': 'Erro durante verificação: $e',
+        'details': {}
+      };
+    }
+  }
+  
+  /// Verifica se todas as tabelas essenciais existem
+  Future<Map<String, dynamic>> _checkEssentialTables() async {
+    final db = await database;
+    final result = <String, bool>{};
+    final missingTables = <String>[];
+    
+    // Lista de tabelas essenciais que devem existir no banco de dados
+    final essentialTables = [
+      'properties',
+      'plots',
+      'monitorings',
+      'monitoring_points',
+      'sync_history',
+      'users',
+      'inventory_items',
+      'pesticide_applications', // Nova tabela adicionada
+      'harvest_losses',         // Nova tabela adicionada
+      'plantings'               // Nova tabela adicionada
+    ];
+    
+    try {
+      for (final tableName in essentialTables) {
+        final tableExists = await _tableExists(db, tableName);
+        if (!tableExists) {
+          missingTables.add(tableName);
+        }
+        result[tableName] = await _tableExists(db, tableName);
+      }
+      
+      return {
+        'allTablesOk': missingTables.isEmpty,
+        'missingTables': missingTables,
+        'tableStatus': result
+      };
+    } catch (e) {
+      return {
+        'allTablesOk': false,
+        'missingTables': <String>[],
+        'message': 'Erro ao verificar tabelas: $e'
+      };
+    }
+  }
+  
+  /// Remove índices problemáticos
+  Future<void> _removeProblematicIndices(List<String> indices) async {
+    try {
+      final db = await database;
+      
+      for (final indexName in indices) {
+        try {
+          Logger.info('Removendo índice problemático: $indexName');
+          await db.execute('DROP INDEX IF EXISTS $indexName');
+        } catch (e) {
+          Logger.error('Erro ao remover índice $indexName: $e');
+        }
+      }
+    } catch (e) {
+      Logger.error('Erro ao remover índices problemáticos: $e');
+    }
+  }
+  
+  /// Cria tabelas ausentes
+  Future<void> _createMissingTables(List<String> tables) async {
+    try {
+      final db = await database;
+      
+      // Definições de tabelas
+      final Map<String, String> tableDefinitions = {
+        'pesticide_applications': '''
+          CREATE TABLE IF NOT EXISTS pesticide_applications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            plot_id TEXT NOT NULL,
+            application_date TEXT NOT NULL,
+            product_name TEXT NOT NULL,
+            dose REAL NOT NULL,
+            dose_unit TEXT NOT NULL,
+            target_pest TEXT,
+            application_method TEXT,
+            weather_conditions TEXT,
+            operator_name TEXT,
+            observations TEXT,
+            images TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            sync_status INTEGER DEFAULT 0,
+            device_id TEXT,
+            FOREIGN KEY (plot_id) REFERENCES plots (id) ON DELETE CASCADE
+          )
+        ''',
+        'harvest_losses': '''
+          CREATE TABLE IF NOT EXISTS harvest_losses (
+            id TEXT PRIMARY KEY,
+            plotId TEXT,
+            cropId TEXT,
+            cropName TEXT,
+            grainsPerArea REAL,
+            sampleAreaSize REAL,
+            thousandGrainWeight REAL,
+            collectedGrainsWeight REAL,
+            useCollectedWeight INTEGER DEFAULT 0,
+            sampleCount INTEGER,
+            imageUrls TEXT,
+            assessmentDate INTEGER,
+            responsiblePerson TEXT,
+            observations TEXT,
+            createdAt INTEGER,
+            updatedAt INTEGER,
+            isSynced INTEGER DEFAULT 0
+          )
+        ''',
+        'plantings': '''
+          CREATE TABLE IF NOT EXISTS plantings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            plot_id TEXT NOT NULL,
+            crop_type TEXT NOT NULL,
+            variety TEXT,
+            planting_date TEXT NOT NULL,
+            expected_harvest_date TEXT,
+            seed_quantity REAL,
+            seed_unit TEXT,
+            row_spacing REAL,
+            plant_spacing REAL,
+            fertilizer_type TEXT,
+            fertilizer_quantity REAL,
+            fertilizer_unit TEXT,
+            observations TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            sync_status INTEGER DEFAULT 0,
+            FOREIGN KEY (plot_id) REFERENCES plots (id) ON DELETE CASCADE
+          )
+        '''
+      };
+      
+      // Criar cada tabela ausente
+      for (final tableName in tables) {
+        if (tableDefinitions.containsKey(tableName)) {
+          try {
+            Logger.info('Criando tabela ausente: $tableName');
+            await db.execute(tableDefinitions[tableName]!);
+          } catch (e) {
+            Logger.error('Erro ao criar tabela $tableName: $e');
+          }
+        } else {
+          Logger.error('Definição não encontrada para tabela: $tableName');
+        }
+      }
+    } catch (e) {
+      Logger.error('Erro ao criar tabelas ausentes: $e');
+    }
+  }
+}

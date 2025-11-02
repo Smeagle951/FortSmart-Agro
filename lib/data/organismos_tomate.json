@@ -1,0 +1,1129 @@
+{
+  "cultura": "Tomate",
+  "nome_cientifico": "Solanum lycopersicum",
+  "versao": "4.0",
+  "data_atualizacao": "2024-12-19T00:00:00Z",
+  "funcionalidades_extras": {
+    "fases_desenvolvimento": true,
+    "tamanhos_mm": true,
+    "severidade_detalhada": true,
+    "condicoes_favoraveis": true,
+    "manejo_integrado": true,
+    "limiares_especificos": true,
+    "niveis_infestacao": true,
+    "niveis_severidade": true,
+    "sintomas_detalhados": true
+  },
+  "organismos": [
+    {
+      "id": "tomate_tuta_absoluta",
+      "nome": "Traça-do-tomate",
+      "nome_cientifico": "Tuta absoluta",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Mineiras nas folhas",
+        "Orifícios nos frutos",
+        "Redução da qualidade",
+        "Perda de produtividade"
+      ],
+      "dano_economico": "Pode causar perdas de até 80% da produtividade",
+      "partes_afetadas": ["Folhas", "Frutos", "Hastes"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10"],
+      "fases_fenologicas_detalhadas": {
+        "V1": "Primeira folha - Primeira folha verdadeira",
+        "V2": "Segunda folha - Segunda folha verdadeira",
+        "V3": "Terceira folha - Terceira folha verdadeira",
+        "V4": "Quarta folha - Quarta folha verdadeira",
+        "V5": "Quinta folha - Quinta folha verdadeira",
+        "V6": "Sexta folha - Sexta folha verdadeira",
+        "V7": "Sétima folha - Sétima folha verdadeira",
+        "V8": "Oitava folha - Oitava folha verdadeira",
+        "V9": "Nona folha - Nona folha verdadeira",
+        "V10": "Décima folha - Décima folha verdadeira",
+        "V11": "Décima primeira folha - Décima primeira folha verdadeira",
+        "V12": "Décima segunda folha - Décima segunda folha verdadeira",
+        "R1": "Primeira inflorescência - Primeira inflorescência visível",
+        "R2": "Segunda inflorescência - Segunda inflorescência visível",
+        "R3": "Terceira inflorescência - Terceira inflorescência visível",
+        "R4": "Quarta inflorescência - Quarta inflorescência visível",
+        "R5": "Quinta inflorescência - Quinta inflorescência visível",
+        "R6": "Sexta inflorescência - Sexta inflorescência visível",
+        "R7": "Sétima inflorescência - Sétima inflorescência visível",
+        "R8": "Oitava inflorescência - Oitava inflorescência visível",
+        "R9": "Nona inflorescência - Nona inflorescência visível",
+        "R10": "Décima inflorescência - Décima inflorescência visível"
+      },
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_infestacao": {
+        "baixo": "1-5 mineiras por folha",
+        "medio": "6-15 mineiras por folha",
+        "alto": "16-30 mineiras por folha",
+        "critico": ">30 mineiras por folha"
+      },
+      "manejo_quimico": [
+        "Spinosad - 0,08-0,12 L/ha",
+        "Abamectina - 0,3-0,5 L/ha",
+        "Clorantraniliprole - 0,15-0,25 L/ha"
+      ],
+      "doses_defensivos": {
+        "spinosad": {
+          "dose": "0,08-0,12 L/ha",
+          "concentracao": "240 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        },
+        "abamectina": {
+          "dose": "0,3-0,5 L/ha",
+          "concentracao": "18 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        },
+        "clorantraniliprole": {
+          "dose": "0,15-0,25 L/ha",
+          "concentracao": "200 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Trichogramma pretiosum",
+        "Bacillus thuringiensis",
+        "Predadores naturais"
+      ],
+      "manejo_cultural": [
+        "Armadilhas com feromônios",
+        "Eliminação de restos culturais",
+        "Cultivares resistentes"
+      ],
+      "manejo": {
+        "cultural": ["Armadilhas com feromônios", "Eliminação de restos culturais", "Cultivares resistentes"],
+        "biologico": ["Trichogramma pretiosum", "Bacillus thuringiensis", "Predadores naturais"],
+        "quimico": ["Spinosad (IRAC 5)", "Abamectina (IRAC 6)", "Clorantraniliprole (IRAC 28)"]
+      },
+      "observacoes": "Principal praga do tomate no Brasil. Causa danos diretos e indiretos.",
+      "icone": "🦋",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.3",
+          "tamanho": "0,3 mm",
+          "danos": "Postura nas folhas",
+          "dano": "Postura nas folhas, sem danos diretos.",
+          "duracao_dias": "4-6",
+          "duracao": "4-6 dias",
+          "caracteristicas": "Postura em folhas, cor esbranquiçada"
+        },
+        {
+          "fase": "Lagarta pequena",
+          "tamanho_mm": "1-3",
+          "tamanho": "1-3 mm",
+          "danos": "Mineiras nas folhas",
+          "dano": "Mineiras nas folhas, redução da fotossíntese.",
+          "duracao_dias": "5-8",
+          "duracao": "5-8 dias",
+          "caracteristicas": "Lagartas pequenas, cor clara"
+        },
+        {
+          "fase": "Lagarta média",
+          "tamanho_mm": "5-8",
+          "tamanho": "5-8 mm",
+          "danos": "Danos em folhas e frutos",
+          "dano": "Danos em folhas e frutos, redução da qualidade.",
+          "duracao_dias": "8-12",
+          "duracao": "8-12 dias",
+          "caracteristicas": "Lagartas com faixas longitudinais"
+        },
+        {
+          "fase": "Lagarta grande",
+          "tamanho_mm": "10-12",
+          "tamanho": "10-12 mm",
+          "danos": "Danos severos em folhas e frutos",
+          "dano": "Danos severos em folhas e frutos, perdas de até 80%.",
+          "duracao_dias": "10-15",
+          "duracao": "10-15 dias",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5 mineiras por folha",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-15 mineiras por folha",
+          "perda_produtividade": "21-50%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "16-30 mineiras por folha",
+          "perda_produtividade": "51-80%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "frutificacao": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "tomate_mosca_branca",
+      "nome": "Mosca-branca",
+      "nome_cientifico": "Bemisia tabaci",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Sucção de seiva das folhas",
+        "Transmissão de vírus",
+        "Fumagina nas folhas",
+        "Redução do crescimento"
+      ],
+      "dano_economico": "Pode causar perdas de até 60% devido à transmissão de vírus",
+      "partes_afetadas": ["Folhas", "Brotos"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "10 moscas-brancas/folha",
+      "niveis_infestacao": {
+        "baixo": "1-5 moscas por folha",
+        "medio": "6-10 moscas por folha",
+        "alto": "11-20 moscas por folha",
+        "critico": ">20 moscas por folha"
+      },
+      "manejo_quimico": [
+        "Imidacloprido",
+        "Tiametoxam",
+        "Acetamiprido"
+      ],
+      "manejo_biologico": [
+        "Encarsia formosa",
+        "Eretmocerus mundus",
+        "Predadores naturais"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas hospedeiras",
+        "Controle de plantas daninhas",
+        "Rotação de culturas"
+      ],
+      "manejo": {
+        "cultural": ["Eliminação de plantas hospedeiras", "Controle de plantas daninhas", "Rotação de culturas"],
+        "biologico": ["Encarsia formosa", "Eretmocerus mundus", "Predadores naturais"],
+        "quimico": ["Imidacloprido", "Tiametoxam", "Acetamiprido"]
+      },
+      "observacoes": "Vetor importante de vírus como o mosaico dourado. Controle preventivo é essencial.",
+      "icone": "🦋",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.2",
+          "tamanho": "0,2 mm",
+          "danos": "Postura em folhas",
+          "dano": "Postura em folhas, sem danos diretos.",
+          "duracao_dias": "3-5",
+          "duracao": "3-5 dias",
+          "caracteristicas": "Postura na face inferior das folhas"
+        },
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "0.3-0.8",
+          "tamanho": "0,3-0,8 mm",
+          "danos": "Sucção de seiva",
+          "dano": "Sucção de seiva, excreção de melada.",
+          "duracao_dias": "10-15",
+          "duracao": "10-15 dias",
+          "caracteristicas": "Ninfas imóveis na face inferior das folhas"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "1-1.5",
+          "tamanho": "1-1,5 mm",
+          "danos": "Sucção de seiva e transmissão de vírus",
+          "dano": "Sucção de seiva e transmissão de vírus importantes.",
+          "duracao_dias": "20-30",
+          "duracao": "20-30 dias",
+          "caracteristicas": "Adultos brancos, voam quando perturbados"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5 moscas por folha",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-10 moscas por folha",
+          "perda_produtividade": "21-40%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "11-20 moscas por folha",
+          "perda_produtividade": "41-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "10 moscas por folha",
+        "floracao": "10 moscas por folha",
+        "frutificacao": "10 moscas por folha"
+      }
+    },
+    {
+      "id": "tomate_requeima",
+      "nome": "Requeima",
+      "nome_cientifico": "Phytophthora infestans",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Manchas aquosas nas folhas",
+        "Necrose das folhas",
+        "Podridão dos frutos",
+        "Morte das plantas"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Manchas aquosas nas folhas, especialmente nas bordas.",
+        "avancados": "Necrose das folhas, podridão dos frutos, morte das plantas."
+      },
+      "dano_economico": "Pode causar perdas de até 100% da produtividade",
+      "partes_afetadas": ["Folhas", "Frutos", "Hastes"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "1-5% das folhas afetadas",
+        "medio": "6-20% das folhas afetadas",
+        "alto": "21-40% das folhas afetadas",
+        "critico": ">40% das folhas afetadas"
+      },
+      "manejo_quimico": [
+        "Cobre",
+        "Fosetyl-Al",
+        "Metalaxyl"
+      ],
+      "manejo_biologico": [
+        "Uso de fungos antagônicos",
+        "Bacillus subtilis"
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Manejo de irrigação",
+        "Eliminação de restos culturais"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Manejo de irrigação", "Eliminação de restos culturais"],
+        "biologico": ["Uso de fungos antagônicos", "Bacillus subtilis"],
+        "quimico": ["Cobre", "Fosetyl-Al", "Metalaxyl"]
+      },
+      "observacoes": "Doença mais destrutiva do tomate. Controle preventivo é fundamental.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5% das folhas afetadas",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-20% das folhas afetadas",
+          "perda_produtividade": "21-60%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "21-40% das folhas afetadas",
+          "perda_produtividade": "61-100%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "15-25°C",
+        "umidade": "Alta umidade relativa (>90%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "frutificacao": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "tomate_mosaico_dourado",
+      "nome": "Mosaico Dourado",
+      "nome_cientifico": "Begomovirus",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Amarelecimento das folhas",
+        "Mosaico nas folhas",
+        "Redução do crescimento",
+        "Baixa produtividade"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Amarelecimento leve das folhas, mosaico sutil.",
+        "avancados": "Amarelecimento intenso, mosaico evidente, redução do crescimento."
+      },
+      "dano_economico": "Pode causar perdas de até 80% da produtividade",
+      "partes_afetadas": ["Folhas", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "Amarelecimento leve das folhas",
+        "medio": "Amarelecimento moderado com mosaico",
+        "alto": "Amarelecimento intenso e redução de crescimento",
+        "critico": "Paralisação do crescimento"
+      },
+      "manejo_quimico": [
+        "Controle da mosca-branca",
+        "Inseticidas sistêmicos"
+      ],
+      "manejo_biologico": [
+        "Controle biológico da mosca-branca",
+        "Cultivares resistentes"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas doentes",
+        "Controle da mosca-branca",
+        "Cultivares resistentes"
+      ],
+      "manejo": {
+        "cultural": ["Eliminação de plantas doentes", "Controle da mosca-branca", "Cultivares resistentes"],
+        "biologico": ["Controle biológico da mosca-branca", "Cultivares resistentes"],
+        "quimico": ["Controle da mosca-branca", "Inseticidas sistêmicos"]
+      },
+      "observacoes": "Doença viral transmitida pela mosca-branca. Controle preventivo é essencial.",
+      "icone": "🦠",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Amarelecimento leve das folhas",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Amarelecimento moderado com mosaico",
+          "perda_produtividade": "21-50%",
+          "cor_alerta": "#FF9800",
+          "acao": "Controle da mosca-branca"
+        },
+        "alto": {
+          "descricao": "Amarelecimento intenso e redução de crescimento",
+          "perda_produtividade": "51-80%",
+          "cor_alerta": "#F44336",
+          "acao": "Controle imediato da mosca-branca"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "frutificacao": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "tomate_deficiencia_calcio",
+      "nome": "Deficiência de Cálcio",
+      "nome_cientifico": "Deficiência nutricional",
+      "categoria": "Deficiência Nutricional",
+      "tipo": "DEFICIENCIA_NUTRICIONAL",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Podridão apical dos frutos",
+        "Amarelecimento das folhas novas",
+        "Redução do crescimento",
+        "Baixa qualidade dos frutos"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Amarelecimento das folhas novas, início da podridão apical.",
+        "avancados": "Podridão apical severa, redução do crescimento, baixa qualidade dos frutos."
+      },
+      "dano_economico": "Pode causar perdas de até 50% da produtividade",
+      "partes_afetadas": ["Frutos", "Folhas novas", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiros sintomas visíveis",
+      "niveis_severidade": {
+        "baixo": "Podridão apical leve dos frutos",
+        "medio": "Podridão apical moderada com redução de crescimento",
+        "alto": "Podridão apical severa e paralisação do crescimento",
+        "critico": "Morte das plantas"
+      },
+      "manejo_quimico": [
+        "Nitrato de cálcio",
+        "Cloreto de cálcio",
+        "Sulfato de cálcio"
+      ],
+      "manejo_biologico": [
+        "Adubação com calcário",
+        "Rotação com culturas que reciclam cálcio"
+      ],
+      "manejo_cultural": [
+        "Adubação de base adequada",
+        "Adubação foliar",
+        "Análise de solo"
+      ],
+      "manejo": {
+        "cultural": ["Adubação de base adequada", "Adubação foliar", "Análise de solo"],
+        "biologico": ["Adubação com calcário", "Rotação com culturas que reciclam cálcio"],
+        "quimico": ["Nitrato de cálcio", "Cloreto de cálcio", "Sulfato de cálcio"]
+      },
+      "observacoes": "Deficiência importante que afeta a qualidade dos frutos. Confundida com doenças.",
+      "icone": "🌿",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Podridão apical leve dos frutos",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento e adubação preventiva"
+        },
+        "medio": {
+          "descricao": "Podridão apical moderada com redução de crescimento",
+          "perda_produtividade": "16-35%",
+          "cor_alerta": "#FF9800",
+          "acao": "Adubação foliar imediata"
+        },
+        "alto": {
+          "descricao": "Podridão apical severa e paralisação do crescimento",
+          "perda_produtividade": "36-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Adubação de emergência"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Qualquer temperatura",
+        "umidade": "Solo com baixa capacidade de retenção",
+        "chuva": "Lixiviação por chuvas intensas",
+        "vento": "Não aplicável",
+        "solo": "Solos arenosos e com baixo teor de matéria orgânica"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiros sintomas visíveis",
+        "floracao": "Primeiros sintomas visíveis",
+        "frutificacao": "Primeiros sintomas visíveis"
+      }
+    },
+    {
+      "id": "tomate_deficiencia_boro",
+      "nome": "Deficiência de Boro",
+      "nome_cientifico": "Deficiência nutricional",
+      "categoria": "Deficiência Nutricional",
+      "tipo": "DEFICIENCIA_NUTRICIONAL",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Amarelecimento das folhas novas",
+        "Redução do crescimento",
+        "Baixa qualidade dos frutos",
+        "Morte dos brotos"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Amarelecimento das folhas novas, redução do crescimento.",
+        "avancados": "Morte dos brotos, baixa qualidade dos frutos, paralisação do crescimento."
+      },
+      "dano_economico": "Pode causar perdas de até 40% da produtividade",
+      "partes_afetadas": ["Folhas novas", "Brotos", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiros sintomas visíveis",
+      "niveis_severidade": {
+        "baixo": "Amarelecimento leve das folhas novas",
+        "medio": "Amarelecimento moderado com redução de crescimento",
+        "alto": "Amarelecimento intenso e morte dos brotos",
+        "critico": "Paralisação do crescimento"
+      },
+      "manejo_quimico": [
+        "Bórax",
+        "Ácido bórico",
+        "Fertilizantes com boro"
+      ],
+      "manejo_biologico": [
+        "Adubação com matéria orgânica",
+        "Rotação com culturas que reciclam boro"
+      ],
+      "manejo_cultural": [
+        "Adubação de base adequada",
+        "Adubação foliar",
+        "Análise de solo"
+      ],
+      "manejo": {
+        "cultural": ["Adubação de base adequada", "Adubação foliar", "Análise de solo"],
+        "biologico": ["Adubação com matéria orgânica", "Rotação com culturas que reciclam boro"],
+        "quimico": ["Bórax", "Ácido bórico", "Fertilizantes com boro"]
+      },
+      "observacoes": "Deficiência importante que afeta o crescimento e qualidade dos frutos.",
+      "icone": "🌿",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Amarelecimento leve das folhas novas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento e adubação preventiva"
+        },
+        "medio": {
+          "descricao": "Amarelecimento moderado com redução de crescimento",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Adubação foliar imediata"
+        },
+        "alto": {
+          "descricao": "Amarelecimento intenso e morte dos brotos",
+          "perda_produtividade": "26-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Adubação de emergência"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Qualquer temperatura",
+        "umidade": "Solo com baixa capacidade de retenção",
+        "chuva": "Lixiviação por chuvas intensas",
+        "vento": "Não aplicável",
+        "solo": "Solos arenosos e com baixo teor de matéria orgânica"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiros sintomas visíveis",
+        "floracao": "Primeiros sintomas visíveis",
+        "frutificacao": "Primeiros sintomas visíveis"
+      }
+    },
+    {
+      "id": "tomate_pulgao",
+      "nome": "Pulgão",
+      "nome_cientifico": "Aphis gossypii",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Sucção de seiva das folhas",
+        "Transmissão de vírus",
+        "Fumagina nas folhas",
+        "Enrolamento das folhas"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% devido à transmissão de vírus",
+      "partes_afetadas": ["Folhas", "Brotos"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "10 pulgões por folha",
+      "niveis_infestacao": {
+        "baixo": "1-5 pulgões por folha",
+        "medio": "6-10 pulgões por folha",
+        "alto": "11-20 pulgões por folha",
+        "critico": ">20 pulgões por folha"
+      },
+      "manejo_quimico": [
+        "Imidacloprido (IRAC 4A)",
+        "Tiametoxam (IRAC 4A)",
+        "Acetamiprido (IRAC 4A)"
+      ],
+      "manejo_biologico": [
+        "Encarsia formosa",
+        "Eretmocerus mundus",
+        "Chrysoperla carnea"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas hospedeiras",
+        "Controle de plantas daninhas",
+        "Rotação de culturas"
+      ],
+      "manejo": {
+        "cultural": ["Eliminação de plantas hospedeiras", "Controle de plantas daninhas", "Rotação de culturas"],
+        "biologico": ["Encarsia formosa", "Eretmocerus mundus", "Chrysoperla carnea"],
+        "quimico": ["Imidacloprido (IRAC 4A)", "Tiametoxam (IRAC 4A)", "Acetamiprido (IRAC 4A)"]
+      },
+      "observacoes": "Vetor importante de vírus. Controle preventivo é essencial.",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {"fase": "Ovo", "tamanho_mm": "0.3", "tamanho": "0,3 mm", "danos": "Postura em folhas", "dano": "Postura em folhas, sem danos diretos.", "duracao_dias": "3-5", "duracao": "3-5 dias", "caracteristicas": "Postura isolada, cor esbranquiçada"},
+        {"fase": "Ninfa", "tamanho_mm": "0.5-1", "tamanho": "0,5-1 mm", "danos": "Sucção de seiva", "dano": "Sucção de seiva, excreção de melada.", "duracao_dias": "5-7", "duracao": "5-7 dias", "caracteristicas": "Ninfas pequenas, cor clara"},
+        {"fase": "Adulto", "tamanho_mm": "1-2", "tamanho": "1-2 mm", "danos": "Sucção de seiva e transmissão de vírus", "dano": "Sucção de seiva e transmissão de vírus importantes.", "duracao_dias": "15-20", "duracao": "15-20 dias", "caracteristicas": "Adultos pequenos, cor variável"}
+      ],
+      "severidade": {
+        "baixo": {"descricao": "1-5 pulgões por folha", "perda_produtividade": "0-10%", "cor_alerta": "#4CAF50", "acao": "Monitoramento intensificado"},
+        "medio": {"descricao": "6-10 pulgões por folha", "perda_produtividade": "11-25%", "cor_alerta": "#FF9800", "acao": "Aplicação de inseticida"},
+        "alto": {"descricao": "11-20 pulgões por folha", "perda_produtividade": "26-40%", "cor_alerta": "#F44336", "acao": "Aplicação imediata de inseticida"}
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de seca",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "10 pulgões por folha",
+        "floracao": "10 pulgões por folha",
+        "frutificacao": "10 pulgões por folha"
+      }
+    },
+    {
+      "id": "tomate_trips",
+      "nome": "Trips",
+      "nome_cientifico": "Thrips tabaci",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Pontuações prateadas nas folhas",
+        "Deformação dos frutos",
+        "Transmissão de vírus",
+        "Redução da qualidade dos frutos"
+      ],
+      "dano_economico": "Pode causar perdas de até 50% na qualidade dos frutos",
+      "partes_afetadas": ["Folhas", "Frutos", "Flores"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5 trips por folha",
+      "niveis_infestacao": {
+        "baixo": "1-2 trips por folha",
+        "medio": "3-5 trips por folha",
+        "alto": "6-10 trips por folha",
+        "critico": ">10 trips por folha"
+      },
+      "manejo_quimico": [
+        "Spinosad (IRAC 5)",
+        "Abamectina (IRAC 6)",
+        "Tiametoxam (IRAC 4A)"
+      ],
+      "manejo_biologico": [
+        "Orius insidiosus",
+        "Amblyseius swirskii",
+        "Neoseiulus cucumeris"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas hospedeiras",
+        "Controle de plantas daninhas",
+        "Armadilhas adesivas"
+      ],
+      "manejo": {
+        "cultural": ["Eliminação de plantas hospedeiras", "Controle de plantas daninhas", "Armadilhas adesivas"],
+        "biologico": ["Orius insidiosus", "Amblyseius swirskii", "Neoseiulus cucumeris"],
+        "quimico": ["Spinosad (IRAC 5)", "Abamectina (IRAC 6)", "Tiametoxam (IRAC 4A)"]
+      },
+      "observacoes": "Praga-chave do tomate, com alta capacidade de transmissão de vírus.",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {"fase": "Ovo", "tamanho_mm": "0.2", "tamanho": "0,2 mm", "danos": "Postura em folhas", "dano": "Postura em folhas, sem danos diretos.", "duracao_dias": "3-5", "duracao": "3-5 dias", "caracteristicas": "Postura isolada, cor esbranquiçada"},
+        {"fase": "Larva", "tamanho_mm": "0.5-1", "tamanho": "0,5-1 mm", "danos": "Pontuações prateadas", "dano": "Pontuações prateadas nas folhas, início dos danos.", "duracao_dias": "5-7", "duracao": "5-7 dias", "caracteristicas": "Larvas pequenas, cor clara"},
+        {"fase": "Pupa", "tamanho_mm": "0.8-1.2", "tamanho": "0,8-1,2 mm", "danos": "Sem danos diretos", "dano": "Sem danos diretos, fase de transformação.", "duracao_dias": "3-5", "duracao": "3-5 dias", "caracteristicas": "Pupas imóveis no solo"},
+        {"fase": "Adulto", "tamanho_mm": "1-1.5", "tamanho": "1-1,5 mm", "danos": "Pontuações prateadas e transmissão de vírus", "dano": "Pontuações prateadas e transmissão de vírus importantes.", "duracao_dias": "15-20", "duracao": "15-20 dias", "caracteristicas": "Adultos pequenos, cor escura"}
+      ],
+      "severidade": {
+        "baixo": {"descricao": "1-2 trips por folha", "perda_produtividade": "0-15%", "cor_alerta": "#4CAF50", "acao": "Monitoramento intensificado"},
+        "medio": {"descricao": "3-5 trips por folha", "perda_produtividade": "16-30%", "cor_alerta": "#FF9800", "acao": "Aplicação de inseticida"},
+        "alto": {"descricao": "6-10 trips por folha", "perda_produtividade": "31-50%", "cor_alerta": "#F44336", "acao": "Aplicação imediata de inseticida"}
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de seca",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5 trips por folha",
+        "floracao": "5 trips por folha",
+        "frutificacao": "5 trips por folha"
+      }
+    },
+    {
+      "id": "tomate_pinta_preta",
+      "nome": "Pinta-preta",
+      "nome_cientifico": "Alternaria solani",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Manchas circulares escuras nas folhas",
+        "Lesões concêntricas",
+        "Necrose das folhas",
+        "Redução da área fotossintética"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Manchas pequenas e circulares nas folhas.",
+        "avancados": "Lesões grandes com anéis concêntricos, necrose das folhas."
+      },
+      "dano_economico": "Pode causar perdas de até 60% da produtividade",
+      "partes_afetadas": ["Folhas", "Frutos", "Caule"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5% das folhas com sintomas",
+      "niveis_severidade": {
+        "baixo": "1-5% das folhas com manchas",
+        "medio": "6-20% das folhas afetadas",
+        "alto": "21-40% das folhas afetadas",
+        "critico": ">40% das folhas afetadas"
+      },
+      "manejo_quimico": [
+        "Triazóis",
+        "Estrobilurinas",
+        "Carboxamidas"
+      ],
+      "manejo_biologico": [
+        "Bacillus subtilis",
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Rotação de culturas",
+        "Destruição de restos culturais"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Rotação de culturas", "Destruição de restos culturais"],
+        "biologico": ["Bacillus subtilis", "Trichoderma spp."],
+        "quimico": ["Triazóis", "Estrobilurinas", "Carboxamidas"]
+      },
+      "observacoes": "Doença importante em regiões tropicais e subtropicais.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {"descricao": "1-5% das folhas com manchas", "perda_produtividade": "0-15%", "cor_alerta": "#4CAF50", "acao": "Monitoramento intensificado"},
+        "medio": {"descricao": "6-20% das folhas afetadas", "perda_produtividade": "16-35%", "cor_alerta": "#FF9800", "acao": "Aplicação de fungicida"},
+        "alto": {"descricao": "21-40% das folhas afetadas", "perda_produtividade": "36-60%", "cor_alerta": "#F44336", "acao": "Aplicação imediata de fungicida"}
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% das folhas com sintomas",
+        "floracao": "5% das folhas com sintomas",
+        "frutificacao": "5% das folhas com sintomas"
+      }
+    },
+    {
+      "id": "tomate_mosaico_comum",
+      "nome": "Mosaico Comum",
+      "nome_cientifico": "Tomato mosaic virus",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Mosaico nas folhas",
+        "Clorose entre as nervuras",
+        "Redução do crescimento",
+        "Deformação dos frutos"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Mosaico leve nas folhas.",
+        "avancados": "Clorose intensa, redução do crescimento, deformação dos frutos."
+      },
+      "dano_economico": "Pode causar perdas de até 50% da produtividade",
+      "partes_afetadas": ["Folhas", "Frutos", "Caule"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "Mosaico leve em poucas folhas",
+        "medio": "Mosaico em 10-20% das folhas",
+        "alto": "Mosaico em 20-40% das folhas",
+        "critico": "Mosaico em >40% das folhas"
+      },
+      "manejo_quimico": [
+        "Controle de vetores",
+        "Eliminação de plantas infectadas"
+      ],
+      "manejo_biologico": [
+        "Uso de plantas resistentes"
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Eliminação de plantas infectadas",
+        "Controle de vetores"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Eliminação de plantas infectadas", "Controle de vetores"],
+        "biologico": ["Uso de plantas resistentes"],
+        "quimico": ["Controle de vetores", "Eliminação de plantas infectadas"]
+      },
+      "observacoes": "Vírus transmitido por contato e vetores. Controle preventivo é fundamental.",
+      "icone": "🦠",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {"descricao": "Mosaico leve em poucas folhas", "perda_produtividade": "0-15%", "cor_alerta": "#4CAF50", "acao": "Monitoramento intensificado"},
+        "medio": {"descricao": "Mosaico em 10-20% das folhas", "perda_produtividade": "16-30%", "cor_alerta": "#FF9800", "acao": "Eliminação de plantas infectadas"},
+        "alto": {"descricao": "Mosaico em 20-40% das folhas", "perda_produtividade": "31-50%", "cor_alerta": "#F44336", "acao": "Eliminação imediata de plantas infectadas"}
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de seca",
+        "vento": "Vento para dispersão de vetores",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "frutificacao": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "tomate_caruru",
+      "nome": "Caruru",
+      "nome_cientifico": "Amaranthus hybridus",
+      "categoria": "Planta Daninha",
+      "tipo": "PLANTA_DANINHA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Competição por nutrientes",
+        "Competição por água",
+        "Competição por luz",
+        "Redução do crescimento do tomateiro"
+      ],
+      "dano_economico": "Pode reduzir a produtividade em até 30% devido à competição intensa",
+      "partes_afetadas": ["Sistema radicular", "Parte aérea"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10"],
+      "ciclo_vida": "Anual",
+      "habito_crescimento": "Ereta",
+      "altura_maxima": "150 cm",
+      "tipo_folha": "Alternas, ovais a lanceoladas",
+      "cor_folha": "Verde",
+      "tipo_raiz": "Pivotante profunda",
+      "reproducao": "Sementes",
+      "dispersao": "Vento, água, animais",
+      "condicoes_favoraveis": {
+        "temperatura": "20-35°C",
+        "umidade": "Solo úmido",
+        "chuva": "Períodos chuvosos",
+        "solo": "Solos férteis e bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "2-3 plantas/m²",
+        "floracao": "1-2 plantas/m²",
+        "frutificacao": "1 planta/m²"
+      }
+    },
+    {
+      "id": "tomate_picao_preto",
+      "nome": "Picão-preto",
+      "nome_cientifico": "Bidens pilosa",
+      "categoria": "Planta Daninha",
+      "tipo": "PLANTA_DANINHA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Competição por recursos",
+        "Interferência na colheita",
+        "Redução da qualidade dos frutos",
+        "Dificuldade na aplicação de defensivos"
+      ],
+      "dano_economico": "Pode causar perdas de até 25% na produtividade",
+      "partes_afetadas": ["Sistema radicular", "Parte aérea"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10"],
+      "ciclo_vida": "Anual",
+      "habito_crescimento": "Ereta",
+      "altura_maxima": "120 cm",
+      "tipo_folha": "Opostas, compostas",
+      "cor_folha": "Verde escuro",
+      "tipo_raiz": "Pivotante",
+      "reproducao": "Sementes",
+      "dispersao": "Vento, animais, água",
+      "condicoes_favoraveis": {
+        "temperatura": "15-30°C",
+        "umidade": "Solo úmido",
+        "chuva": "Períodos chuvosos",
+        "solo": "Solos férteis"
+      },
+      "limiares_especificos": {
+        "vegetativo": "3-4 plantas/m²",
+        "floracao": "2-3 plantas/m²",
+        "frutificacao": "1-2 plantas/m²"
+      }
+    },
+    {
+      "id": "tomate_trapoeraba",
+      "nome": "Trapoeraba",
+      "nome_cientifico": "Commelina benghalensis",
+      "categoria": "Planta Daninha",
+      "tipo": "PLANTA_DANINHA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Competição por água e nutrientes",
+        "Formação de cobertura densa",
+        "Interferência na colheita",
+        "Redução da aeração do solo"
+      ],
+      "dano_economico": "Pode reduzir a produtividade em até 20%",
+      "partes_afetadas": ["Sistema radicular", "Parte aérea"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10"],
+      "ciclo_vida": "Anual",
+      "habito_crescimento": "Rasteira",
+      "altura_maxima": "30 cm",
+      "tipo_folha": "Alternas, ovais",
+      "cor_folha": "Verde",
+      "tipo_raiz": "Adventícias",
+      "reproducao": "Sementes e estolões",
+      "dispersao": "Vento, água, fragmentos",
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Alta umidade",
+        "chuva": "Períodos chuvosos",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5-10 plantas/m²",
+        "floracao": "3-5 plantas/m²",
+        "frutificacao": "2-3 plantas/m²"
+      }
+    },
+    {
+      "id": "tomate_capim_coloniao",
+      "nome": "Capim-colonião",
+      "nome_cientifico": "Panicum maximum",
+      "categoria": "Planta Daninha",
+      "tipo": "PLANTA_DANINHA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Competição intensa por nutrientes",
+        "Competição por água",
+        "Sombreamento do tomateiro",
+        "Interferência na colheita"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% na produtividade",
+      "partes_afetadas": ["Sistema radicular", "Parte aérea"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10"],
+      "ciclo_vida": "Perene",
+      "habito_crescimento": "Touceira",
+      "altura_maxima": "200 cm",
+      "tipo_folha": "Lineares, longas",
+      "cor_folha": "Verde",
+      "tipo_raiz": "Fasciculada",
+      "reproducao": "Sementes e rizomas",
+      "dispersao": "Vento, água, fragmentos",
+      "condicoes_favoraveis": {
+        "temperatura": "20-35°C",
+        "umidade": "Solo úmido",
+        "chuva": "Períodos chuvosos",
+        "solo": "Solos férteis"
+      },
+      "limiares_especificos": {
+        "vegetativo": "1-2 plantas/m²",
+        "floracao": "1 planta/m²",
+        "frutificacao": "1 planta/m²"
+      }
+    },
+    {
+      "id": "tomate_maria_pretinha",
+      "nome": "Maria-pretinha",
+      "nome_cientifico": "Solanum americanum",
+      "categoria": "Planta Daninha",
+      "tipo": "PLANTA_DANINHA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Competição por recursos",
+        "Hospedeiro de pragas e doenças",
+        "Interferência na colheita",
+        "Redução da qualidade dos frutos"
+      ],
+      "dano_economico": "Pode reduzir a produtividade em até 15%",
+      "partes_afetadas": ["Sistema radicular", "Parte aérea"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10"],
+      "ciclo_vida": "Anual",
+      "habito_crescimento": "Ereta",
+      "altura_maxima": "100 cm",
+      "tipo_folha": "Alternas, ovais",
+      "cor_folha": "Verde",
+      "tipo_raiz": "Pivotante",
+      "reproducao": "Sementes",
+      "dispersao": "Vento, animais, água",
+      "condicoes_favoraveis": {
+        "temperatura": "15-30°C",
+        "umidade": "Solo úmido",
+        "chuva": "Períodos chuvosos",
+        "solo": "Solos férteis"
+      },
+      "limiares_especificos": {
+        "vegetativo": "2-3 plantas/m²",
+        "floracao": "1-2 plantas/m²",
+        "frutificacao": "1 planta/m²"
+      }
+    },
+    {
+      "id": "tomate_erva_de_santa_maria",
+      "nome": "Erva-de-santa-maria",
+      "nome_cientifico": "Chenopodium album",
+      "categoria": "Planta Daninha",
+      "tipo": "PLANTA_DANINHA",
+      "cultura_id": "tomate",
+      "sintomas": [
+        "Competição por nutrientes",
+        "Competição por água",
+        "Interferência na colheita",
+        "Redução da qualidade dos frutos"
+      ],
+      "dano_economico": "Pode causar perdas de até 20% na produtividade",
+      "partes_afetadas": ["Sistema radicular", "Parte aérea"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10"],
+      "ciclo_vida": "Anual",
+      "habito_crescimento": "Ereta",
+      "altura_maxima": "150 cm",
+      "tipo_folha": "Alternas, romboidais",
+      "cor_folha": "Verde",
+      "tipo_raiz": "Pivotante",
+      "reproducao": "Sementes",
+      "dispersao": "Vento, água, animais",
+      "condicoes_favoraveis": {
+        "temperatura": "10-30°C",
+        "umidade": "Solo úmido",
+        "chuva": "Períodos chuvosos",
+        "solo": "Solos férteis"
+      },
+      "limiares_especificos": {
+        "vegetativo": "3-4 plantas/m²",
+        "floracao": "2-3 plantas/m²",
+        "frutificacao": "1-2 plantas/m²"
+      }
+    }
+  ]
+}

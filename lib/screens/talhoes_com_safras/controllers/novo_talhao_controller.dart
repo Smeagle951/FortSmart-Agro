@@ -484,10 +484,10 @@ class NovoTalhaoController extends ChangeNotifier {
         if (culturasFazenda.isNotEmpty) {
           // Converter para CulturaModel
           final culturasConvertidas = culturasFazenda.map((crop) => CulturaModel(
-            id: crop.id?.toString() ?? '0',
-            name: crop.name,
-            color: _obterCorPorNome(crop.name),
-            description: crop.description ?? '',
+            id: crop['id']?.toString() ?? '0',
+            name: crop['name'] ?? '',
+            color: _obterCorPorNome(crop['name'] ?? ''),
+            description: crop['description'] ?? '',
           )).toList();
           
           _culturas = culturasConvertidas;

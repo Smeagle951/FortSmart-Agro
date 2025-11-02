@@ -1,0 +1,550 @@
+{
+  "culturas": [
+    {
+      "id": 1,
+      "nome": "Soja"
+    },
+    {
+      "id": 2,
+      "nome": "Milho"
+    },
+    {
+      "id": 3,
+      "nome": "Sorgo"
+    },
+    {
+      "id": 4,
+      "nome": "Algodão"
+    },
+    {
+      "id": 5,
+      "nome": "Feijão"
+    },
+    {
+      "id": 6,
+      "nome": "Girassol"
+    },
+    {
+      "id": 7,
+      "nome": "Aveia"
+    },
+    {
+      "id": 8,
+      "nome": "Trigo"
+    },
+    {
+      "id": 9,
+      "nome": "Gergelim"
+    }
+  ],
+  "organismos": [
+    {
+      "id": 1,
+      "tipo": "PRAGA",
+      "nomeComum": "Percevejo-marrom",
+      "nomeCientifico": "Euschistus heros",
+      "categoria": "Percevejo",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 2,
+      "tipo": "PRAGA",
+      "nomeComum": "Lagarta-da-soja",
+      "nomeCientifico": "Chrysodeixis includens",
+      "categoria": "Lagarta",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 3,
+      "tipo": "PRAGA",
+      "nomeComum": "Helicoverpa",
+      "nomeCientifico": "Helicoverpa armigera",
+      "categoria": "Lagarta",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 4,
+      "tipo": "DOENCA",
+      "nomeComum": "Ferrugem-asiática",
+      "nomeCientifico": "Phakopsora pachyrhizi",
+      "categoria": "Ferrugem",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 5,
+      "tipo": "DOENCA",
+      "nomeComum": "Mancha-alvo",
+      "nomeCientifico": "Corynespora cassiicola",
+      "categoria": "Mancha foliar",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 6,
+      "tipo": "PRAGA",
+      "nomeComum": "Lagarta-do-cartucho",
+      "nomeCientifico": "Spodoptera frugiperda",
+      "categoria": "Lagarta",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 7,
+      "tipo": "PRAGA",
+      "nomeComum": "Cigarrinha-do-milho",
+      "nomeCientifico": "Dalbulus maidis",
+      "categoria": "Cigarrinha",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 8,
+      "tipo": "DOENCA",
+      "nomeComum": "Ferrugem comum",
+      "nomeCientifico": "Puccinia sorghi",
+      "categoria": "Ferrugem",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 9,
+      "tipo": "DOENCA",
+      "nomeComum": "Mancha branca",
+      "nomeCientifico": "Phaeosphaeria maydis",
+      "categoria": "Mancha foliar",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 10,
+      "tipo": "PRAGA",
+      "nomeComum": "Pulgão-do-sorgo",
+      "nomeCientifico": "Melanaphis sacchari",
+      "categoria": "Pulgão",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 11,
+      "tipo": "DOENCA",
+      "nomeComum": "Antracnose",
+      "nomeCientifico": "Colletotrichum graminicola",
+      "categoria": "Antracnose",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 12,
+      "tipo": "PRAGA",
+      "nomeComum": "Bicudo-do-algodoeiro",
+      "nomeCientifico": "Anthonomus grandis",
+      "categoria": "Besouro",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 13,
+      "tipo": "DOENCA",
+      "nomeComum": "Ramulose",
+      "nomeCientifico": "Colletotrichum gossypii var. cephalosporioides",
+      "categoria": "Fungo",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 14,
+      "tipo": "PRAGA",
+      "nomeComum": "Mosca-branca",
+      "nomeCientifico": "Bemisia tabaci",
+      "categoria": "Mosca-branca",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 15,
+      "tipo": "DOENCA",
+      "nomeComum": "Antracnose",
+      "nomeCientifico": "Colletotrichum lindemuthianum",
+      "categoria": "Antracnose",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 16,
+      "tipo": "PRAGA",
+      "nomeComum": "Pulgões",
+      "nomeCientifico": "Aphis gossypii",
+      "categoria": "Pulgão",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 17,
+      "tipo": "DOENCA",
+      "nomeComum": "Míldio",
+      "nomeCientifico": "Plasmopara halstedii",
+      "categoria": "Míldio",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 18,
+      "tipo": "PRAGA",
+      "nomeComum": "Pulgão-do-cereal",
+      "nomeCientifico": "Rhopalosiphum padi",
+      "categoria": "Pulgão",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 19,
+      "tipo": "DOENCA",
+      "nomeComum": "Ferrugem da folha",
+      "nomeCientifico": "Puccinia coronata f. sp. avenae",
+      "categoria": "Ferrugem",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 20,
+      "tipo": "PRAGA",
+      "nomeComum": "Percevejo-barriga-verde",
+      "nomeCientifico": "Dichelops furcatus",
+      "categoria": "Percevejo",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 21,
+      "tipo": "DOENCA",
+      "nomeComum": "Brusone do trigo",
+      "nomeCientifico": "Magnaporthe oryzae path. Triticum",
+      "categoria": "Brusone",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 22,
+      "tipo": "PRAGA",
+      "nomeComum": "Trips",
+      "nomeCientifico": "Thrips tabaci",
+      "categoria": "Trips",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    },
+    {
+      "id": 23,
+      "tipo": "DOENCA",
+      "nomeComum": "Murcha de Fusarium",
+      "nomeCientifico": "Fusarium oxysporum f. sp. sesami",
+      "categoria": "Fusariose",
+      "iconePath": null,
+      "sintomaDescricao": "",
+      "danoEconomico": "",
+      "partesAfetadas": "[]",
+      "fenologia": "[]",
+      "niveisAcao": "[]",
+      "manejoQuimico": "[]",
+      "manejoBiologico": "[]",
+      "manejoCultural": "[]",
+      "observacoes": ""
+    }
+  ],
+  "cultura_organismo": [
+    {
+      "id": 1,
+      "culturaId": 1,
+      "organismoId": 1
+    },
+    {
+      "id": 2,
+      "culturaId": 1,
+      "organismoId": 2
+    },
+    {
+      "id": 3,
+      "culturaId": 1,
+      "organismoId": 3
+    },
+    {
+      "id": 4,
+      "culturaId": 1,
+      "organismoId": 4
+    },
+    {
+      "id": 5,
+      "culturaId": 1,
+      "organismoId": 5
+    },
+    {
+      "id": 6,
+      "culturaId": 2,
+      "organismoId": 6
+    },
+    {
+      "id": 7,
+      "culturaId": 2,
+      "organismoId": 7
+    },
+    {
+      "id": 8,
+      "culturaId": 2,
+      "organismoId": 8
+    },
+    {
+      "id": 9,
+      "culturaId": 2,
+      "organismoId": 9
+    },
+    {
+      "id": 10,
+      "culturaId": 3,
+      "organismoId": 10
+    },
+    {
+      "id": 11,
+      "culturaId": 3,
+      "organismoId": 11
+    },
+    {
+      "id": 12,
+      "culturaId": 4,
+      "organismoId": 12
+    },
+    {
+      "id": 13,
+      "culturaId": 4,
+      "organismoId": 13
+    },
+    {
+      "id": 14,
+      "culturaId": 5,
+      "organismoId": 14
+    },
+    {
+      "id": 15,
+      "culturaId": 5,
+      "organismoId": 15
+    },
+    {
+      "id": 16,
+      "culturaId": 6,
+      "organismoId": 16
+    },
+    {
+      "id": 17,
+      "culturaId": 6,
+      "organismoId": 17
+    },
+    {
+      "id": 18,
+      "culturaId": 7,
+      "organismoId": 18
+    },
+    {
+      "id": 19,
+      "culturaId": 7,
+      "organismoId": 19
+    },
+    {
+      "id": 20,
+      "culturaId": 8,
+      "organismoId": 20
+    },
+    {
+      "id": 21,
+      "culturaId": 8,
+      "organismoId": 21
+    },
+    {
+      "id": 22,
+      "culturaId": 9,
+      "organismoId": 22
+    },
+    {
+      "id": 23,
+      "culturaId": 9,
+      "organismoId": 23
+    }
+  ]
+}

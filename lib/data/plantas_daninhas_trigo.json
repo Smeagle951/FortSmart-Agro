@@ -1,0 +1,51 @@
+{
+  "cultura": "Trigo",
+  "plantas_daninhas": [
+    {
+      "id": "trigo_nabo",
+      "nome": "Nabo",
+      "nome_cientifico": "Raphanus raphanistrum",
+      "categoria": "Planta Daninha",
+      "familia": "Brassicaceae",
+      "ciclo": "Anual",
+      "tipo_germinacao": "Outono-Inverno",
+      "sintomas": [
+        "Competição severa por recursos",
+        "Redução da produtividade",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a V6",
+      "densidade_critica": "4-6 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Trifluralina", "Pendimetalina"],
+        "pos_emergencia": ["2,4-D", "MCPA", "Dicamba"],
+        "cultural": ["Rotação de culturas", "Plantio direto", "Cobertura do solo"]
+      },
+      "observacoes": "Principal problema no trigo",
+      "icone": "🌿"
+    },
+    {
+      "id": "trigo_aveia_selvagem",
+      "nome": "Aveia selvagem",
+      "nome_cientifico": "Avena fatua",
+      "categoria": "Planta Daninha",
+      "familia": "Poaceae",
+      "ciclo": "Anual",
+      "tipo_germinacao": "Outono-Inverno",
+      "sintomas": [
+        "Competição severa por recursos",
+        "Redução significativa na produtividade",
+        "Dificuldade na colheita"
+      ],
+      "periodo_critico": "V1 a V8",
+      "densidade_critica": "2-4 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Trifluralina", "Pendimetalina"],
+        "pos_emergencia": ["Fenoxaprop", "Quizalofop", "Diclofop"],
+        "cultural": ["Rotação", "Plantio direto", "Cobertura do solo"]
+      },
+      "observacoes": "Resistente em várias regiões",
+      "icone": "🌾"
+    }
+  ]
+}

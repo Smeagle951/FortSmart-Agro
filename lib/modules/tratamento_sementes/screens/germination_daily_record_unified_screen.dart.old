@@ -1,0 +1,1723 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/germination_ai_integration_service.dart';
+import '../repositories/germination_test_repository.dart';
+import '../models/germination_test_model.dart';
+import '../widgets/daily_records_table_widget.dart';
+import '../../../../providers/germination_test_provider.dart';
+import '../../../../models/germination_test_model.dart';
+
+/// Tela unificada para registro diário de testes de germinação
+/// Detecta automaticamente se é teste individual ou com subtestes
+/// Segue rigorosamente as normas agronômicas para cálculo de germinação
+class GerminationDailyRecordUnifiedScreen extends StatefulWidget {
+  final int testId;
+  final int? day;
+  final GerminationDailyRecord? existingRecord;
+
+  const GerminationDailyRecordUnifiedScreen({
+    Key? key,
+    required this.testId,
+    this.day,
+    this.existingRecord,
+  }) : super(key: key);
+
+  @override
+  State<GerminationDailyRecordUnifiedScreen> createState() => 
+      _GerminationDailyRecordUnifiedScreenState();
+}
+
+class _GerminationDailyRecordUnifiedScreenState 
+    extends State<GerminationDailyRecordUnifiedScreen> {
+  
+  // ===== CONTROLLERS =====
+  final _formKey = GlobalKey<FormState>();
+  
+  // Controllers para contagem básica
+  final _normalGerminatedController = TextEditingController();
+  final _abnormalGerminatedController = TextEditingController();
+  final _diseasedFungiController = TextEditingController();
+  final _notGerminatedController = TextEditingController();
+  
+  // Controllers para IA FortSmart
+  final _manchasController = TextEditingController();
+  final _podridaoController = TextEditingController();
+  final _cotiledonesAmareladosController = TextEditingController();
+  final _purezaController = TextEditingController();
+  final _temperaturaController = TextEditingController();
+  final _umidadeController = TextEditingController();
+  final _observationsController = TextEditingController();
+  
+  // ===== VARIÁVEIS DE CONTROLE =====
+  bool _isLoading = false;
+  bool _isSaving = false;
+  bool _isAnalyzing = false;
+  
+  // Dados do teste
+  String _testName = '';
+  String _variety = '';
+  String _lot = '';
+  int _totalSeeds = 0;
+  String _testType = 'individual'; // 'individual' ou 'subtests'
+  
+  // Registros diários existentes
+  List<GerminationDailyRecordModel> _existingRecords = [];
+  
+  // Data e dia
+  DateTime _recordDate = DateTime.now();
+  int _day = 1;
+  
+  // Subtestes (se aplicável)
+  final List<SubtestRecord> _subtestRecords = [];
+  String? _selectedSubtestCode;
+  
+  // IA FortSmart
+  String? _vigorSelecionado = 'Médio';
+  double _temperatura = 25.0;
+  double _umidade = 60.0;
+  bool _sementeTratada = false;
+  
+  // Serviços
+  final _aiService = GerminationAIIntegrationService();
+  final _repository = GerminationTestRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Configurar dia se fornecido
+    if (widget.day != null) {
+      _day = widget.day!;
+    }
+    
+    // Carregar dados existentes se for edição
+    if (widget.existingRecord != null) {
+      _loadExistingRecord();
+    }
+    
+    // Carregar dados do teste
+    _loadTestData();
+    
+    // Adicionar listeners para auto-cálculo
+    _normalGerminatedController.addListener(_calculateNotGerminated);
+    _abnormalGerminatedController.addListener(_calculateNotGerminated);
+    _diseasedFungiController.addListener(_calculateNotGerminated);
+  }
+
+  @override
+  void dispose() {
+    // Remover listeners
+    _normalGerminatedController.removeListener(_calculateNotGerminated);
+    _abnormalGerminatedController.removeListener(_calculateNotGerminated);
+    _diseasedFungiController.removeListener(_calculateNotGerminated);
+    
+    // Dispose controllers
+    _normalGerminatedController.dispose();
+    _abnormalGerminatedController.dispose();
+    _diseasedFungiController.dispose();
+    _notGerminatedController.dispose();
+    _manchasController.dispose();
+    _podridaoController.dispose();
+    _cotiledonesAmareladosController.dispose();
+    _purezaController.dispose();
+    _temperaturaController.dispose();
+    _umidadeController.dispose();
+    _observationsController.dispose();
+    
+    // Dispose subtestes
+    for (final record in _subtestRecords) {
+      record.dispose();
+    }
+    
+    super.dispose();
+  }
+
+  /// Carrega dados do registro existente para edição
+  void _loadExistingRecord() {
+    final record = widget.existingRecord!;
+    _day = record.day;
+    _recordDate = record.recordDate;
+    _normalGerminatedController.text = record.normalGerminated.toString();
+    _abnormalGerminatedController.text = record.abnormalGerminated.toString();
+    _diseasedFungiController.text = record.diseasedFungi.toString();
+    _notGerminatedController.text = record.notGerminated.toString();
+    _observationsController.text = record.observations ?? '';
+  }
+
+  /// Carrega dados do teste e detecta o tipo automaticamente
+  Future<void> _loadTestData() async {
+    setState(() => _isLoading = true);
+    
+    try {
+      print('🔄 Carregando dados do teste ID: ${widget.testId}');
+      
+      // Buscar dados do teste
+      final test = await _repository.buscarTestePorId(widget.testId.toString());
+      
+      if (test != null) {
+        setState(() {
+          _testName = test.cultura.isNotEmpty ? test.cultura : 'Teste de Germinação';
+          _variety = test.variedade.isNotEmpty ? test.variedade : 'Variedade';
+          _lot = test.loteId.isNotEmpty ? test.loteId : 'Lote';
+          _totalSeeds = test.totalSeeds > 0 ? test.totalSeeds : 100;
+          _testType = test.tipo == 'com_subtestes' ? 'subtests' : 'individual';
+        });
+        
+        print('✅ Teste carregado: $_testName - Tipo: $_testType - Total: $_totalSeeds sementes');
+        
+        // Se for teste com subtestes, carregar subtestes
+        if (_testType == 'subtests') {
+          _loadSubtests();
+        }
+        
+        // Carregar registros diários existentes
+        await _loadExistingRecords();
+        
+      } else {
+        // Usar dados padrão
+        setState(() {
+          _testName = 'Teste de Germinação';
+          _variety = 'Variedade';
+          _lot = 'Lote';
+          _totalSeeds = 100;
+          _testType = 'individual';
+        });
+        print('⚠️ Teste não encontrado, usando dados padrão');
+      }
+      
+    } catch (e) {
+      print('❌ Erro ao carregar dados: $e');
+      // Usar dados padrão em caso de erro
+      setState(() {
+        _testName = 'Teste de Germinação';
+        _variety = 'Variedade';
+        _lot = 'Lote';
+        _totalSeeds = 100;
+        _testType = 'individual';
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  /// Carrega subtestes para testes com subtestes
+  void _loadSubtests() {
+    _subtestRecords.clear();
+    final subtestNames = ['A', 'B', 'C'];
+    
+    for (final name in subtestNames) {
+      _subtestRecords.add(SubtestRecord(
+        name: name,
+        totalSeeds: 100, // Padrão agronômico
+      ));
+    }
+    
+    if (_subtestRecords.isNotEmpty) {
+      _selectedSubtestCode = _subtestRecords.first.name;
+    }
+    
+    print('✅ Subtestes carregados: ${_subtestRecords.length}');
+  }
+
+  /// Carrega registros diários existentes
+  Future<void> _loadExistingRecords() async {
+    try {
+      final records = await _repository.buscarRegistrosPorTeste(widget.testId.toString());
+      setState(() {
+        _existingRecords = records;
+      });
+      print('✅ Registros diários carregados: ${_existingRecords.length}');
+    } catch (e) {
+      print('❌ Erro ao carregar registros diários: $e');
+      setState(() {
+        _existingRecords = [];
+      });
+    }
+  }
+
+  /// Calcula automaticamente as sementes não germinadas
+  /// Segue as normas agronômicas: Não Germinadas = Total - (Normais + Anormais + Doentes)
+  void _calculateNotGerminated() {
+    if (_totalSeeds > 0) {
+      final normal = int.tryParse(_normalGerminatedController.text) ?? 0;
+      final abnormal = int.tryParse(_abnormalGerminatedController.text) ?? 0;
+      final diseased = int.tryParse(_diseasedFungiController.text) ?? 0;
+      
+      final notGerminated = _totalSeeds - (normal + abnormal + diseased);
+      
+      if (_notGerminatedController.text != notGerminated.toString()) {
+        _notGerminatedController.text = notGerminated.toString();
+        print('🧮 Auto-cálculo: $_totalSeeds - ($normal + $abnormal + $diseased) = $notGerminated');
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade50,
+      appBar: _buildAppBar(),
+      body: _isLoading
+          ? _buildLoadingState()
+          : _buildMainContent(),
+    );
+  }
+
+  /// Estado de carregamento
+  Widget _buildLoadingState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text('Carregando dados do teste...'),
+        ],
+      ),
+    );
+  }
+
+  /// Conteúdo principal da tela
+  Widget _buildMainContent() {
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTestInfoCard(),
+            const SizedBox(height: 16),
+            _buildDayInfoCard(),
+            const SizedBox(height: 16),
+            _buildCountsCard(),
+            const SizedBox(height: 16),
+            _buildAICalculationInfoCard(),
+            const SizedBox(height: 16),
+            _buildAIFortSmartCard(),
+            const SizedBox(height: 16),
+            _buildDateAndObservationsCard(),
+            const SizedBox(height: 16),
+            if (_existingRecords.isNotEmpty) ...[
+              _buildExistingRecordsCard(),
+              const SizedBox(height: 16),
+            ],
+            const SizedBox(height: 16),
+            _buildSaveButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// AppBar da tela
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.green.shade600,
+      foregroundColor: Colors.white,
+      title: Text(
+        widget.existingRecord != null 
+            ? 'Editar Registro - Dia $_day'
+            : 'Registro Diário - Dia $_day',
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      actions: [
+        if (_testType == 'subtests')
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade100,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.science, size: 16, color: Colors.blue.shade700),
+                const SizedBox(width: 4),
+                Text(
+                  'Subtestes A, B, C',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.blue.shade700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// Card com informações do teste
+  Widget _buildTestInfoCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.science, color: Colors.green.shade600),
+                const SizedBox(width: 8),
+                Text(
+                  'Informações do Teste',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade600,
+                      ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _testType == 'subtests' ? Colors.blue.shade100 : Colors.green.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _testType == 'subtests' ? 'Com Subtestes' : 'Individual',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: _testType == 'subtests' ? Colors.blue.shade700 : Colors.green.shade700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildInfoRow('Nome:', _testName),
+            _buildInfoRow('Variedade:', _variety),
+            _buildInfoRow('Lote:', _lot),
+            _buildInfoRow('Total de Sementes:', '$_totalSeeds'),
+            if (_testType == 'subtests')
+              _buildInfoRow('Subtestes:', 'A, B, C (100 sementes cada)'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Linha de informação
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Card com informações do dia
+  Widget _buildDayInfoCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.calendar_today, color: Colors.blue.shade600),
+                const SizedBox(width: 8),
+                Text(
+                  'Informações do Dia',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade600,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: _day.toString(),
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Dia do Teste *',
+                      hintText: 'Ex: 1, 2, 3...',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      final day = int.tryParse(value);
+                      if (day != null && day > 0) {
+                        setState(() {
+                          _day = day;
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Dia é obrigatório';
+                      }
+                      final day = int.tryParse(value);
+                      if (day == null || day <= 0) {
+                        return 'Digite um dia válido';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: TextFormField(
+                    initialValue: _formatDate(_recordDate),
+                    readOnly: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Data do Registro',
+                      border: OutlineInputBorder(),
+                      suffixIcon: Icon(Icons.calendar_today),
+                    ),
+                    onTap: _selectRecordDate,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Card com campos de contagem
+  Widget _buildCountsCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.eco, color: Colors.green.shade600),
+                const SizedBox(width: 8),
+                Text(
+                  'Contagem de Sementes',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade600,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            if (_testType == 'individual') ...[
+              _buildIndividualCounts(),
+            ] else ...[
+              _buildSubtestsCounts(),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Contagens para teste individual
+  Widget _buildIndividualCounts() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildCountField(
+                controller: _normalGerminatedController,
+                label: 'Germinação Normal *',
+                icon: Icons.check_circle,
+                color: Colors.green,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildCountField(
+                controller: _abnormalGerminatedController,
+                label: 'Germinação Anormal *',
+                icon: Icons.warning,
+                color: Colors.orange,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildCountField(
+                controller: _diseasedFungiController,
+                label: 'Doentes/Fungos *',
+                icon: Icons.sick,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildCountField(
+                controller: _notGerminatedController,
+                label: 'Não Germinadas *',
+                icon: Icons.cancel,
+                color: Colors.grey,
+                readOnly: true,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Contagens para teste com subtestes
+  Widget _buildSubtestsCounts() {
+    return Column(
+      children: [
+        // Seletor de subteste
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.blue.shade200),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.science, color: Colors.blue.shade600, size: 20),
+              const SizedBox(width: 8),
+              const Text('Subteste Ativo:'),
+              const SizedBox(width: 8),
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: _selectedSubtestCode,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  items: _subtestRecords.map((record) {
+                    return DropdownMenuItem(
+                      value: record.name,
+                      child: Text('Subteste ${record.name}'),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedSubtestCode = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        
+        // Campos de contagem para o subteste selecionado
+        if (_selectedSubtestCode != null) ...[
+          _buildSubtestCounts(_selectedSubtestCode!),
+        ],
+        
+        const SizedBox(height: 16),
+        
+        // Resumo consolidado
+        _buildConsolidatedSummary(),
+      ],
+    );
+  }
+
+  /// Contagens para um subteste específico
+  Widget _buildSubtestCounts(String subtestCode) {
+    final record = _subtestRecords.firstWhere((r) => r.name == subtestCode);
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Subteste $subtestCode',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade700,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildCountField(
+                  controller: record.normalController,
+                  label: 'Normal',
+                  icon: Icons.check_circle,
+                  color: Colors.green,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildCountField(
+                  controller: record.abnormalController,
+                  label: 'Anormal',
+                  icon: Icons.warning,
+                  color: Colors.orange,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: _buildCountField(
+                  controller: record.diseasedController,
+                  label: 'Doentes',
+                  icon: Icons.sick,
+                  color: Colors.red,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildCountField(
+                  controller: record.notGerminatedController,
+                  label: 'Não Germ.',
+                  icon: Icons.cancel,
+                  color: Colors.grey,
+                  readOnly: true,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Resumo consolidado dos subtestes
+  Widget _buildConsolidatedSummary() {
+    final consolidated = _calculateConsolidatedData();
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.purple.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.purple.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.analytics, color: Colors.purple.shade600, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Resumo Consolidado',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple.shade700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildSummaryItem(
+                  'Total Sementes',
+                  '${consolidated['totalSeeds']}',
+                  Icons.all_inclusive,
+                  Colors.blue,
+                ),
+              ),
+              Expanded(
+                child: _buildSummaryItem(
+                  'Germinação Normal',
+                  '${consolidated['normalGerminated']}',
+                  Icons.check_circle,
+                  Colors.green,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: _buildSummaryItem(
+                  'Germinação Anormal',
+                  '${consolidated['abnormalGerminated']}',
+                  Icons.warning,
+                  Colors.orange,
+                ),
+              ),
+              Expanded(
+                child: _buildSummaryItem(
+                  'Germinação Total',
+                  '${consolidated['germinationPercentage'].toStringAsFixed(1)}%',
+                  Icons.analytics,
+                  Colors.purple,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Item de resumo
+  Widget _buildSummaryItem(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 16),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Campo de contagem
+  Widget _buildCountField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    required Color color,
+    bool readOnly = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      readOnly: readOnly,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: color, size: 20),
+        border: const OutlineInputBorder(),
+        filled: true,
+        fillColor: readOnly ? Colors.grey.shade100 : null,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      validator: (value) {
+        if (!readOnly && (value == null || value.isEmpty)) {
+          return 'Campo obrigatório';
+        }
+        final number = int.tryParse(value ?? '0');
+        if (number != null && number < 0) {
+          return 'Valor inválido';
+        }
+        return null;
+      },
+    );
+  }
+
+  /// Card informativo sobre cálculos automáticos da IA
+  Widget _buildAICalculationInfoCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.auto_awesome, color: Colors.purple.shade600),
+                const SizedBox(width: 8),
+                Text(
+                  'Cálculos Automáticos da IA FortSmart',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.purple.shade600,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // O que você informa
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.blue.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.input, color: Colors.blue.shade600, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'O QUE VOCÊ INFORMA:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _buildInfoItem('✅ Germinação Normal', 'Quantas germinaram normalmente'),
+                  _buildInfoItem('✅ Germinação Anormal', 'Quantas germinaram com problemas'),
+                  _buildInfoItem('✅ Doentes/Fungos', 'Quantas estão doentes'),
+                  _buildInfoItem('✅ Dia do Teste', 'Dia 1, 2, 3, etc.'),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // O que a IA calcula
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.psychology, color: Colors.green.shade600, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'O QUE A IA CALCULA AUTOMATICAMENTE:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _buildInfoItem('🤖 Vigor', 'Alto/Médio/Baixo (baseado na velocidade)'),
+                  _buildInfoItem('🤖 Classificação', 'Excelente/Boa/Regular/Ruim'),
+                  _buildInfoItem('🤖 Percentual Previsto', 'Percentual final de germinação'),
+                  _buildInfoItem('🤖 Recomendações', 'Ações agronômicas específicas'),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Explicação adicional
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.orange.shade200),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.orange.shade600, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'A IA usa algoritmos científicos agronômicos para calcular vigor, classificação e gerar recomendações baseadas nos dados que você informa.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.orange.shade700,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Item de informação
+  Widget _buildInfoItem(String title, String description) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              description,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Card com análise IA FortSmart
+  Widget _buildAIFortSmartCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.psychology, color: Colors.purple.shade600),
+                const SizedBox(width: 8),
+                Text(
+                  'Análise FortSmart AI',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.purple.shade600,
+                      ),
+                ),
+                const Spacer(),
+                if (_isAnalyzing)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // Problemas Visuais
+            _buildSectionTitle('Problemas Visuais'),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildAIField(
+                    controller: _manchasController,
+                    label: 'Plântulas com Manchas',
+                    icon: Icons.warning,
+                    color: Colors.orange,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildAIField(
+                    controller: _podridaoController,
+                    label: 'Plântulas Podres',
+                    icon: Icons.sick,
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            _buildAIField(
+              controller: _cotiledonesAmareladosController,
+              label: 'Cotilédones Amarelados',
+              icon: Icons.warning_amber,
+              color: Colors.yellow.shade700,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Qualidade das Sementes
+            _buildSectionTitle('Qualidade das Sementes'),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildAIField(
+                    controller: _purezaController,
+                    label: 'Pureza (%)',
+                    icon: Icons.verified,
+                    color: Colors.green,
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Vigor das Plântulas',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      DropdownButtonFormField<String>(
+                        value: _vigorSelecionado,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
+                        items: ['Alto', 'Médio', 'Baixo'].map((vigor) {
+                          return DropdownMenuItem(
+                            value: vigor,
+                            child: Text(vigor),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _vigorSelecionado = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Condições Ambientais
+            _buildSectionTitle('Condições Ambientais'),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildAIField(
+                    controller: _temperaturaController,
+                    label: 'Temperatura (°C)',
+                    icon: Icons.thermostat,
+                    color: Colors.blue,
+                    keyboardType: TextInputType.number,
+                    initialValue: _temperatura.toString(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildAIField(
+                    controller: _umidadeController,
+                    label: 'Umidade (%)',
+                    icon: Icons.water_drop,
+                    color: Colors.cyan,
+                    keyboardType: TextInputType.number,
+                    initialValue: _umidade.toString(),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Checkbox(
+                  value: _sementeTratada,
+                  onChanged: (value) {
+                    setState(() {
+                      _sementeTratada = value ?? false;
+                    });
+                  },
+                ),
+                const Text('Sementes foram tratadas'),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Botão de análise
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _isAnalyzing ? null : _analyzeWithAI,
+                icon: _isAnalyzing 
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.psychology),
+                label: Text(_isAnalyzing ? 'Analisando...' : 'Analisar com IA FortSmart'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple.shade600,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Card com registros diários existentes
+  Widget _buildExistingRecordsCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.history, color: Colors.blue.shade600),
+                const SizedBox(width: 8),
+                Text(
+                  'Registros Diários Existentes',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade600,
+                      ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${_existingRecords.length} registros',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.blue.shade700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            DailyRecordsTableWidget(
+              records: _existingRecords,
+              totalSeeds: _totalSeeds,
+              onEditRecord: (record) => _editExistingRecord(record),
+              onDeleteRecord: (record) => _deleteExistingRecord(record),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Editar registro existente
+  void _editExistingRecord(GerminationDailyRecordModel record) {
+    // Navegar para edição do registro
+    Navigator.pushNamed(
+      context,
+      '/germination-daily-record',
+      arguments: {
+        'testId': widget.testId,
+        'day': record.dia,
+        'existingRecord': record,
+      },
+    );
+  }
+
+  /// Deletar registro existente
+  void _deleteExistingRecord(GerminationDailyRecordModel record) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Excluir Registro'),
+        content: Text(
+          'Tem certeza que deseja excluir o registro do Dia ${record.dia}?\n\n'
+          'Esta ação não pode ser desfeita.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deleteRecord(record);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Deletar registro do banco
+  Future<void> _deleteRecord(GerminationDailyRecordModel record) async {
+    try {
+      await _repository.excluirRegistro(int.parse(record.id));
+      await _loadExistingRecords(); // Recarregar lista
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registro excluído com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao excluir registro: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Card com data e observações
+  Widget _buildDateAndObservationsCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.note_alt, color: Colors.orange.shade600),
+                const SizedBox(width: 8),
+                Text(
+                  'Data e Observações',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange.shade600,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _observationsController,
+              maxLines: 4,
+              decoration: const InputDecoration(
+                labelText: 'Observações',
+                hintText: 'Digite observações sobre o teste...',
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Botão de salvar
+  Widget _buildSaveButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: _isSaving ? null : _saveRecord,
+        icon: _isSaving 
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.save),
+        label: Text(_isSaving ? 'Salvando...' : 'Salvar Registro'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green.shade600,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Título de seção
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey.shade700,
+      ),
+    );
+  }
+
+  /// Campo da IA
+  Widget _buildAIField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    required Color color,
+    TextInputType keyboardType = TextInputType.text,
+    String? initialValue,
+  }) {
+    if (initialValue != null && controller.text.isEmpty) {
+      controller.text = initialValue;
+    }
+    
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: color, size: 20),
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+    );
+  }
+
+  /// Formata data para exibição
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/'
+           '${date.month.toString().padLeft(2, '0')}/'
+           '${date.year}';
+  }
+
+  /// Seleciona data do registro
+  Future<void> _selectRecordDate() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _recordDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    
+    if (date != null) {
+      setState(() {
+        _recordDate = date;
+      });
+    }
+  }
+
+  /// Calcula dados consolidados dos subtestes
+  Map<String, dynamic> _calculateConsolidatedData() {
+    int totalSeeds = 0;
+    int normalGerminated = 0;
+    int abnormalGerminated = 0;
+    int diseasedFungi = 0;
+    
+    for (final record in _subtestRecords) {
+      totalSeeds += record.totalSeeds;
+      normalGerminated += int.tryParse(record.normalController.text) ?? 0;
+      abnormalGerminated += int.tryParse(record.abnormalController.text) ?? 0;
+      diseasedFungi += int.tryParse(record.diseasedController.text) ?? 0;
+    }
+    
+    final totalGerminated = normalGerminated + abnormalGerminated;
+    final germinationPercentage = totalSeeds > 0 ? (totalGerminated / totalSeeds) * 100 : 0.0;
+    
+    return {
+      'totalSeeds': totalSeeds,
+      'normalGerminated': normalGerminated,
+      'abnormalGerminated': abnormalGerminated,
+      'diseasedFungi': diseasedFungi,
+      'germinationPercentage': germinationPercentage,
+    };
+  }
+
+  /// Analisa com IA FortSmart
+  Future<void> _analyzeWithAI() async {
+    setState(() => _isAnalyzing = true);
+    
+    try {
+      // Coletar dados para análise
+      final normal = int.tryParse(_normalGerminatedController.text) ?? 0;
+      final abnormal = int.tryParse(_abnormalGerminatedController.text) ?? 0;
+      final diseased = int.tryParse(_diseasedFungiController.text) ?? 0;
+      final notGerminated = int.tryParse(_notGerminatedController.text) ?? 0;
+      
+      // Criar dados de análise
+      final analysisData = GerminationAIPrediction(
+        day: _day,
+        normalGerminated: normal,
+        abnormalGerminated: abnormal,
+        diseasedFungi: diseased,
+        notGerminated: notGerminated,
+        manchas: int.tryParse(_manchasController.text) ?? 0,
+        podridao: int.tryParse(_podridaoController.text) ?? 0,
+        cotiledonesAmarelados: int.tryParse(_cotiledonesAmareladosController.text) ?? 0,
+        pureza: double.tryParse(_purezaController.text) ?? 0.0,
+        vigor: _vigorSelecionado ?? 'Médio',
+        temperatura: double.tryParse(_temperaturaController.text) ?? _temperatura,
+        umidade: double.tryParse(_umidadeController.text) ?? _umidade,
+        sementeTratada: _sementeTratada,
+        cultura: _testName,
+        variedade: _variety,
+        lote: _lot,
+      );
+      
+      // Executar análise
+      final result = await _aiService.enviarDadosParaIA({
+        'test_id': widget.testId,
+        'subtestes': [{
+          'registros': [{
+            'dia': _day,
+            'germinadas': normal + abnormal,
+            'nao_germinadas': notGerminated,
+            'manchas': int.tryParse(_manchasController.text) ?? 0,
+            'podridao': int.tryParse(_podridaoController.text) ?? 0,
+            'cotiledones_amarelados': int.tryParse(_cotiledonesAmareladosController.text) ?? 0,
+            'vigor': _vigorSelecionado ?? 'Médio',
+            'pureza': double.tryParse(_purezaController.text) ?? 0.0,
+            'temperatura': double.tryParse(_temperaturaController.text) ?? _temperatura,
+            'umidade': double.tryParse(_umidadeController.text) ?? _umidade,
+            'sementes_totais': normal + abnormal + diseased + notGerminated,
+          }]
+        }]
+      });
+      
+      // Mostrar resultado
+      if (mounted && result != null) {
+        _showAIAnalysisResult(result);
+      }
+      
+    } catch (e) {
+      print('❌ Erro na análise IA: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro na análise: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isAnalyzing = false);
+      }
+    }
+  }
+
+  /// Mostra resultado da análise IA
+  void _showAIAnalysisResult(GerminationAIPrediction result) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.psychology, color: Colors.purple.shade600),
+            const SizedBox(width: 8),
+            const Text('Análise FortSmart AI'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildAnalysisItem('Classificação:', result.classificationPrediction ?? 'N/A'),
+            _buildAnalysisItem('Percentual Previsto:', '${result.regressionPrediction?.toStringAsFixed(1) ?? 'N/A'}%'),
+            _buildAnalysisItem('Recomendações:', result.recommendations?.join(', ') ?? 'N/A'),
+            if (result.confidence?.isNotEmpty == true)
+              _buildAnalysisItem('Confiança:', result.confidence!),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Item de análise
+  Widget _buildAnalysisItem(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(value),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  /// Salva o registro
+  Future<void> _saveRecord() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    
+    setState(() => _isSaving = true);
+    
+    try {
+      // Criar registro
+      final record = GerminationDailyRecord(
+        id: widget.existingRecord?.id,
+        germinationTestId: widget.testId,
+        day: _day,
+        recordDate: _recordDate,
+        normalGerminated: int.parse(_normalGerminatedController.text),
+        abnormalGerminated: int.parse(_abnormalGerminatedController.text),
+        diseasedFungi: int.parse(_diseasedFungiController.text),
+        diseasedBacteria: 0, // Valor padrão
+        notGerminated: int.parse(_notGerminatedController.text),
+        otherSeeds: 0, // Valor padrão
+        observations: _observationsController.text,
+      );
+      
+      // Salvar no banco
+      if (widget.existingRecord != null) {
+        await _repository.atualizarRegistro(record);
+      } else {
+        await _repository.salvarRegistro(record);
+      }
+      
+      // Atualizar provider e recarregar registros
+      if (mounted) {
+        final provider = Provider.of<GerminationTestProvider>(context, listen: false);
+        await provider.carregarRegistros(widget.testId);
+        await _loadExistingRecords(); // Recarregar registros na tela
+      }
+      
+      // Mostrar sucesso
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registro salvo com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        
+        // Voltar
+        Navigator.of(context).pop();
+      }
+      
+    } catch (e) {
+      print('❌ Erro ao salvar: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao salvar: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
+}
+
+/// Classe para gerenciar registros de subtestes
+class SubtestRecord {
+  final String name;
+  final int totalSeeds;
+  
+  final TextEditingController normalController = TextEditingController();
+  final TextEditingController abnormalController = TextEditingController();
+  final TextEditingController diseasedController = TextEditingController();
+  final TextEditingController notGerminatedController = TextEditingController();
+  
+  SubtestRecord({
+    required this.name,
+    required this.totalSeeds,
+  }) {
+    // Adicionar listeners para auto-cálculo
+    normalController.addListener(_calculateNotGerminated);
+    abnormalController.addListener(_calculateNotGerminated);
+    diseasedController.addListener(_calculateNotGerminated);
+  }
+  
+  void _calculateNotGerminated() {
+    final normal = int.tryParse(normalController.text) ?? 0;
+    final abnormal = int.tryParse(abnormalController.text) ?? 0;
+    final diseased = int.tryParse(diseasedController.text) ?? 0;
+    
+    final notGerminated = totalSeeds - (normal + abnormal + diseased);
+    
+    if (notGerminatedController.text != notGerminated.toString()) {
+      notGerminatedController.text = notGerminated.toString();
+    }
+  }
+  
+  void dispose() {
+    normalController.dispose();
+    abnormalController.dispose();
+    diseasedController.dispose();
+    notGerminatedController.dispose();
+  }
+}

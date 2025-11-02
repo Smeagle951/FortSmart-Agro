@@ -1,0 +1,51 @@
+{
+  "cultura": "Sorgo",
+  "plantas_daninhas": [
+    {
+      "id": "sorgo_caruru",
+      "nome": "Caruru",
+      "nome_cientifico": "Amaranthus spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Amaranthaceae",
+      "ciclo": "Anual",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por recursos",
+        "Redução da produtividade",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a V6",
+      "densidade_critica": "2-4 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Atrazina", "S-metolacloro", "Dimetenamida"],
+        "pos_emergencia": ["Atrazina + Tembotriona", "Mesotriona", "Nicosulfuron"],
+        "cultural": ["Rotação de culturas", "Plantio direto", "Cobertura do solo"]
+      },
+      "observacoes": "Principal problema no sorgo",
+      "icone": "🌿"
+    },
+    {
+      "id": "sorgo_buva",
+      "nome": "Buva",
+      "nome_cientifico": "Conyza spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Asteraceae",
+      "ciclo": "Bienal",
+      "tipo_germinacao": "Outono-Inverno",
+      "sintomas": [
+        "Competição severa por recursos",
+        "Redução significativa na produtividade",
+        "Dificuldade na colheita"
+      ],
+      "periodo_critico": "V2 a V8",
+      "densidade_critica": "1-2 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Atrazina", "S-metolacloro"],
+        "pos_emergencia": ["Atrazina + Glyphosate", "Paraquat"],
+        "cultural": ["Plantio direto", "Cobertura do solo", "Rotação"]
+      },
+      "observacoes": "Resistente em várias regiões",
+      "icone": "🌾"
+    }
+  ]
+}

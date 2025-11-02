@@ -1,0 +1,95 @@
+{
+  "version": "2.0",
+  "last_updated": "2025-10-17",
+  "culture": "sorgo",
+  "culture_id": "custom_sorgo",
+  "scientific_name": "Sorghum bicolor",
+  "common_name": "Sorgo",
+  
+  "phenological_stages": {
+    "vegetative": ["VE", "V1", "V3", "V5", "V7", "V9"],
+    "reproductive": ["R1", "R2", "R3", "R4", "R5", "R6"],
+    "critical_stages": ["R1", "R2", "R3"]
+  },
+  
+  "susceptibility_curve": {
+    "VE": { "damage_potential": 80, "recovery_capacity": 20 },
+    "V3": { "damage_potential": 60, "recovery_capacity": 50 },
+    "V7": { "damage_potential": 40, "recovery_capacity": 60 },
+    "R1": { "damage_potential": 85, "recovery_capacity": 20 },
+    "R3": { "damage_potential": 95, "recovery_capacity": 10 },
+    "R6": { "damage_potential": 20, "recovery_capacity": 0 }
+  },
+  
+  "organisms": {
+    "pests": [
+      {
+        "id": "sorgo_lagarta_espiga",
+        "name": "Lagarta-da-espiga",
+        "scientific_name": "Helicoverpa zea",
+        "unit": "lagartas/espiga",
+        "monitoring_method": "Inspeção de 20 espigas/ponto",
+        
+        "phenological_thresholds": {
+          "V3-V9": {
+            "low": 2,
+            "medium": 4,
+            "high": 6,
+            "critical": 10,
+            "damage_potential": 50,
+            "damage_type": "Desfolha moderada",
+            "economic_loss": "< 10%"
+          },
+          "R1-R3": {
+            "low": 0.5,
+            "medium": 1,
+            "high": 2,
+            "critical": 3,
+            "damage_potential": 90,
+            "damage_type": "Alimenta-se de grãos em formação",
+            "economic_loss": "30-60%",
+            "action_window_hours": 48
+          },
+          "R4-R6": {
+            "low": 1,
+            "medium": 2,
+            "high": 4,
+            "critical": 6,
+            "damage_potential": 40,
+            "damage_type": "Grãos endurecidos - menor dano",
+            "economic_loss": "< 10%"
+          }
+        }
+      },
+      {
+        "id": "sorgo_pulgao_verde",
+        "name": "Pulgão-verde",
+        "scientific_name": "Schizaphis graminum",
+        "unit": "colônias/planta",
+        "monitoring_method": "Inspeção visual",
+        
+        "phenological_thresholds": {
+          "VE-V3": {
+            "low": 0.5,
+            "medium": 1,
+            "high": 2,
+            "critical": 4,
+            "damage_potential": 80,
+            "damage_type": "Sugamento - nanismo e morte",
+            "economic_loss": "20-40%"
+          },
+          "V5-R1": {
+            "low": 1,
+            "medium": 2,
+            "high": 4,
+            "critical": 8,
+            "damage_potential": 50,
+            "damage_type": "Redução de crescimento",
+            "economic_loss": "10-20%"
+          }
+        }
+      }
+    ]
+  }
+}
+

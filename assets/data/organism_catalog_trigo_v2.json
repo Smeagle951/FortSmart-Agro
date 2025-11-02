@@ -1,0 +1,106 @@
+{
+  "version": "2.0",
+  "last_updated": "2025-10-17",
+  "culture": "trigo",
+  "culture_id": "custom_trigo",
+  "scientific_name": "Triticum aestivum",
+  "common_name": "Trigo",
+  
+  "phenological_stages": {
+    "vegetative": ["V1", "V2", "V3", "V4", "V5"],
+    "reproductive": ["R1", "R2", "R3", "R4"],
+    "critical_stages": ["R1", "R2", "R3"]
+  },
+  
+  "susceptibility_curve": {
+    "V2": { "damage_potential": 70, "recovery_capacity": 40 },
+    "V4": { "damage_potential": 50, "recovery_capacity": 60 },
+    "R1": { "damage_potential": 85, "recovery_capacity": 20 },
+    "R2": { "damage_potential": 90, "recovery_capacity": 10 },
+    "R4": { "damage_potential": 30, "recovery_capacity": 0 }
+  },
+  
+  "organisms": {
+    "pests": [
+      {
+        "id": "trigo_pulgao",
+        "name": "Pulgão-do-trigo",
+        "scientific_name": "Schizaphis graminum",
+        "unit": "adultos/planta",
+        "monitoring_method": "Contagem em 20 plantas",
+        
+        "phenological_thresholds": {
+          "V1-V3": {
+            "low": 5,
+            "medium": 10,
+            "high": 20,
+            "critical": 30,
+            "damage_potential": 70,
+            "damage_type": "Sugamento e transmissão de vírus",
+            "economic_loss": "15-30%"
+          },
+          "V4-R2": {
+            "low": 3,
+            "medium": 8,
+            "high": 15,
+            "critical": 25,
+            "damage_potential": 85,
+            "damage_type": "Sugamento em espiga - grãos leves",
+            "economic_loss": "20-40%",
+            "action_window_hours": 48
+          }
+        }
+      },
+      {
+        "id": "trigo_percevejo",
+        "name": "Percevejo-do-trigo",
+        "scientific_name": "Tibraca limbativentris",
+        "unit": "adultos/m²",
+        "monitoring_method": "Contagem por área",
+        
+        "phenological_thresholds": {
+          "V3-R1": {
+            "low": 1,
+            "medium": 2,
+            "high": 4,
+            "critical": 6,
+            "damage_potential": 60,
+            "damage_type": "Sugamento de colmo",
+            "economic_loss": "10-20%"
+          },
+          "R2-R4": {
+            "low": 0.5,
+            "medium": 1,
+            "high": 2,
+            "critical": 3,
+            "damage_potential": 80,
+            "damage_type": "Sugamento de grãos - chochamento",
+            "economic_loss": "20-40%"
+          }
+        }
+      }
+    ],
+    "diseases": [
+      {
+        "id": "trigo_ferrugem",
+        "name": "Ferrugem-da-folha",
+        "pathogen": "Puccinia triticina",
+        "monitoring": "% área foliar com pústulas",
+        
+        "critical_stages": ["V4", "R1", "R2"],
+        
+        "thresholds": {
+          "V4-R2": {
+            "low": 5,
+            "medium": 15,
+            "high": 30,
+            "critical": 50,
+            "damage_potential": 90,
+            "economic_loss": "30-70%"
+          }
+        }
+      }
+    ]
+  }
+}
+

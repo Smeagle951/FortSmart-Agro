@@ -1,0 +1,1013 @@
+[
+    {
+        "id":  "tomate_lagarta_helicoverpa",
+        "nome":  "Lagarta-da-tomate",
+        "nome_cientifico":  "Helicoverpa armigera",
+        "categoria":  "Praga",
+        "tipo":  "PRAGA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Danos em folhas e frutos",
+                         "OrifA-cios nos frutos",
+                         "ReduAAœo da qualidade",
+                         "Perda de produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 70% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas",
+                                "Frutos",
+                                "Flores"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "2 lagartas por planta",
+        "niveis_infestacao":  {
+                                  "baixo":  "1 lagarta por planta",
+                                  "medio":  "2-3 lagartas por planta",
+                                  "alto":  "4-5 lagartas por planta",
+                                  "critico":  "\u003e5 lagartas por planta"
+                              },
+        "manejo_quimico":  [
+                               "Bacillus thuringiensis",
+                               "Spinosad",
+                               "Clorantraniliprole"
+                           ],
+        "manejo_biologico":  [
+                                 "Trichogramma pretiosum",
+                                 "Predadores naturais",
+                                 "Parasitoides"
+                             ],
+        "manejo_cultural":  [
+                                "Armadilhas com feromA'nios",
+                                "EliminaAAœo de restos culturais",
+                                "Cultivares resistentes"
+                            ],
+        "observacoes":  "Praga importante do tomate, com alta capacidade de danos.",
+        "icone":  "dY?>",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_lagarta_rosca",
+        "nome":  "Lagarta-rosca",
+        "nome_cientifico":  "Agrotis ipsilon",
+        "categoria":  "Praga",
+        "tipo":  "PRAGA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Corte de plantas jovens",
+                         "Danos em raA-zes",
+                         "ReduAAœo do estande",
+                         "Perda de produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 50% do estande",
+        "partes_afetadas":  [
+                                "Caule",
+                                "RaA-zes"
+                            ],
+        "fenologia":  [
+                          "V1",
+                          "V2",
+                          "V3",
+                          "V4"
+                      ],
+        "nivel_acao":  "1 lagarta por 10 plantas",
+        "niveis_infestacao":  {
+                                  "baixo":  "1 lagarta por 20 plantas",
+                                  "medio":  "1 lagarta por 10 plantas",
+                                  "alto":  "1 lagarta por 5 plantas",
+                                  "critico":  "1 lagarta por 2 plantas"
+                              },
+        "manejo_quimico":  [
+                               "ClorpirifA3s",
+                               "Fipronil",
+                               "Carbaryl"
+                           ],
+        "manejo_biologico":  [
+                                 "Bacillus thuringiensis",
+                                 "Nematoides entomopatogA¦nicos"
+                             ],
+        "manejo_cultural":  [
+                                "Preparo adequado do solo",
+                                "EliminaAAœo de plantas daninhas",
+                                "IrrigaAAœo adequada"
+                            ],
+        "observacoes":  "Praga de solo que ataca principalmente plantas jovens.",
+        "icone":  "dY?>",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_broca_haste",
+        "nome":  "Broca da haste",
+        "nome_cientifico":  "Neoleucinodes elegantalis",
+        "categoria":  "Praga",
+        "tipo":  "PRAGA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "OrifA-cios na haste",
+                         "Murcha das plantas",
+                         "ReduAAœo do crescimento",
+                         "Perda de produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 60% da produtividade",
+        "partes_afetadas":  [
+                                "Haste",
+                                "Frutos"
+                            ],
+        "fenologia":  [
+                          "V4",
+                          "V5",
+                          "V6",
+                          "R1",
+                          "R2",
+                          "R3"
+                      ],
+        "nivel_acao":  "Primeiro sintoma detectado",
+        "niveis_infestacao":  {
+                                  "baixo":  "1-2 plantas atacadas por 100",
+                                  "medio":  "3-5 plantas atacadas por 100",
+                                  "alto":  "6-10 plantas atacadas por 100",
+                                  "critico":  "\u003e10 plantas atacadas por 100"
+                              },
+        "manejo_quimico":  [
+                               "Clorantraniliprole",
+                               "Indoxacarb",
+                               "Spinosad"
+                           ],
+        "manejo_biologico":  [
+                                 "Trichogramma pretiosum",
+                                 "Bacillus thuringiensis"
+                             ],
+        "manejo_cultural":  [
+                                "EliminaAAœo de restos culturais",
+                                "Cultivares resistentes",
+                                "Armadilhas com feromA'nios"
+                            ],
+        "observacoes":  "Praga importante que causa danos diretos na haste e frutos.",
+        "icone":  "dY?>",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_vaquinha",
+        "nome":  "Vaquinha",
+        "nome_cientifico":  "Diabrotica speciosa",
+        "categoria":  "Praga",
+        "tipo":  "PRAGA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Desfolha em rebordos",
+                         "Danos em flores",
+                         "ReduAAœo da polinizaAAœo",
+                         "Perda de produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 30% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas",
+                                "Flores"
+                            ],
+        "fenologia":  [
+                          "V4",
+                          "V5",
+                          "V6",
+                          "R1",
+                          "R2"
+                      ],
+        "nivel_acao":  "5 vaquinhas por planta",
+        "niveis_infestacao":  {
+                                  "baixo":  "1-2 vaquinhas por planta",
+                                  "medio":  "3-5 vaquinhas por planta",
+                                  "alto":  "6-10 vaquinhas por planta",
+                                  "critico":  "\u003e10 vaquinhas por planta"
+                              },
+        "manejo_quimico":  [
+                               "Deltametrina",
+                               "Lambda-cialotrina",
+                               "Tiametoxam"
+                           ],
+        "manejo_biologico":  [
+                                 "Predadores naturais",
+                                 "Parasitoides"
+                             ],
+        "manejo_cultural":  [
+                                "EliminaAAœo de plantas daninhas",
+                                "RotaAAœo de culturas",
+                                "Armadilhas luminosas"
+                            ],
+        "observacoes":  "Besouro que ataca principalmente as folhas e flores.",
+        "icone":  "dY¦ý",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_acaro_rajado",
+        "nome":  "A?caro-rajado",
+        "nome_cientifico":  "Tetranychus urticae",
+        "categoria":  "Praga",
+        "tipo":  "PRAGA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "PontuaAAæes clorA3ticas nas folhas",
+                         "Bronzeamento das folhas",
+                         "Teias nas folhas",
+                         "Desfolha precoce"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 40% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "10 A­caros por folha",
+        "niveis_infestacao":  {
+                                  "baixo":  "1-5 A­caros por folha",
+                                  "medio":  "6-10 A­caros por folha",
+                                  "alto":  "11-20 A­caros por folha",
+                                  "critico":  "\u003e20 A­caros por folha"
+                              },
+        "manejo_quimico":  [
+                               "Abamectina",
+                               "Spiromesifeno",
+                               "Hexitiazox"
+                           ],
+        "manejo_biologico":  [
+                                 "Phytoseiulus macropilis",
+                                 "Neoseiulus californicus"
+                             ],
+        "manejo_cultural":  [
+                                "Aumentar umidade relativa",
+                                "IrrigaAAœo por aspersAœo",
+                                "EliminaAAœo de plantas daninhas"
+                            ],
+        "observacoes":  "A?caro que prolifera em perA-odos de seca.",
+        "icone":  "dYú‹,?",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_minador_folha",
+        "nome":  "Minador de folha",
+        "nome_cientifico":  "Liriomyza huidobrensis",
+        "categoria":  "Praga",
+        "tipo":  "PRAGA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Mineiras nas folhas",
+                         "ReduAAœo da fotossA-ntese",
+                         "Desfolha precoce",
+                         "Perda de produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 25% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "5 mineiras por folha",
+        "niveis_infestacao":  {
+                                  "baixo":  "1-2 mineiras por folha",
+                                  "medio":  "3-5 mineiras por folha",
+                                  "alto":  "6-10 mineiras por folha",
+                                  "critico":  "\u003e10 mineiras por folha"
+                              },
+        "manejo_quimico":  [
+                               "Abamectina",
+                               "Spinosad",
+                               "Tiametoxam"
+                           ],
+        "manejo_biologico":  [
+                                 "Diglyphus isaea",
+                                 "Dacnusa sibirica"
+                             ],
+        "manejo_cultural":  [
+                                "EliminaAAœo de plantas daninhas",
+                                "Armadilhas adesivas",
+                                "Cultivares resistentes"
+                            ],
+        "observacoes":  "Mosca que causa mineiras nas folhas do tomateiro.",
+        "icone":  "dY¦ø",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_nematoide_galha",
+        "nome":  "Nematoide de galha",
+        "nome_cientifico":  "Meloidogyne incognita",
+        "categoria":  "Praga",
+        "tipo":  "PRAGA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Galhas nas raA-zes",
+                         "Murcha das plantas",
+                         "ReduAAœo do crescimento",
+                         "Baixa produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 80% da produtividade",
+        "partes_afetadas":  [
+                                "RaA-zes"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "Primeiro sintoma detectado",
+        "niveis_infestacao":  {
+                                  "baixo":  "Poucas galhas nas raA-zes",
+                                  "medio":  "Galhas moderadas nas raA-zes",
+                                  "alto":  "Muitas galhas nas raA-zes",
+                                  "critico":  "RaA-zes completamente deformadas"
+                              },
+        "manejo_quimico":  [
+                               "Oxamyl",
+                               "FenamifA3s",
+                               "Carbofuran"
+                           ],
+        "manejo_biologico":  [
+                                 "Pasteuria penetrans",
+                                 "Paecilomyces lilacinus"
+                             ],
+        "manejo_cultural":  [
+                                "SolarizaAAœo do solo",
+                                "Cultivares resistentes",
+                                "RotaAAœo com gramA-neas"
+                            ],
+        "observacoes":  "Nematoide muito importante que causa galhas nas raA-zes.",
+        "icone":  "dY¦ñ",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_murcha_bacteriana",
+        "nome":  "Murcha bacteriana",
+        "nome_cientifico":  "Ralstonia solanacearum",
+        "categoria":  "DoenAa",
+        "tipo":  "DOENCA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Murcha das plantas",
+                         "Amarelecimento das folhas",
+                         "Morte das plantas",
+                         "ReduAAœo do estande"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 100% do estande",
+        "partes_afetadas":  [
+                                "Sistema vascular",
+                                "Folhas",
+                                "Caule"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "Primeiro sintoma detectado",
+        "niveis_severidade":  {
+                                  "baixo":  "1-5% das plantas afetadas",
+                                  "medio":  "6-20% das plantas afetadas",
+                                  "alto":  "21-50% das plantas afetadas",
+                                  "critico":  "\u003e50% das plantas afetadas"
+                              },
+        "manejo_quimico":  [
+                               "Cobre",
+                               "Kasugamicina",
+                               "Estreptomicina"
+                           ],
+        "manejo_biologico":  [
+                                 "Bacillus subtilis",
+                                 "Trichoderma spp."
+                             ],
+        "manejo_cultural":  [
+                                "Cultivares resistentes",
+                                "Drenagem adequada",
+                                "RotaAAœo de culturas"
+                            ],
+        "observacoes":  "DoenAa bacteriana muito destrutiva do tomate.",
+        "icone":  "dYÝÿ",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_mancha_bacteriana",
+        "nome":  "Mancha bacteriana",
+        "nome_cientifico":  "Xanthomonas vesicatoria",
+        "categoria":  "DoenAa",
+        "tipo":  "DOENCA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Manchas nas folhas",
+                         "LesAæes nos frutos",
+                         "ReduAAœo da qualidade",
+                         "Perda de produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 60% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas",
+                                "Frutos",
+                                "Caule"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "5% das folhas com sintomas",
+        "niveis_severidade":  {
+                                  "baixo":  "1-5% das folhas afetadas",
+                                  "medio":  "6-20% das folhas afetadas",
+                                  "alto":  "21-40% das folhas afetadas",
+                                  "critico":  "\u003e40% das folhas afetadas"
+                              },
+        "manejo_quimico":  [
+                               "Cobre",
+                               "Kasugamicina",
+                               "Oxitetraciclina"
+                           ],
+        "manejo_biologico":  [
+                                 "Bacillus subtilis",
+                                 "Pseudomonas fluorescens"
+                             ],
+        "manejo_cultural":  [
+                                "Cultivares resistentes",
+                                "Evitar molhamento das folhas",
+                                "EliminaAAœo de restos culturais"
+                            ],
+        "observacoes":  "DoenAa bacteriana que afeta folhas e frutos.",
+        "icone":  "dYÝÿ",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_virus_tobrfv",
+        "nome":  "VA-rus ToBRFV",
+        "nome_cientifico":  "Tomato brown rugose fruit virus",
+        "categoria":  "DoenAa",
+        "tipo":  "DOENCA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Manchas marrons nos frutos",
+                         "Rugosidade dos frutos",
+                         "ReduAAœo do crescimento",
+                         "Baixa qualidade dos frutos"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 100% da produtividade",
+        "partes_afetadas":  [
+                                "Frutos",
+                                "Folhas",
+                                "Caule"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "Primeiro sintoma detectado",
+        "niveis_severidade":  {
+                                  "baixo":  "Poucos frutos afetados",
+                                  "medio":  "Moderados frutos afetados",
+                                  "alto":  "Muitos frutos afetados",
+                                  "critico":  "Todos os frutos afetados"
+                              },
+        "manejo_quimico":  [
+                               "Controle de vetores",
+                               "EliminaAAœo de plantas infectadas"
+                           ],
+        "manejo_biologico":  [
+                                 "Cultivares resistentes"
+                             ],
+        "manejo_cultural":  [
+                                "Cultivares resistentes",
+                                "EliminaAAœo de plantas infectadas",
+                                "Controle de vetores",
+                                "HigienizaAAœo de ferramentas"
+                            ],
+        "observacoes":  "VA-rus emergente muito destrutivo do tomate.",
+        "icone":  "dYÝÿ",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_oidio",
+        "nome":  "OA-dio",
+        "nome_cientifico":  "Leveillula taurica",
+        "categoria":  "DoenAa",
+        "tipo":  "DOENCA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "PA3 branco nas folhas",
+                         "Clorose das folhas",
+                         "Desfolha precoce",
+                         "ReduAAœo da fotossA-ntese"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 40% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "10% das folhas com sintomas",
+        "niveis_severidade":  {
+                                  "baixo":  "1-10% das folhas afetadas",
+                                  "medio":  "11-30% das folhas afetadas",
+                                  "alto":  "31-60% das folhas afetadas",
+                                  "critico":  "\u003e60% das folhas afetadas"
+                              },
+        "manejo_quimico":  [
+                               "TriazA3is",
+                               "Estrobilurinas",
+                               "Carboxamidas"
+                           ],
+        "manejo_biologico":  [
+                                 "Bacillus subtilis",
+                                 "Trichoderma spp."
+                             ],
+        "manejo_cultural":  [
+                                "Cultivares resistentes",
+                                "VentilaAAœo adequada",
+                                "Controle da umidade"
+                            ],
+        "observacoes":  "DoenAa fA§ngica que afeta principalmente as folhas.",
+        "icone":  "dY?,",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_mancha_septoria",
+        "nome":  "Mancha de Septoria",
+        "nome_cientifico":  "Septoria lycopersici",
+        "categoria":  "DoenAa",
+        "tipo":  "DOENCA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Manchas circulares nas folhas",
+                         "Pontos pretos no centro das manchas",
+                         "Desfolha precoce",
+                         "ReduAAœo da fotossA-ntese"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 50% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "5% das folhas com sintomas",
+        "niveis_severidade":  {
+                                  "baixo":  "1-5% das folhas afetadas",
+                                  "medio":  "6-20% das folhas afetadas",
+                                  "alto":  "21-40% das folhas afetadas",
+                                  "critico":  "\u003e40% das folhas afetadas"
+                              },
+        "manejo_quimico":  [
+                               "TriazA3is",
+                               "Estrobilurinas",
+                               "Carboxamidas"
+                           ],
+        "manejo_biologico":  [
+                                 "Bacillus subtilis",
+                                 "Trichoderma spp."
+                             ],
+        "manejo_cultural":  [
+                                "Cultivares resistentes",
+                                "EliminaAAœo de restos culturais",
+                                "RotaAAœo de culturas"
+                            ],
+        "observacoes":  "DoenAa fA§ngica que causa manchas nas folhas.",
+        "icone":  "dY?,",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_antracnose_frutos",
+        "nome":  "Antracnose em frutos",
+        "nome_cientifico":  "Colletotrichum coccodes",
+        "categoria":  "DoenAa",
+        "tipo":  "DOENCA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "LesAæes circulares nos frutos",
+                         "PodridAœo dos frutos",
+                         "ReduAAœo da qualidade",
+                         "Perda de produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 60% na qualidade dos frutos",
+        "partes_afetadas":  [
+                                "Frutos"
+                            ],
+        "fenologia":  [
+                          "R3",
+                          "R4",
+                          "R5",
+                          "R6"
+                      ],
+        "nivel_acao":  "5% dos frutos com sintomas",
+        "niveis_severidade":  {
+                                  "baixo":  "1-5% dos frutos afetados",
+                                  "medio":  "6-20% dos frutos afetados",
+                                  "alto":  "21-40% dos frutos afetados",
+                                  "critico":  "\u003e40% dos frutos afetados"
+                              },
+        "manejo_quimico":  [
+                               "TriazA3is",
+                               "Estrobilurinas",
+                               "Carboxamidas"
+                           ],
+        "manejo_biologico":  [
+                                 "Bacillus subtilis",
+                                 "Trichoderma spp."
+                             ],
+        "manejo_cultural":  [
+                                "Cultivares resistentes",
+                                "Evitar ferimentos nos frutos",
+                                "Colheita adequada"
+                            ],
+        "observacoes":  "DoenAa que afeta principalmente os frutos maduros.",
+        "icone":  "dY?,",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_podridao_raizes",
+        "nome":  "PodridAœo das raA-zes",
+        "nome_cientifico":  "Pythium spp.",
+        "categoria":  "DoenAa",
+        "tipo":  "DOENCA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "PodridAœo das raA-zes",
+                         "Murcha das plantas",
+                         "ReduAAœo do crescimento",
+                         "Morte das plantas"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 70% do estande",
+        "partes_afetadas":  [
+                                "RaA-zes"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "Primeiro sintoma detectado",
+        "niveis_severidade":  {
+                                  "baixo":  "1-5% das plantas afetadas",
+                                  "medio":  "6-20% das plantas afetadas",
+                                  "alto":  "21-50% das plantas afetadas",
+                                  "critico":  "\u003e50% das plantas afetadas"
+                              },
+        "manejo_quimico":  [
+                               "Metalaxyl",
+                               "Fosetyl-Al",
+                               "Propamocarb"
+                           ],
+        "manejo_biologico":  [
+                                 "Trichoderma spp.",
+                                 "Bacillus subtilis"
+                             ],
+        "manejo_cultural":  [
+                                "Drenagem adequada",
+                                "Evitar excesso de A­gua",
+                                "Cultivares resistentes"
+                            ],
+        "observacoes":  "DoenAa que afeta o sistema radicular das plantas.",
+        "icone":  "dY?,",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_deficiencia_magnesio",
+        "nome":  "DeficiA¦ncia de MagnAcsio",
+        "nome_cientifico":  "DeficiA¦ncia nutricional",
+        "categoria":  "DeficiA¦ncia Nutricional",
+        "tipo":  "DEFICIENCIA_NUTRICIONAL",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Clorose internerval das folhas",
+                         "Amarelecimento das folhas velhas",
+                         "ReduAAœo do crescimento",
+                         "Baixa produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 30% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas velhas"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "Primeiros sintomas visA-veis",
+        "niveis_severidade":  {
+                                  "baixo":  "Clorose leve nas folhas velhas",
+                                  "medio":  "Clorose moderada com reduAAœo de crescimento",
+                                  "alto":  "Clorose intensa e paralisaAAœo do crescimento",
+                                  "critico":  "Morte das folhas"
+                              },
+        "manejo_quimico":  [
+                               "Sulfato de magnAcsio",
+                               "A"xido de magnAcsio",
+                               "Fertilizantes com magnAcsio"
+                           ],
+        "manejo_biologico":  [
+                                 "AdubaAAœo com matAcria orgA›nica",
+                                 "RotaAAœo com culturas que reciclam magnAcsio"
+                             ],
+        "manejo_cultural":  [
+                                "AdubaAAœo de base adequada",
+                                "AdubaAAœo foliar",
+                                "AnA­lise de solo"
+                            ],
+        "observacoes":  "DeficiA¦ncia importante que afeta a fotossA-ntese.",
+        "icone":  "dYO¨",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_deficiencia_ferro",
+        "nome":  "DeficiA¦ncia de Ferro",
+        "nome_cientifico":  "DeficiA¦ncia nutricional",
+        "categoria":  "DeficiA¦ncia Nutricional",
+        "tipo":  "DEFICIENCIA_NUTRICIONAL",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Clorose das folhas novas",
+                         "Amarelecimento internerval",
+                         "ReduAAœo do crescimento",
+                         "Baixa produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 25% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas novas"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "Primeiros sintomas visA-veis",
+        "niveis_severidade":  {
+                                  "baixo":  "Clorose leve nas folhas novas",
+                                  "medio":  "Clorose moderada com reduAAœo de crescimento",
+                                  "alto":  "Clorose intensa e paralisaAAœo do crescimento",
+                                  "critico":  "Morte das folhas novas"
+                              },
+        "manejo_quimico":  [
+                               "Sulfato de ferro",
+                               "Quelato de ferro",
+                               "Fertilizantes com ferro"
+                           ],
+        "manejo_biologico":  [
+                                 "AdubaAAœo com matAcria orgA›nica",
+                                 "RotaAAœo com culturas que reciclam ferro"
+                             ],
+        "manejo_cultural":  [
+                                "AdubaAAœo de base adequada",
+                                "AdubaAAœo foliar",
+                                "AnA­lise de solo"
+                            ],
+        "observacoes":  "DeficiA¦ncia que afeta principalmente as folhas novas.",
+        "icone":  "dYO¨",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_deficiencia_zinco",
+        "nome":  "DeficiA¦ncia de Zinco",
+        "nome_cientifico":  "DeficiA¦ncia nutricional",
+        "categoria":  "DeficiA¦ncia Nutricional",
+        "tipo":  "DEFICIENCIA_NUTRICIONAL",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "Clorose das folhas novas",
+                         "ReduAAœo do tamanho das folhas",
+                         "ReduAAœo do crescimento",
+                         "Baixa produtividade"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 20% da produtividade",
+        "partes_afetadas":  [
+                                "Folhas novas"
+                            ],
+        "fenologia":  [
+                          "Todo o ciclo"
+                      ],
+        "nivel_acao":  "Primeiros sintomas visA-veis",
+        "niveis_severidade":  {
+                                  "baixo":  "Clorose leve nas folhas novas",
+                                  "medio":  "Clorose moderada com reduAAœo de crescimento",
+                                  "alto":  "Clorose intensa e paralisaAAœo do crescimento",
+                                  "critico":  "Morte das folhas novas"
+                              },
+        "manejo_quimico":  [
+                               "Sulfato de zinco",
+                               "A"xido de zinco",
+                               "Fertilizantes com zinco"
+                           ],
+        "manejo_biologico":  [
+                                 "AdubaAAœo com matAcria orgA›nica",
+                                 "RotaAAœo com culturas que reciclam zinco"
+                             ],
+        "manejo_cultural":  [
+                                "AdubaAAœo de base adequada",
+                                "AdubaAAœo foliar",
+                                "AnA­lise de solo"
+                            ],
+        "observacoes":  "DeficiA¦ncia que afeta o crescimento das plantas.",
+        "icone":  "dYO¨",
+        "ativo":  true,
+        "data_criacao":  "2024-12-19T00:00:00Z",
+        "data_atualizacao":  "2024-12-19T00:00:00Z"
+    },
+    {
+        "id":  "tomate_buva",
+        "nome":  "Buva",
+        "nome_cientifico":  "Conyza spp.",
+        "categoria":  "Planta Daninha",
+        "tipo":  "PLANTA_DANINHA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "CompetiAAœo por nutrientes",
+                         "CompetiAAœo por A­gua",
+                         "CompetiAAœo por luz",
+                         "ReduAAœo do crescimento do tomateiro"
+                     ],
+        "dano_economico":  "Pode reduzir a produtividade em atAc 40% devido Aÿ competiAAœo intensa",
+        "partes_afetadas":  [
+                                "Sistema radicular",
+                                "Parte aAcrea"
+                            ],
+        "fenologia":  [
+                          "V1",
+                          "V2",
+                          "V3",
+                          "V4",
+                          "V5",
+                          "V6",
+                          "V7",
+                          "V8",
+                          "V9",
+                          "V10",
+                          "V11",
+                          "V12",
+                          "R1",
+                          "R2",
+                          "R3",
+                          "R4",
+                          "R5",
+                          "R6",
+                          "R7",
+                          "R8",
+                          "R9",
+                          "R10"
+                      ],
+        "ciclo_vida":  "Anual",
+        "habito_crescimento":  "Ereta",
+        "altura_maxima":  "200 cm",
+        "tipo_folha":  "Alternas, lanceoladas",
+        "cor_folha":  "Verde",
+        "tipo_raiz":  "Pivotante profunda",
+        "reproducao":  "Sementes",
+        "dispersao":  "Vento, A­gua, animais",
+        "condicoes_favoraveis":  {
+                                     "temperatura":  "15-35AøC",
+                                     "umidade":  "Solo A§mido",
+                                     "chuva":  "PerA-odos chuvosos",
+                                     "solo":  "Solos fAcrteis e bem drenados"
+                                 },
+        "limiares_especificos":  {
+                                     "vegetativo":  "1-2 plantas/mAý",
+                                     "floracao":  "1 planta/mAý",
+                                     "frutificacao":  "1 planta/mAý"
+                                 }
+    },
+    {
+        "id":  "tomate_capim_colchao",
+        "nome":  "Capim-colchAœo",
+        "nome_cientifico":  "Digitaria spp.",
+        "categoria":  "Planta Daninha",
+        "tipo":  "PLANTA_DANINHA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "CompetiAAœo intensa por nutrientes",
+                         "CompetiAAœo por A­gua",
+                         "Sombreamento do tomateiro",
+                         "InterferA¦ncia na colheita"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 50% na produtividade",
+        "partes_afetadas":  [
+                                "Sistema radicular",
+                                "Parte aAcrea"
+                            ],
+        "fenologia":  [
+                          "V1",
+                          "V2",
+                          "V3",
+                          "V4",
+                          "V5",
+                          "V6",
+                          "V7",
+                          "V8",
+                          "V9",
+                          "V10",
+                          "V11",
+                          "V12",
+                          "R1",
+                          "R2",
+                          "R3",
+                          "R4",
+                          "R5",
+                          "R6",
+                          "R7",
+                          "R8",
+                          "R9",
+                          "R10"
+                      ],
+        "ciclo_vida":  "Anual",
+        "habito_crescimento":  "Ereta",
+        "altura_maxima":  "100 cm",
+        "tipo_folha":  "Lineares, longas",
+        "cor_folha":  "Verde",
+        "tipo_raiz":  "Fasciculada",
+        "reproducao":  "Sementes",
+        "dispersao":  "Vento, A­gua, animais",
+        "condicoes_favoraveis":  {
+                                     "temperatura":  "20-35AøC",
+                                     "umidade":  "Solo A§mido",
+                                     "chuva":  "PerA-odos chuvosos",
+                                     "solo":  "Solos fAcrteis"
+                                 },
+        "limiares_especificos":  {
+                                     "vegetativo":  "2-3 plantas/mAý",
+                                     "floracao":  "1-2 plantas/mAý",
+                                     "frutificacao":  "1 planta/mAý"
+                                 }
+    },
+    {
+        "id":  "tomate_capim_arroz",
+        "nome":  "Capim-arroz",
+        "nome_cientifico":  "Echinochloa spp.",
+        "categoria":  "Planta Daninha",
+        "tipo":  "PLANTA_DANINHA",
+        "cultura_id":  "tomate",
+        "sintomas":  [
+                         "CompetiAAœo por nutrientes",
+                         "CompetiAAœo por A­gua",
+                         "Sombreamento do tomateiro",
+                         "InterferA¦ncia na colheita"
+                     ],
+        "dano_economico":  "Pode causar perdas de atAc 45% na produtividade",
+        "partes_afetadas":  [
+                                "Sistema radicular",
+                                "Parte aAcrea"
+                            ],
+        "fenologia":  [
+                          "V1",
+                          "V2",
+                          "V3",
+                          "V4",
+                          "V5",
+                          "V6",
+                          "V7",
+                          "V8",
+                          "V9",
+                          "V10",
+                          "V11",
+                          "V12",
+                          "R1",
+                          "R2",
+                          "R3",
+                          "R4",
+                          "R5",
+                          "R6",
+                          "R7",
+                          "R8",
+                          "R9",
+                          "R10"
+                      ],
+        "ciclo_vida":  "Anual",
+        "habito_crescimento":  "Ereta",
+        "altura_maxima":  "150 cm",
+        "tipo_folha":  "Lineares, longas",
+        "cor_folha":  "Verde",
+        "tipo_raiz":  "Fasciculada",
+        "reproducao":  "Sementes",
+        "dispersao":  "Vento, A­gua, animais",
+        "condicoes_favoraveis":  {
+                                     "temperatura":  "20-35AøC",
+                                     "umidade":  "Solo A§mido",
+                                     "chuva":  "PerA-odos chuvosos",
+                                     "solo":  "Solos fAcrteis"
+                                 },
+        "limiares_especificos":  {
+                                     "vegetativo":  "2-3 plantas/mAý",
+                                     "floracao":  "1-2 plantas/mAý",
+                                     "frutificacao":  "1 planta/mAý"
+                                 }
+    }
+]

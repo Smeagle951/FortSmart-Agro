@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      floor_generator:
+        options:
+          # Configurações do Floor Generator
+          generate_floor_database: true
+          generate_floor_dao: true
+          generate_floor_entity: true

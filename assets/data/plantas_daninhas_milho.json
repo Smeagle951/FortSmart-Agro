@@ -1,0 +1,409 @@
+{
+  "cultura": "Milho",
+  "versao": "1.0",
+  "data_criacao": "2024-01-15",
+  "descricao": "Plantas daninhas comuns na cultura do milho no Brasil",
+  "plantas_daninhas": [
+    {
+      "id": "weed_milho_buva_001",
+      "nome": "Buva (Conyza bonariensis)",
+      "nome_cientifico": "Conyza bonariensis",
+      "familia": "Asteraceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 150,
+        "periodo_germinacao": "Outono-Inverno",
+        "resistencia_herbicidas": "Alta",
+        "competicao_nutrientes": "Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-5 plantas/m²",
+        "medio": "5-15 plantas/m²",
+        "alto": "15-30 plantas/m²",
+        "critico": ">30 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Rotação de culturas",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "2,4-D",
+          "Dicamba",
+          "Atrazina",
+          "Nicosulfuron"
+        ],
+        "biologico": [
+          "Controle biológico com insetos",
+          "Fungos patogênicos"
+        ]
+      },
+      "observacoes": "Principal problema no milho. Resistente a vários herbicidas."
+    },
+    {
+      "id": "weed_milho_caruru_001",
+      "nome": "Caruru (Amaranthus spp.)",
+      "nome_cientifico": "Amaranthus hybridus",
+      "familia": "Amaranthaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 200,
+        "periodo_germinacao": "Primavera-Verão",
+        "resistencia_herbicidas": "Média",
+        "competicao_nutrientes": "Muito Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-3 plantas/m²",
+        "medio": "3-10 plantas/m²",
+        "alto": "10-20 plantas/m²",
+        "critico": ">20 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Rotação com gramíneas",
+          "Cobertura morta",
+          "Plantio adensado"
+        ],
+        "quimico": [
+          "Atrazina",
+          "Metribuzin",
+          "Mesotrione",
+          "Tembotrione"
+        ],
+        "biologico": [
+          "Controle com predadores naturais"
+        ]
+      },
+      "observacoes": "Alto potencial competitivo no milho. Controle com herbicidas específicos."
+    },
+    {
+      "id": "weed_milho_capim_001",
+      "nome": "Capim-arroz (Echinochloa spp.)",
+      "nome_cientifico": "Echinochloa crus-galli",
+      "familia": "Poaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌾",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 150,
+        "periodo_germinacao": "Primavera-Verão",
+        "resistencia_herbicidas": "Alta",
+        "competicao_nutrientes": "Muito Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-5 plantas/m²",
+        "medio": "5-15 plantas/m²",
+        "alto": "15-30 plantas/m²",
+        "critico": ">30 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Rotação com leguminosas",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "Nicosulfuron",
+          "Rimsulfuron",
+          "Foramsulfuron",
+          "Mesotrione"
+        ],
+        "biologico": [
+          "Controle com fungos patogênicos"
+        ]
+      },
+      "observacoes": "Principal gramínea daninha no milho. Resistente a vários herbicidas."
+    },
+    {
+      "id": "weed_milho_cordadevolta_001",
+      "nome": "Corda-de-viola (Ipomoea spp.)",
+      "nome_cientifico": "Ipomoea purpurea",
+      "familia": "Convolvulaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual trepadeira",
+        "altura_maxima": 300,
+        "periodo_germinacao": "Primavera-Verão",
+        "resistencia_herbicidas": "Baixa",
+        "competicao_luz": "Muito Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-2 plantas/m²",
+        "medio": "2-5 plantas/m²",
+        "alto": "5-10 plantas/m²",
+        "critico": ">10 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Capina manual",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "2,4-D",
+          "Dicamba",
+          "Atrazina",
+          "Mesotrione"
+        ],
+        "biologico": [
+          "Controle com fungos patogênicos"
+        ]
+      },
+      "observacoes": "Trepadeira que compete por luz no milho. Fácil controle químico."
+    },
+    {
+      "id": "weed_milho_trapoeraba_001",
+      "nome": "Trapoeraba (Commelina benghalensis)",
+      "nome_cientifico": "Commelina benghalensis",
+      "familia": "Commelinaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Perene",
+        "altura_maxima": 50,
+        "periodo_germinacao": "Ano todo",
+        "resistencia_herbicidas": "Média",
+        "competicao_nutrientes": "Média"
+      },
+      "nivel_dano": {
+        "baixo": "0-10 plantas/m²",
+        "medio": "10-25 plantas/m²",
+        "alto": "25-50 plantas/m²",
+        "critico": ">50 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Aração profunda",
+          "Solarização",
+          "Cobertura plástica"
+        ],
+        "quimico": [
+          "Atrazina",
+          "Metribuzin",
+          "2,4-D",
+          "Dicamba"
+        ],
+        "biologico": [
+          "Controle com insetos específicos"
+        ]
+      },
+      "observacoes": "Planta perene difícil de controlar no milho. Propaga-se por sementes e estolões."
+    },
+    {
+      "id": "weed_milho_picao_001",
+      "nome": "Picão-preto (Bidens pilosa)",
+      "nome_cientifico": "Bidens pilosa",
+      "familia": "Asteraceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 120,
+        "periodo_germinacao": "Primavera-Verão",
+        "resistencia_herbicidas": "Baixa",
+        "competicao_nutrientes": "Média"
+      },
+      "nivel_dano": {
+        "baixo": "0-8 plantas/m²",
+        "medio": "8-20 plantas/m²",
+        "alto": "20-40 plantas/m²",
+        "critico": ">40 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Capina manual",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "2,4-D",
+          "Dicamba",
+          "Atrazina",
+          "Metribuzin"
+        ],
+        "biologico": [
+          "Controle natural com insetos"
+        ]
+      },
+      "observacoes": "Fácil controle químico no milho. Germina principalmente na primavera."
+    },
+    {
+      "id": "weed_milho_papua_001",
+      "nome": "Papuã (Urochloa plantaginea)",
+      "nome_cientifico": "Urochloa plantaginea",
+      "familia": "Poaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌾",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 100,
+        "periodo_germinacao": "Primavera-Verão",
+        "resistencia_herbicidas": "Média",
+        "competicao_nutrientes": "Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-10 plantas/m²",
+        "medio": "10-25 plantas/m²",
+        "alto": "25-50 plantas/m²",
+        "critico": ">50 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Rotação de culturas",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "Nicosulfuron",
+          "Rimsulfuron",
+          "Foramsulfuron",
+          "Mesotrione"
+        ],
+        "biologico": [
+          "Controle biológico natural"
+        ]
+      },
+      "observacoes": "Gramínea comum em áreas de milho. Controle com herbicidas específicos."
+    },
+    {
+      "id": "weed_milho_nabica_001",
+      "nome": "Nabiça (Raphanus raphanistrum)",
+      "nome_cientifico": "Raphanus raphanistrum",
+      "familia": "Brassicaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 80,
+        "periodo_germinacao": "Outono-Inverno",
+        "resistencia_herbicidas": "Baixa",
+        "competicao_nutrientes": "Média"
+      },
+      "nivel_dano": {
+        "baixo": "0-15 plantas/m²",
+        "medio": "15-35 plantas/m²",
+        "alto": "35-70 plantas/m²",
+        "critico": ">70 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Capina manual",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "2,4-D",
+          "Dicamba",
+          "Atrazina",
+          "Metribuzin"
+        ],
+        "biologico": [
+          "Controle natural"
+        ]
+      },
+      "observacoes": "Fácil controle no milho. Germina principalmente no outono."
+    },
+    {
+      "id": "weed_milho_azevem_001",
+      "nome": "Azevém (Lolium multiflorum)",
+      "nome_cientifico": "Lolium multiflorum",
+      "familia": "Poaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌾",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 120,
+        "periodo_germinacao": "Outono-Inverno",
+        "resistencia_herbicidas": "Alta",
+        "competicao_nutrientes": "Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-8 plantas/m²",
+        "medio": "8-20 plantas/m²",
+        "alto": "20-40 plantas/m²",
+        "critico": ">40 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Rotação com leguminosas",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "Nicosulfuron",
+          "Rimsulfuron",
+          "Foramsulfuron",
+          "Mesotrione"
+        ],
+        "biologico": [
+          "Controle com fungos patogênicos"
+        ]
+      },
+      "observacoes": "Gramínea resistente a herbicidas. Principal problema no inverno no milho."
+    },
+    {
+      "id": "weed_milho_guanxuma_001",
+      "nome": "Guanxuma (Sida rhombifolia)",
+      "nome_cientifico": "Sida rhombifolia",
+      "familia": "Malvaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Perene",
+        "altura_maxima": 100,
+        "periodo_germinacao": "Ano todo",
+        "resistencia_herbicidas": "Média",
+        "competicao_nutrientes": "Média"
+      },
+      "nivel_dano": {
+        "baixo": "0-5 plantas/m²",
+        "medio": "5-12 plantas/m²",
+        "alto": "12-25 plantas/m²",
+        "critico": ">25 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Aração profunda",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "2,4-D",
+          "Dicamba",
+          "Atrazina",
+          "Metribuzin"
+        ],
+        "biologico": [
+          "Controle biológico"
+        ]
+      },
+      "observacoes": "Planta perene de difícil controle no milho. Propaga-se por sementes e raízes."
+    }
+  ]
+}

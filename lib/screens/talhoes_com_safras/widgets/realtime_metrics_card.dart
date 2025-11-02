@@ -5,7 +5,6 @@ import '../../../utils/geo_calculator.dart';
 class RealtimeMetricsCard extends StatelessWidget {
   final double areaHa;
   final double perimeterM;
-  final double speedKmh;
   final Duration elapsedTime;
   final double? gpsAccuracy;
   final bool isGpsMode;
@@ -16,7 +15,6 @@ class RealtimeMetricsCard extends StatelessWidget {
     Key? key,
     required this.areaHa,
     required this.perimeterM,
-    required this.speedKmh,
     required this.elapsedTime,
     this.gpsAccuracy,
     this.isGpsMode = false,
@@ -138,30 +136,6 @@ class RealtimeMetricsCard extends StatelessWidget {
             
             // Métricas secundárias (GPS)
             if (isGpsMode) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildMetricCard(
-                      'Velocidade',
-                      '${speedKmh.toStringAsFixed(1)} km/h',
-                      Icons.speed,
-                      Colors.orange,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildMetricCard(
-                      'Tempo',
-                      _formatDuration(elapsedTime),
-                      Icons.timer,
-                      Colors.purple,
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 12),
-              
               // Indicador de precisão GPS
               if (gpsAccuracy != null)
                 _buildAccuracyIndicator(gpsAccuracy!),

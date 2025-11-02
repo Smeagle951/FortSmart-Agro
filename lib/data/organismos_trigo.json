@@ -1,0 +1,755 @@
+{
+  "cultura": "Trigo",
+  "nome_cientifico": "Triticum aestivum",
+  "versao": "4.0",
+  "data_atualizacao": "2024-12-19T00:00:00Z",
+  "funcionalidades_extras": {
+    "fases_desenvolvimento": true,
+    "tamanhos_mm": true,
+    "severidade_detalhada": true,
+    "condicoes_favoraveis": true,
+    "manejo_integrado": true,
+    "limiares_especificos": true,
+    "niveis_infestacao": true,
+    "niveis_severidade": true,
+    "sintomas_detalhados": true
+  },
+  "organismos": [
+    {
+      "id": "trigo_lagarta_soja",
+      "nome": "Lagarta-da-soja",
+      "nome_cientifico": "Anticarsia gemmatalis",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "trigo",
+      "sintomas": [
+        "Desfolha intensa",
+        "Folhas com bordas irregulares",
+        "Redução da área fotossintética"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% na produtividade devido à desfolha severa",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8"],
+      "fases_fenologicas_detalhadas": {
+        "V1": "Primeira folha verdadeira - Controle preventivo",
+        "V2": "Segunda folha verdadeira - Monitoramento iniciado",
+        "V3": "Terceira folha verdadeira - Aplicação se >2 lagartas/m²",
+        "V4": "Quarta folha verdadeira - Controle intensivo",
+        "V5": "Quinta folha verdadeira - Controle crítico",
+        "V6": "Sexta folha verdadeira - Última chance efetiva",
+        "R1": "Início do emborrachamento - Evitar aplicações",
+        "R2": "Emborrachamento pleno - Parar aplicações",
+        "R3": "Início do espigamento - Retomar se necessário",
+        "R4": "Espigamento pleno - Controle intensivo",
+        "R5": "Início do enchimento - Aplicações finais",
+        "R6": "Enchimento pleno - Parar aplicações",
+        "R7": "Maturação fisiológica - Não aplicar",
+        "R8": "Pronto para colheita - Não aplicar"
+      },
+      "nivel_acao": "Desfolha ≥ 30% no estágio vegetativo",
+      "niveis_infestacao": {
+        "baixo": "1-2 lagartas/metro",
+        "medio": "3-5 lagartas/metro",
+        "alto": "6-8 lagartas/metro",
+        "critico": ">8 lagartas/metro"
+      },
+      "manejo_quimico": [
+        "Clorantraniliprole (IRAC 28) - 0,15-0,25 L/ha",
+        "Spinosad (IRAC 5) - 0,08-0,12 L/ha"
+      ],
+      "doses_defensivos": {
+        "clorantraniliprole": {
+          "dose": "0,15-0,25 L/ha",
+          "concentracao": "200 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        },
+        "spinosad": {
+          "dose": "0,08-0,12 L/ha",
+          "concentracao": "480 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Trichogramma pretiosum",
+        "Bacillus thuringiensis"
+      ],
+      "manejo_cultural": [
+        "Rotação de culturas",
+        "Plantio na época recomendada",
+        "Destruição de restos culturais"
+      ],
+      "manejo": {
+        "cultural": ["Rotação de culturas", "Plantio na época recomendada", "Destruição de restos culturais"],
+        "biologico": ["Bacillus thuringiensis", "Trichogramma pretiosum"],
+        "quimico": ["Clorantraniliprole (IRAC 28)", "Spinosad (IRAC 5)"]
+      },
+      "observacoes": "Importante realizar monitoramento constante para controle no início da infestação. Maior dano ocorre no florescimento e enchimento de grãos.",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.6",
+          "danos": "Postura em folhas",
+          "duracao_dias": "3-5",
+          "caracteristicas": "Postura em folhas, cor esbranquiçada"
+        },
+        {
+          "fase": "Larva inicial",
+          "tamanho_mm": "2-5",
+          "danos": "Pequenas perfurações em folhas",
+          "duracao_dias": "3-5",
+          "caracteristicas": "Lagartas pequenas, cor verde"
+        },
+        {
+          "fase": "Larva média",
+          "tamanho_mm": "15-25",
+          "danos": "Destruição parcial das folhas",
+          "duracao_dias": "8-12",
+          "caracteristicas": "Lagartas com listras longitudinais"
+        },
+        {
+          "fase": "Larva adulta",
+          "tamanho_mm": "35-45",
+          "danos": "Desfolha intensa",
+          "duracao_dias": "5-8",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        },
+        {
+          "fase": "Pupa",
+          "tamanho_mm": "20",
+          "danos": "Não causa danos diretos",
+          "duracao_dias": "8-12",
+          "caracteristicas": "Pupas no solo, cor marrom"
+        },
+        {
+          "fase": "Mariposa",
+          "tamanho_mm": "35-40",
+          "danos": "Somente reprodução",
+          "duracao_dias": "10-15",
+          "caracteristicas": "Mariposas marrons, formato triangular"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 10% de desfolha",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "11-30% de desfolha",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 30% de desfolha",
+          "perda_produtividade": "26-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "V1-V3": "30% de desfolha",
+        "V4-V6": "20% de desfolha",
+        "R1-R2": "15% de desfolha (evitar aplicações)",
+        "R3-R4": "10% de desfolha",
+        "R5-R6": "5% de desfolha",
+        "R7-R8": "Não aplicar"
+      },
+      "manejo_avancado": {
+        "monitoramento": {
+          "metodo": "Pano de batida",
+          "frequencia": "Semanal",
+          "horario": "Manhã (8-10h) ou tarde (16-18h)",
+          "condicoes": "Tempo seco, sem vento"
+        },
+        "aplicacao": {
+          "horario_ideal": "Manhã (6-10h) ou tarde (16-19h)",
+          "temperatura_maxima": "30°C",
+          "umidade_relativa_minima": "60%",
+          "velocidade_vento_maxima": "10 km/h"
+        },
+        "rotacao_modos_acao": {
+          "grupo_1": "IRAC 28 (Clorantraniliprole)",
+          "grupo_2": "IRAC 5 (Spinosad)",
+          "grupo_3": "IRAC 22A (Metaflumizona)",
+          "intervalo_minimo": "14 dias entre grupos"
+        }
+      }
+    },
+    {
+      "id": "trigo_ferrugem_amarela",
+      "nome": "Ferrugem-amarela",
+      "nome_cientifico": "Puccinia striiformis",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "trigo",
+      "sintomas": [
+        "Listras amarelas nas folhas",
+        "Pústulas amarelo-alaranjadas",
+        "Redução da área fotossintética"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Listras pequenas amarelas nas folhas.",
+        "avancados": "Pústulas amarelo-alaranjadas em listras, redução da área fotossintética."
+      },
+      "dano_economico": "Pode causar perdas de até 80% da produtividade",
+      "partes_afetadas": ["Folhas", "Colmo"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8"],
+      "fases_fenologicas_detalhadas": {
+        "V1": "Primeira folha - Monitoramento iniciado",
+        "V2": "Segunda folha - Controle preventivo",
+        "V3": "Terceira folha - Aplicação se sintomas detectados",
+        "V4": "Quarta folha - Controle intensivo",
+        "V5": "Quinta folha - Controle crítico",
+        "V6": "Sexta folha - Controle tardio",
+        "R1": "Início emborrachamento - Controle essencial",
+        "R2": "Emborrachamento pleno - Controle crítico",
+        "R3": "Início espigamento - Controle intensivo",
+        "R4": "Espigamento pleno - Controle final",
+        "R5": "Início enchimento - Parar aplicações",
+        "R6": "Enchimento pleno - Não aplicar",
+        "R7": "Maturação fisiológica - Não aplicar",
+        "R8": "Pronto colheita - Não aplicar"
+      },
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "1-5 pústulas por folha",
+        "medio": "6-20 pústulas por folha",
+        "alto": "21-50 pústulas por folha",
+        "critico": ">50 pústulas por folha"
+      },
+      "manejo_quimico": [
+        "Triazóis - 0,5-0,75 L/ha",
+        "Estrobilurinas - 0,3-0,5 L/ha",
+        "Carboxamidas - 0,4-0,6 L/ha"
+      ],
+      "doses_defensivos": {
+        "triazois": {
+          "dose": "0,5-0,75 L/ha",
+          "concentracao": "250 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "21 dias"
+        },
+        "estrobilurinas": {
+          "dose": "0,3-0,5 L/ha",
+          "concentracao": "250 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        },
+        "carboxamidas": {
+          "dose": "0,4-0,6 L/ha",
+          "concentracao": "200 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "21 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Uso de fungos antagônicos"
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Eliminação de plantas voluntárias",
+        "Rotação de culturas"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Eliminação de plantas voluntárias", "Rotação de culturas"],
+        "biologico": ["Uso de fungos antagônicos"],
+        "quimico": ["Triazóis", "Estrobilurinas", "Carboxamidas"]
+      },
+      "observacoes": "Doença mais importante do trigo no Brasil. Controle preventivo é fundamental.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5 pústulas por folha",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-20 pústulas por folha",
+          "perda_produtividade": "16-40%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "21-50 pústulas por folha",
+          "perda_produtividade": "41-80%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "15-20°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "enchimento": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "trigo_oidio",
+      "nome": "Oídio",
+      "nome_cientifico": "Blumeria graminis",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "trigo",
+      "sintomas": [
+        "Manchas brancas pulverulentas nas folhas",
+        "Redução da área fotossintética",
+        "Desfolha precoce"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Manchas pequenas brancas pulverulentas nas folhas.",
+        "avancados": "Manchas grandes brancas, redução da área fotossintética, desfolha precoce."
+      },
+      "dano_economico": "Pode causar perdas de até 50% da produtividade",
+      "partes_afetadas": ["Folhas", "Colmo"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5% das folhas com sintomas",
+      "niveis_severidade": {
+        "baixo": "1-5% das folhas com manchas",
+        "medio": "6-25% das folhas afetadas",
+        "alto": "26-50% das folhas afetadas",
+        "critico": ">50% das folhas afetadas"
+      },
+      "manejo_quimico": [
+        "Triazóis",
+        "Estrobilurinas",
+        "Carboxamidas"
+      ],
+      "manejo_biologico": [
+        "Bacillus subtilis",
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Controle de adubação nitrogenada",
+        "Rotação de culturas"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Controle de adubação nitrogenada", "Rotação de culturas"],
+        "biologico": ["Bacillus subtilis", "Trichoderma spp."],
+        "quimico": ["Triazóis", "Estrobilurinas", "Carboxamidas"]
+      },
+      "observacoes": "Doença importante em condições de alta umidade e temperaturas amenas.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5% das folhas com manchas",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-25% das folhas afetadas",
+          "perda_produtividade": "16-35%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "26-50% das folhas afetadas",
+          "perda_produtividade": "36-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "15-25°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% das folhas com sintomas",
+        "floracao": "5% das folhas com sintomas",
+        "enchimento": "5% das folhas com sintomas"
+      }
+    },
+    {
+      "id": "trigo_pulgao_verde",
+      "nome": "Pulgão-verde",
+      "nome_cientifico": "Schizaphis graminum",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "trigo",
+      "sintomas": [
+        "Sucção de seiva das folhas",
+        "Transmissão de vírus",
+        "Fumagina nas folhas"
+      ],
+      "dano_economico": "Pode causar perdas de até 60% devido à transmissão de vírus",
+      "partes_afetadas": ["Folhas", "Colmo"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "10 pulgões por folha",
+      "niveis_infestacao": {
+        "baixo": "1-5 pulgões por folha",
+        "medio": "6-10 pulgões por folha",
+        "alto": "11-20 pulgões por folha",
+        "critico": ">20 pulgões por folha"
+      },
+      "manejo_quimico": [
+        "Imidacloprido",
+        "Tiametoxam",
+        "Acetamiprido"
+      ],
+      "manejo_biologico": [
+        "Aphidius colemani",
+        "Coccinella septempunctata"
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Controle de plantas daninhas",
+        "Rotação de culturas"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Controle de plantas daninhas", "Rotação de culturas"],
+        "biologico": ["Aphidius colemani", "Coccinella septempunctata"],
+        "quimico": ["Imidacloprido", "Tiametoxam", "Acetamiprido"]
+      },
+      "observacoes": "Vetor importante de vírus como o nanismo amarelo. Controle preventivo é essencial.",
+      "icone": "🦟",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "0.5-1",
+          "tamanho": "0,5-1 mm",
+          "danos": "Sucção de seiva",
+          "dano": "Sucção de seiva, excreção de melada.",
+          "duracao_dias": "5-8",
+          "duracao": "5-8 dias",
+          "caracteristicas": "Ninfas pequenas, cor verde clara"
+        },
+        {
+          "fase": "Adulto áptero",
+          "tamanho_mm": "1.5-2",
+          "tamanho": "1,5-2 mm",
+          "danos": "Sucção de seiva e transmissão de vírus",
+          "dano": "Sucção de seiva e transmissão de vírus importantes.",
+          "duracao_dias": "15-25",
+          "duracao": "15-25 dias",
+          "caracteristicas": "Adultos sem asas, cor verde"
+        },
+        {
+          "fase": "Adulto alado",
+          "tamanho_mm": "1.5-2",
+          "tamanho": "1,5-2 mm",
+          "danos": "Dispersão e transmissão de vírus",
+          "dano": "Dispersão e transmissão de vírus para novas plantas.",
+          "duracao_dias": "15-25",
+          "duracao": "15-25 dias",
+          "caracteristicas": "Adultos com asas, cor verde"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5 pulgões por folha",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-10 pulgões por folha",
+          "perda_produtividade": "16-40%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "11-20 pulgões por folha",
+          "perda_produtividade": "41-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "10 pulgões por folha",
+        "floracao": "10 pulgões por folha",
+        "enchimento": "10 pulgões por folha"
+      }
+    },
+    {
+      "id": "trigo_mancha_marrom",
+      "nome": "Mancha-marrom",
+      "nome_cientifico": "Bipolaris sorokiniana",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "trigo",
+      "sintomas": [
+        "Manchas marrons nas folhas",
+        "Lesões alongadas",
+        "Redução da área fotossintética"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Manchas pequenas marrons nas folhas, principalmente nas folhas inferiores.",
+        "avancados": "Lesões alongadas marrons, redução da área fotossintética, desfolha precoce."
+      },
+      "dano_economico": "Pode causar perdas de até 50% da produtividade",
+      "partes_afetadas": ["Folhas", "Colmo", "Grãos"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5% das folhas com sintomas",
+      "niveis_severidade": {
+        "baixo": "1-5% das folhas com manchas",
+        "medio": "6-25% das folhas afetadas",
+        "alto": "26-50% das folhas afetadas",
+        "critico": ">50% das folhas afetadas"
+      },
+      "manejo_quimico": [
+        "Triazóis",
+        "Estrobilurinas",
+        "Carboxamidas"
+      ],
+      "manejo_biologico": [
+        "Bacillus subtilis",
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Rotação de culturas",
+        "Destruição de restos culturais"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Rotação de culturas", "Destruição de restos culturais"],
+        "biologico": ["Bacillus subtilis", "Trichoderma spp."],
+        "quimico": ["Triazóis", "Estrobilurinas", "Carboxamidas"]
+      },
+      "observacoes": "Doença importante em condições de alta umidade.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5% das folhas com manchas",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-25% das folhas afetadas",
+          "perda_produtividade": "16-35%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "26-50% das folhas afetadas",
+          "perda_produtividade": "36-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% das folhas com sintomas",
+        "floracao": "5% das folhas com sintomas",
+        "enchimento": "5% das folhas com sintomas"
+      }
+    },
+    {
+      "id": "trigo_deficiencia_nitrogenio",
+      "nome": "Deficiência de Nitrogênio",
+      "nome_cientifico": "Deficiência nutricional",
+      "categoria": "Deficiência Nutricional",
+      "tipo": "DEFICIENCIA_NUTRICIONAL",
+      "cultura_id": "trigo",
+      "sintomas": [
+        "Amarelecimento das folhas mais velhas",
+        "Redução do crescimento",
+        "Baixa produtividade"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Amarelecimento uniforme das folhas mais velhas, começando pelas pontas.",
+        "avancados": "Folhas completamente amarelas, redução do crescimento, baixa produtividade."
+      },
+      "dano_economico": "Pode causar perdas de até 60% da produtividade",
+      "partes_afetadas": ["Folhas velhas", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiros sintomas visíveis",
+      "niveis_severidade": {
+        "baixo": "Amarelecimento leve das folhas velhas",
+        "medio": "Amarelecimento moderado com redução de crescimento",
+        "alto": "Amarelecimento intenso e paralisação do crescimento",
+        "critico": "Necrose e morte das folhas"
+      },
+      "manejo_quimico": [
+        "Ureia",
+        "Sulfato de amônio",
+        "Nitrato de amônio"
+      ],
+      "manejo_biologico": [
+        "Adubação verde",
+        "Rotação com leguminosas"
+      ],
+      "manejo_cultural": [
+        "Adubação de base adequada",
+        "Adubação de cobertura",
+        "Análise de solo"
+      ],
+      "manejo": {
+        "cultural": ["Adubação de base adequada", "Adubação de cobertura", "Análise de solo"],
+        "biologico": ["Adubação verde", "Rotação com leguminosas"],
+        "quimico": ["Ureia", "Sulfato de amônio", "Nitrato de amônio"]
+      },
+      "observacoes": "Deficiência mais comum no trigo. Confundida com doenças virais.",
+      "icone": "🌿",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Amarelecimento leve das folhas velhas",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento e adubação preventiva"
+        },
+        "medio": {
+          "descricao": "Amarelecimento moderado com redução de crescimento",
+          "perda_produtividade": "21-40%",
+          "cor_alerta": "#FF9800",
+          "acao": "Adubação de cobertura imediata"
+        },
+        "alto": {
+          "descricao": "Amarelecimento intenso e paralisação do crescimento",
+          "perda_produtividade": "41-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Adubação de emergência"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Qualquer temperatura",
+        "umidade": "Solo com baixa capacidade de retenção",
+        "chuva": "Lixiviação por chuvas intensas",
+        "vento": "Não aplicável",
+        "solo": "Solos arenosos e com baixo teor de matéria orgânica"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiros sintomas visíveis",
+        "floracao": "Primeiros sintomas visíveis",
+        "enchimento": "Primeiros sintomas visíveis"
+      }
+    },
+    {
+      "id": "trigo_deficiencia_fosforo",
+      "nome": "Deficiência de Fósforo",
+      "nome_cientifico": "Deficiência nutricional",
+      "categoria": "Deficiência Nutricional",
+      "tipo": "DEFICIENCIA_NUTRICIONAL",
+      "cultura_id": "trigo",
+      "sintomas": [
+        "Folhas com coloração roxo-azulada",
+        "Crescimento reduzido",
+        "Sistema radicular pouco desenvolvido"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Folhas com coloração roxo-azulada, principalmente nas folhas mais velhas.",
+        "avancados": "Folhas completamente roxas, crescimento muito reduzido, sistema radicular pouco desenvolvido."
+      },
+      "dano_economico": "Pode causar perdas de até 50% da produtividade",
+      "partes_afetadas": ["Folhas", "Sistema radicular", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiros sintomas visíveis",
+      "niveis_severidade": {
+        "baixo": "Coloração roxo-azulada leve",
+        "medio": "Coloração roxo-azulada moderada",
+        "alto": "Coloração roxo-azulada intensa",
+        "critico": "Necrose e morte das folhas"
+      },
+      "manejo_quimico": [
+        "Superfosfato simples",
+        "Superfosfato triplo",
+        "Fosfato de amônio"
+      ],
+      "manejo_biologico": [
+        "Micorrizas",
+        "Adubação verde"
+      ],
+      "manejo_cultural": [
+        "Adubação de base adequada",
+        "Correção do pH do solo",
+        "Análise de solo"
+      ],
+      "manejo": {
+        "cultural": ["Adubação de base adequada", "Correção do pH do solo", "Análise de solo"],
+        "biologico": ["Micorrizas", "Adubação verde"],
+        "quimico": ["Superfosfato simples", "Superfosfato triplo", "Fosfato de amônio"]
+      },
+      "observacoes": "Mais comum em solos ácidos e com baixo teor de fósforo.",
+      "icone": "🌿",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Coloração roxo-azulada leve",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento e adubação preventiva"
+        },
+        "medio": {
+          "descricao": "Coloração roxo-azulada moderada",
+          "perda_produtividade": "21-35%",
+          "cor_alerta": "#FF9800",
+          "acao": "Adubação de cobertura"
+        },
+        "alto": {
+          "descricao": "Coloração roxo-azulada intensa",
+          "perda_produtividade": "36-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Adubação de emergência"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Qualquer temperatura",
+        "umidade": "Solo com baixa disponibilidade de fósforo",
+        "chuva": "Não aplicável",
+        "vento": "Não aplicável",
+        "solo": "Solos ácidos (pH < 6,0) e com baixo teor de fósforo"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiros sintomas visíveis",
+        "floracao": "Primeiros sintomas visíveis",
+        "enchimento": "Primeiros sintomas visíveis"
+      }
+    }
+  ]
+}

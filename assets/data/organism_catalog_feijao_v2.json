@@ -1,0 +1,106 @@
+{
+  "version": "2.0",
+  "last_updated": "2025-10-17",
+  "culture": "feijao",
+  "culture_id": "custom_feijao",
+  "scientific_name": "Phaseolus vulgaris",
+  "common_name": "Feijão",
+  
+  "phenological_stages": {
+    "vegetative": ["V1", "V2", "V3", "V4"],
+    "reproductive": ["R5", "R6", "R7", "R8", "R9"],
+    "critical_stages": ["R5", "R6", "R7"]
+  },
+  
+  "susceptibility_curve": {
+    "V2": { "damage_potential": 80, "recovery_capacity": 30 },
+    "V4": { "damage_potential": 60, "recovery_capacity": 50 },
+    "R5": { "damage_potential": 85, "recovery_capacity": 20 },
+    "R7": { "damage_potential": 95, "recovery_capacity": 10 },
+    "R9": { "damage_potential": 25, "recovery_capacity": 0 }
+  },
+  
+  "organisms": {
+    "pests": [
+      {
+        "id": "feijao_mosca_branca",
+        "name": "Mosca-branca",
+        "scientific_name": "Bemisia tabaci",
+        "unit": "adultos/folha",
+        "monitoring_method": "Inspeção de folhas",
+        
+        "phenological_thresholds": {
+          "V1-V3": {
+            "low": 1,
+            "medium": 3,
+            "high": 5,
+            "critical": 10,
+            "damage_potential": 90,
+            "damage_type": "Transmissão de vírus - mosaico dourado",
+            "economic_loss": "40-80%",
+            "action_window_hours": 24
+          },
+          "V4-R6": {
+            "low": 2,
+            "medium": 5,
+            "high": 10,
+            "critical": 15,
+            "damage_potential": 70,
+            "damage_type": "Sugamento e fumagina",
+            "economic_loss": "20-40%"
+          }
+        }
+      },
+      {
+        "id": "feijao_vaquinha",
+        "name": "Vaquinha",
+        "scientific_name": "Diabrotica speciosa",
+        "unit": "adultos/planta",
+        "monitoring_method": "Contagem visual",
+        
+        "phenological_thresholds": {
+          "V1-V2": {
+            "low": 1,
+            "medium": 3,
+            "high": 5,
+            "critical": 8,
+            "damage_potential": 85,
+            "damage_type": "Desfolha severa em plântulas",
+            "economic_loss": "20-40%"
+          },
+          "V3-R5": {
+            "low": 2,
+            "medium": 5,
+            "high": 10,
+            "critical": 15,
+            "damage_potential": 50,
+            "damage_type": "Desfolha - planta compensa",
+            "economic_loss": "< 10%"
+          }
+        }
+      }
+    ],
+    "diseases": [
+      {
+        "id": "feijao_antracnose",
+        "name": "Antracnose",
+        "pathogen": "Colletotrichum lindemuthianum",
+        "monitoring": "% folhas/vagens com lesões",
+        
+        "critical_stages": ["R5", "R7"],
+        
+        "thresholds": {
+          "V3-R7": {
+            "low": 5,
+            "medium": 10,
+            "high": 20,
+            "critical": 30,
+            "damage_potential": 85,
+            "economic_loss": "20-50%"
+          }
+        }
+      }
+    ]
+  }
+}
+

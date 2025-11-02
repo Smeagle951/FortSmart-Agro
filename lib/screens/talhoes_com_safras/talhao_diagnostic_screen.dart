@@ -14,7 +14,7 @@ class _TalhaoDiagnosticScreenState extends State<TalhaoDiagnosticScreen> {
   final TalhaoDiagnosticService _diagnosticService = TalhaoDiagnosticService();
   
   bool _isLoading = false;
-  String _diagnosticReport = '';
+  Map<String, dynamic> _diagnosticReport = {};
   String? _errorMessage;
 
   @override
@@ -222,7 +222,7 @@ class _TalhaoDiagnosticScreenState extends State<TalhaoDiagnosticScreen> {
                     border: Border.all(color: Colors.grey.withOpacity(0.3)),
                   ),
                   child: SelectableText(
-                    _diagnosticReport,
+                    _diagnosticReport.toString(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,

@@ -1,0 +1,3947 @@
+{
+  "cultura": "Soja",
+  "nome_cientifico": "Glycine max",
+  "versao": "4.0",
+  "data_atualizacao": "2024-12-19T00:00:00Z",
+  "funcionalidades_extras": {
+    "fases_desenvolvimento": true,
+    "tamanhos_mm": true,
+    "severidade_detalhada": true,
+    "condicoes_favoraveis": true,
+    "manejo_integrado": true,
+    "limiares_especificos": true,
+    "niveis_infestacao": true,
+    "niveis_severidade": true,
+    "sintomas_detalhados": true
+  },
+  "organismos": [
+    {
+      "id": "soja_lagarta_soja",
+      "nome": "Lagarta-da-soja",
+      "nome_cientifico": "Anticarsia gemmatalis",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Desfolha intensa",
+        "Folhas com bordas irregulares",
+        "Redução da área fotossintética"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% na produtividade devido à desfolha severa",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "R1", "R2", "R3", "R4", "R5", "R6"],
+      "fases_fenologicas_detalhadas": {
+        "V1": "Primeiro trifólio completamente desenvolvido - Monitoramento iniciado",
+        "V2": "Segundo trifólio - Primeira aplicação preventiva se necessário",
+        "V3": "Terceiro trifólio - Controle de lagartas iniciais",
+        "V4": "Quarto trifólio - Aplicação de inseticidas se >2 lagartas/m²",
+        "V5": "Quinto trifólio - Controle intensificado",
+        "V6": "Sexto trifólio - Última chance de controle efetivo",
+        "R1": "Início do florescimento - Controle crítico",
+        "R2": "Florescimento pleno - Evitar aplicações",
+        "R3": "Início do enchimento - Retomada de aplicações",
+        "R4": "Enchimento pleno - Controle intensivo",
+        "R5": "Início da maturação - Aplicações finais",
+        "R6": "Maturação fisiológica - Parar aplicações"
+      },
+      "nivel_acao": "Desfolha ≥ 30% no estágio vegetativo",
+      "niveis_infestacao": {
+        "baixo": "1-2 lagartas/metro",
+        "medio": "3-5 lagartas/metro", 
+        "alto": "6-8 lagartas/metro",
+        "critico": ">8 lagartas/metro"
+      },
+      "manejo_quimico": [
+        "Clorantraniliprole (IRAC 28) - 0,15-0,25 L/ha",
+        "Spinosad (IRAC 5) - 0,08-0,12 L/ha"
+      ],
+      "doses_defensivos": {
+        "clorantraniliprole": {
+          "dose": "0,15-0,25 L/ha",
+          "concentracao": "200 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias",
+          "epoca_aplicacao": "Vegetativo (V2-V6) e reprodutivo (R1-R5)",
+          "condicoes_climaticas": "Temperatura < 30°C, sem chuva por 4h, umidade relativa 60-80%",
+          "equipamento": "Pulverizador com bicos de jato cônico",
+          "adjuvante": "Óleo mineral 0,5% ou silicone 0,1%",
+          "observacoes": "Aplicar no início da infestação. Eficaz contra lagartas pequenas (1-3mm). Evitar aplicação em temperaturas > 30°C.",
+          "custo_aproximado": "R$ 45-65/ha"
+        },
+        "spinosad": {
+          "dose": "0,08-0,12 L/ha",
+          "concentracao": "480 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias",
+          "epoca_aplicacao": "Todo o ciclo (V1-R6)",
+          "condicoes_climaticas": "Temperatura < 35°C, sem chuva por 2h, umidade relativa 50-90%",
+          "equipamento": "Pulverizador com bicos de jato cônico",
+          "adjuvante": "Não necessário",
+          "observacoes": "Controle biológico. Respeitar intervalo para colheita. Eficaz contra lagartas de 3-8mm.",
+          "custo_aproximado": "R$ 25-35/ha"
+        }
+      },
+      "manejo_biologico": [
+        "Trichogramma pretiosum",
+        "Bacillus thuringiensis"
+      ],
+      "manejo_cultural": [
+        "Rotação de culturas",
+        "Plantio na época recomendada",
+        "Destruição de restos culturais"
+      ],
+      "manejo": {
+        "cultural": ["Rotação de culturas", "Plantio na época recomendada", "Destruição de restos culturais"],
+        "biologico": ["Bacillus thuringiensis", "Trichogramma pretiosum"],
+        "quimico": ["Clorantraniliprole (IRAC 28)", "Spinosad (IRAC 5)"]
+      },
+      "observacoes": "Importante realizar monitoramento constante para controle no início da infestação. Maior dano ocorre no florescimento e enchimento de grãos.",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.5",
+          "tamanho": "0,5 mm",
+          "danos": "Início da infestação",
+          "dano": "Sem danos diretos; representa início da infestação.",
+          "duracao_dias": "3-5",
+          "duracao": "3-5 dias",
+          "caracteristicas": "Postura em folhas, cor esbranquiçada"
+        },
+        {
+          "fase": "Neonata",
+          "tamanho_mm": "1-2",
+          "tamanho": "1-3 mm",
+          "danos": "Raspagens leves nas folhas",
+          "dano": "Pequenas raspagens nas folhas, baixo impacto.",
+          "duracao_dias": "2-3",
+          "duracao": "2-3 dias",
+          "caracteristicas": "Lagartas pequenas, cor verde clara"
+        },
+        {
+          "fase": "Média",
+          "tamanho_mm": "10-25",
+          "tamanho": "10-18 mm",
+          "danos": "Desfolha significativa",
+          "dano": "Consumo intenso de área foliar, perdas médias de 15–20%.",
+          "duracao_dias": "8-12",
+          "duracao": "5-7 dias",
+          "caracteristicas": "Lagartas verdes com listras longitudinais"
+        },
+        {
+          "fase": "Adulta",
+          "tamanho_mm": "30-35",
+          "tamanho": "25-30 mm",
+          "danos": "Desfolha severa, comprometendo produtividade",
+          "dano": "Desfolha severa, pode reduzir produtividade em até 40%.",
+          "duracao_dias": "5-8",
+          "duracao": "5-8 dias",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 5 lagartas por pano de batida",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-15 lagartas por pano de batida",
+          "perda_produtividade": "6-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 15 lagartas por pano de batida",
+          "perda_produtividade": "21-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Alta umidade relativa (>70%)",
+        "chuva": "Períodos de chuva frequente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos úmidos e bem drenados"
+      },
+      "limiares_especificos": {
+        "V1-V3": "2 lagartas/m² ou 30% de desfolha",
+        "V4-V6": "1 lagarta/m² ou 20% de desfolha",
+        "R1-R2": "1 lagarta/m² ou 15% de desfolha (evitar aplicações)",
+        "R3-R4": "1 lagarta/m² ou 10% de desfolha",
+        "R5-R6": "1 lagarta/m² ou 5% de desfolha"
+      },
+      "manejo_avancado": {
+        "monitoramento": {
+          "metodo": "Pano de batida",
+          "frequencia": "Semanal",
+          "horario": "Manhã (8-10h) ou tarde (16-18h)",
+          "condicoes": "Tempo seco, sem vento"
+        },
+        "aplicacao": {
+          "horario_ideal": "Manhã (6-10h) ou tarde (16-19h)",
+          "temperatura_maxima": "30°C",
+          "umidade_relativa_minima": "60%",
+          "velocidade_vento_maxima": "10 km/h"
+        },
+        "rotacao_modos_acao": {
+          "grupo_1": "IRAC 28 (Clorantraniliprole)",
+          "grupo_2": "IRAC 5 (Spinosad)",
+          "grupo_3": "IRAC 22A (Metaflumizona)",
+          "intervalo_minimo": "14 dias entre grupos"
+        }
+      }
+    },
+    {
+      "id": "soja_lagarta_cartucho",
+      "nome": "Lagarta Spodoptera",
+      "nome_cientifico": "Spodoptera frugiperda",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Danos em folhas centrais (cartucho)",
+        "Perfurações e raspagens"
+      ],
+      "dano_economico": "Redução severa da área foliar e do estande",
+      "partes_afetadas": ["Folhas", "Cartucho"],
+      "fenologia": ["V1", "V2", "V3", "V4", "V5", "V6", "R1", "R2"],
+      "fases_fenologicas_detalhadas": {
+        "V1": "Primeiro trifólio - Controle preventivo",
+        "V2": "Segundo trifólio - Aplicação se >20% plantas atacadas",
+        "V3": "Terceiro trifólio - Controle intensivo",
+        "V4": "Quarto trifólio - Última chance efetiva",
+        "V5": "Quinto trifólio - Controle tardio",
+        "V6": "Sexto trifólio - Controle de emergência",
+        "R1": "Início florescimento - Evitar aplicações",
+        "R2": "Florescimento pleno - Parar aplicações"
+      },
+      "nivel_acao": "Presença em mais de 20% das plantas",
+      "manejo_quimico": [
+        "Espinetoram (IRAC 5) - 0,08-0,12 L/ha",
+        "Flubendiamida (IRAC 28) - 0,15-0,20 L/ha"
+      ],
+      "doses_defensivos": {
+        "espinetoram": {
+          "dose": "0,08-0,12 L/ha",
+          "concentracao": "120 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        },
+        "flubendiamida": {
+          "dose": "0,15-0,20 L/ha",
+          "concentracao": "480 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Baculovirus spodoptera",
+        "Trichogramma pretiosum"
+      ],
+      "manejo_cultural": [
+        "Híbridos Bt",
+        "Refúgio",
+        "Plantio em época ideal"
+      ],
+      "observacoes": "Alto risco de resistência, exige rotação de modos de ação",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.4",
+          "danos": "Postura em folhas",
+          "duracao_dias": "2-4",
+          "caracteristicas": "Postura em massas, cor esbranquiçada"
+        },
+        {
+          "fase": "Neonata",
+          "tamanho_mm": "1-3",
+          "danos": "Perfurações pequenas em folhas",
+          "duracao_dias": "2-3",
+          "caracteristicas": "Lagartas pequenas, cor clara"
+        },
+        {
+          "fase": "Média",
+          "tamanho_mm": "10-20",
+          "danos": "Consumo de folhas médias e ponteiros",
+          "duracao_dias": "8-10",
+          "caracteristicas": "Lagartas com listras longitudinais"
+        },
+        {
+          "fase": "Adulta",
+          "tamanho_mm": "30-40",
+          "danos": "Alto consumo de folhas, ataque em vagens e ramos",
+          "duracao_dias": "5-7",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 3 lagartas por pano de batida",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "4-8 lagartas por pano de batida",
+          "perda_produtividade": "6-15%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 8 lagartas por pano de batida",
+          "perda_produtividade": "16-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "V1-V2": "20% das plantas com danos",
+        "V3-V4": "15% das plantas com danos",
+        "V5-V6": "10% das plantas com danos",
+        "R1-R2": "5% das plantas com danos (evitar aplicações)"
+      },
+      "manejo_avancado": {
+        "monitoramento": {
+          "metodo": "Inspeção visual das folhas centrais",
+          "frequencia": "Semanal",
+          "horario": "Manhã (8-10h)",
+          "condicoes": "Tempo seco"
+        },
+        "aplicacao": {
+          "horario_ideal": "Manhã (6-10h)",
+          "temperatura_maxima": "28°C",
+          "umidade_relativa_minima": "70%",
+          "velocidade_vento_maxima": "8 km/h"
+        },
+        "rotacao_modos_acao": {
+          "grupo_1": "IRAC 5 (Espinetoram)",
+          "grupo_2": "IRAC 28 (Flubendiamida)",
+          "grupo_3": "IRAC 22A (Metaflumizona)",
+          "intervalo_minimo": "14 dias entre grupos"
+        }
+      }
+    },
+    {
+      "id": "soja_lagarta_falsa_medideira",
+      "nome": "Lagarta-falsa-medideira",
+      "nome_cientifico": "Chrysodeixis includens",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Folhas com recortes irregulares",
+        "Presença de lagartas \"esticadas\" e ágeis"
+      ],
+      "dano_economico": "Redução da área foliar e potencial produtivo",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V4", "R5"],
+      "nivel_acao": "20 lagartas por pano de batida",
+      "manejo_quimico": [
+        "Metaflumizona (IRAC 22A)",
+        "Clorantraniliprole"
+      ],
+      "manejo_biologico": [
+        "Beauveria bassiana"
+      ],
+      "manejo_cultural": [
+        "Semeadura recomendada",
+        "Eliminação de soqueiras"
+      ],
+      "observacoes": "Muito comum em regiões tropicais, especialmente em cultivos sem rotação",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "soja_percevejo_marrom",
+      "nome": "Percevejo-marrom",
+      "nome_cientifico": "Euschistus heros",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Grãos chochos",
+        "Má formação",
+        "Abortamento de vagens"
+      ],
+      "dano_economico": "Perdas diretas por sucção de grãos e perdas indiretas por desuniformidade",
+      "partes_afetadas": ["Vagens", "Grãos"],
+      "fenologia": ["R3", "R4", "R5", "R6", "R7"],
+      "fases_fenologicas_detalhadas": {
+        "R3": "Início do enchimento - Monitoramento iniciado",
+        "R4": "Enchimento pleno - Controle crítico",
+        "R5": "Início da maturação - Controle intensivo",
+        "R6": "Maturação fisiológica - Aplicações finais",
+        "R7": "Maturação de colheita - Parar aplicações"
+      },
+      "nivel_acao": "≥ 1 percevejo por metro",
+      "manejo_quimico": [
+        "Tiametoxam + Lambda-cialotrina (IRAC 4A + 3A) - 0,25-0,30 L/ha",
+        "Acetamiprido (IRAC 4A) - 0,15-0,20 L/ha",
+        "Fipronil (IRAC 2B) - 0,20-0,25 L/ha"
+      ],
+      "doses_defensivos": {
+        "tiametoxam_lambda": {
+          "dose": "0,25-0,30 L/ha",
+          "concentracao": "250 g/L + 100 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "21 dias"
+        },
+        "acetamiprido": {
+          "dose": "0,15-0,20 L/ha",
+          "concentracao": "200 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        },
+        "fipronil": {
+          "dose": "0,20-0,25 L/ha",
+          "concentracao": "250 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "21 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Telenomus podisi"
+      ],
+      "manejo_cultural": [
+        "Semeadura no período ideal",
+        "Controle da bordadura"
+      ],
+      "observacoes": "Um dos maiores causadores de prejuízos na fase de enchimento de grãos",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "1-1.5",
+          "danos": "Postura em folhas e vagens; início de infestação",
+          "duracao_dias": "5-7",
+          "caracteristicas": "Postura em massas, cor esbranquiçada"
+        },
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "2-8",
+          "danos": "Sucção em vagens jovens, deformação de grãos",
+          "duracao_dias": "15-20",
+          "caracteristicas": "Ninfas pequenas, cor marrom clara"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "11-14",
+          "danos": "Sucção intensa em vagens e grãos; perdas de produtividade",
+          "duracao_dias": "30-45",
+          "caracteristicas": "Adultos marrons, formato oval"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 1 percevejo por metro",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "2-4 percevejos por metro",
+          "perda_produtividade": "6-15%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 4 percevejos por metro",
+          "perda_produtividade": "16-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "Não aplicável",
+        "enchimento": "2 percevejos por metro"
+      }
+    },
+    {
+      "id": "soja_percevejo_pequeno",
+      "nome": "Percevejo-pequeno",
+      "nome_cientifico": "Piezodorus guildinii",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Grãos chochos",
+        "Má formação",
+        "Abortamento de vagens"
+      ],
+      "dano_economico": "Perdas diretas por sucção de grãos e perdas indiretas por desuniformidade",
+      "partes_afetadas": ["Vagens", "Grãos"],
+      "fenologia": ["R4", "R6"],
+      "nivel_acao": "≥ 2 percevejos por metro",
+      "manejo_quimico": [
+        "Tiametoxam + Lambda-cialotrina (IRAC 4A + 3A)"
+      ],
+      "manejo_biologico": [
+        "Telenomus podisi"
+      ],
+      "manejo_cultural": [
+        "Semeadura no período ideal",
+        "Controle da bordadura"
+      ],
+      "observacoes": "Percevejo menor que o marrom, mas igualmente prejudicial",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "1",
+          "danos": "Início de infestação",
+          "duracao_dias": "4-6",
+          "caracteristicas": "Postura em massas, cor esbranquiçada"
+        },
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "1.5-7",
+          "danos": "Sucção em folhas e vagens pequenas",
+          "duracao_dias": "12-18",
+          "caracteristicas": "Ninfas pequenas, cor verde clara"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "8-10",
+          "danos": "Sucção intensa em vagens; deformação de grãos",
+          "duracao_dias": "25-35",
+          "caracteristicas": "Adultos pequenos, cor verde"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 1 percevejo por metro",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "2-4 percevejos por metro",
+          "perda_produtividade": "6-15%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 4 percevejos por metro",
+          "perda_produtividade": "16-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "Não aplicável",
+        "enchimento": "2 percevejos por metro"
+      }
+    },
+    {
+      "id": "soja_lagarta_helicoverpa",
+      "nome": "Lagarta Helicoverpa",
+      "nome_cientifico": "Helicoverpa armigera",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Perfuração de vagens",
+        "Consumo direto dos grãos",
+        "Danos em folhas e brotos"
+      ],
+      "dano_economico": "Danos severos e diretos na fase de enchimento, perdas econômicas elevadas",
+      "partes_afetadas": ["Vagens", "Grãos", "Folhas", "Brotos"],
+      "fenologia": ["R3", "R6"],
+      "nivel_acao": "≥ 1 larva por metro",
+      "manejo_quimico": [
+        "Espinetoram (IRAC 5)",
+        "Clorantraniliprole (IRAC 28)"
+      ],
+      "manejo_biologico": [
+        "Trichogramma pretiosum",
+        "Baculovirus Helicoverpa"
+      ],
+      "manejo_cultural": [
+        "Monitoramento noturno",
+        "Eliminação de soqueiras"
+      ],
+      "observacoes": "Populações explosivas em safrinha, alta resistência a inseticidas",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.5",
+          "danos": "Não causa danos diretos",
+          "duracao_dias": "3-5",
+          "caracteristicas": "Postura em folhas, cor esbranquiçada"
+        },
+        {
+          "fase": "Neonata",
+          "tamanho_mm": "1-2",
+          "danos": "Danos leves em folhas e brotos",
+          "duracao_dias": "2-3",
+          "caracteristicas": "Lagartas pequenas, cor clara"
+        },
+        {
+          "fase": "Média",
+          "tamanho_mm": "10-15",
+          "danos": "Perfura flores e vagens pequenas",
+          "duracao_dias": "8-10",
+          "caracteristicas": "Lagartas com listras longitudinais"
+        },
+        {
+          "fase": "Adulta",
+          "tamanho_mm": "30-40",
+          "danos": "Consome folhas, vagens e grãos; perdas econômicas elevadas",
+          "duracao_dias": "5-8",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 1 lagarta por metro",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "2-3 lagartas por metro",
+          "perda_produtividade": "6-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 3 lagartas por metro",
+          "perda_produtividade": "21-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "1 lagarta por metro",
+        "enchimento": "1 lagarta por metro"
+      }
+    },
+    {
+      "id": "soja_ferrugem_asiatica",
+      "nome": "Ferrugem-asiática",
+      "nome_cientifico": "Phakopsora pachyrhizi",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Pústulas castanho-avermelhadas nas folhas",
+        "Desfolha precoce"
+      ],
+      "dano_economico": "Redução drástica da produtividade e da longevidade foliar",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["R1", "R6"],
+      "nivel_acao": "Presença confirmada na região (monitoramento regional)",
+      "manejo_quimico": [
+        "Triazóis + Estrobilurinas + Carboxamidas (FRAC 3+11+7)"
+      ],
+      "manejo_biologico": [
+        "Bacillus subtilis",
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Vazio sanitário",
+        "Plantio precoce",
+        "Uso de cultivares precoces"
+      ],
+      "observacoes": "Doença mais grave da soja no Brasil, exige manejo integrado e preventivo",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 5% folhas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-25%",
+          "perda_produtividade": "11-30%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Acima de 25%",
+          "perda_produtividade": "31-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "18-26°C",
+        "umidade": "Alta umidade",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "Presença confirmada na região",
+        "enchimento": "Presença confirmada na região"
+      }
+    },
+    {
+      "id": "soja_mancha_alvo",
+      "nome": "Mancha-alvo",
+      "nome_cientifico": "Corynespora cassiicola",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Lesões circulares com halo amarelado"
+      ],
+      "dano_economico": "Queda foliar e redução na fotossíntese",
+      "partes_afetadas": ["Folhas", "Vagens"],
+      "fenologia": ["R1", "R5"],
+      "nivel_acao": "Incidência em ≥ 10% das folhas",
+      "manejo_quimico": [
+        "Protioconazol + Trifloxistrobina (FRAC 3 + 11)"
+      ],
+      "manejo_biologico": [
+        "Bacillus amyloliquefaciens"
+      ],
+      "manejo_cultural": [
+        "Rotação de culturas",
+        "Controle de plantas daninhas hospedeiras"
+      ],
+      "observacoes": "Doença emergente em várias regiões do Cerrado e Sul",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Poucas lesões isoladas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Lesões coalescentes, início da desfolha",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Desfolha intensa, perda de rendimento",
+          "perda_produtividade": "26-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Alta umidade",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "10% das folhas com lesões",
+        "enchimento": "10% das folhas com lesões"
+      }
+    },
+    {
+      "id": "soja_mofo_branco",
+      "nome": "Mofo-branco",
+      "nome_cientifico": "Sclerotinia sclerotiorum",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Murcha repentina",
+        "Podridão branca com micélio algodonoso",
+        "Escleródios pretos"
+      ],
+      "dano_economico": "Altamente destrutiva, pode dizimar áreas inteiras",
+      "partes_afetadas": ["Haste", "Ramos", "Vagens"],
+      "fenologia": ["R1", "R4"],
+      "nivel_acao": "Histórico da área e alta umidade + florescimento",
+      "manejo_quimico": [
+        "Fluazinam",
+        "Procidimona"
+      ],
+      "manejo_biologico": [
+        "Trichoderma harzianum",
+        "Coniothyrium minitans"
+      ],
+      "manejo_cultural": [
+        "Redução da densidade de plantas",
+        "Rotação com gramíneas"
+      ],
+      "observacoes": "Presente em regiões mais frias e úmidas, como Sul do Brasil",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "soja_oidio",
+      "nome": "Oídio",
+      "nome_cientifico": "Microsphaera diffusa",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Pó branco sobre folhas",
+        "Clorose e necrose progressiva"
+      ],
+      "dano_economico": "Perda de folhas e baixa retenção de vagens",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V6", "R3"],
+      "nivel_acao": "Presença inicial em reboleiras",
+      "manejo_quimico": [
+        "Tebuconazol",
+        "Trifloxistrobina"
+      ],
+      "manejo_biologico": [
+        "Bacillus subtilis"
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Plantio precoce"
+      ],
+      "observacoes": "Mais comum em regiões secas",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "soja_mancha_parda",
+      "nome": "Mancha-parda",
+      "nome_cientifico": "Septoria glycines",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Lesões marrons em folhas"
+      ],
+      "dano_economico": "Redução de área foliar e fotossíntese",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V4", "R5"],
+      "nivel_acao": "≥ 10% da folha infectada",
+      "manejo_quimico": [
+        "Azoxistrobina + Difenoconazol"
+      ],
+      "manejo_biologico": [
+        "Bacillus amyloliquefaciens"
+      ],
+      "manejo_cultural": [
+        "Eliminação de restos culturais"
+      ],
+      "observacoes": "Doença secundária, mas comum em cultivos sem rotação",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Lesões pequenas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Lesões maiores e algumas desfolhas",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Perda de folhas severa",
+          "perda_produtividade": "26-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Alta umidade",
+        "chuva": "Alta umidade e chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "10% da folha infectada",
+        "enchimento": "10% da folha infectada"
+      }
+    },
+    {
+      "id": "soja_nematoide_cisto",
+      "nome": "Nematoide-de-cisto",
+      "nome_cientifico": "Heterodera glycines",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Nódulos e cistos nas raízes"
+      ],
+      "dano_economico": "Redução do desenvolvimento radicular e produtividade",
+      "partes_afetadas": ["Raízes"],
+      "fenologia": ["Emergência", "R6"],
+      "nivel_acao": "Presença confirmada na área",
+      "manejo_quimico": [
+        "Nematicidas específicos"
+      ],
+      "manejo_biologico": [
+        "Nematóides antagonistas"
+      ],
+      "manejo_cultural": [
+        "Rotação de culturas",
+        "Cultivares resistentes"
+      ],
+      "observacoes": "Frequente em solos leves e irrigados",
+      "icone": "🪱",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Infestação inicial",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Nódulos visíveis",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de nematicida"
+        },
+        "alto": {
+          "descricao": "Perda de produtividade",
+          "perda_produtividade": "26-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de nematicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Umidade moderada",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Não aplicável",
+        "solo": "Solos leves e irrigados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Presença confirmada na área",
+        "floracao": "Presença confirmada na área",
+        "enchimento": "Presença confirmada na área"
+      }
+    },
+    {
+      "id": "soja_nematoide_galha",
+      "nome": "Nematoide-de-galha",
+      "nome_cientifico": "Meloidogyne spp.",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Galhas nas raízes, plantas atrofiadas"
+      ],
+      "dano_economico": "Redução do desenvolvimento radicular e produtividade",
+      "partes_afetadas": ["Raízes"],
+      "fenologia": ["Emergência", "R6"],
+      "nivel_acao": "Presença confirmada na área",
+      "manejo_quimico": [
+        "Nematicidas específicos"
+      ],
+      "manejo_biologico": [
+        "Nematóides antagonistas"
+      ],
+      "manejo_cultural": [
+        "Rotação de culturas",
+        "Cultivares resistentes"
+      ],
+      "observacoes": "Frequente em solo arenoso e quente",
+      "icone": "🪱",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Ataque inicial",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Galhas moderadas",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de nematicida"
+        },
+        "alto": {
+          "descricao": "Plantas comprometidas",
+          "perda_produtividade": "26-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de nematicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade moderada",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Não aplicável",
+        "solo": "Solo arenoso e quente"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Presença confirmada na área",
+        "floracao": "Presença confirmada na área",
+        "enchimento": "Presença confirmada na área"
+      }
+    },
+    {
+      "id": "soja_nematoide_lesao",
+      "nome": "Nematoide-de-lesão",
+      "nome_cientifico": "Pratylenchus brachyurus",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Lesões longitudinais nas raízes"
+      ],
+      "dano_economico": "Redução do desenvolvimento radicular e produtividade",
+      "partes_afetadas": ["Raízes"],
+      "fenologia": ["Emergência", "R6"],
+      "nivel_acao": "Presença confirmada na área",
+      "manejo_quimico": [
+        "Nematicidas específicos"
+      ],
+      "manejo_biologico": [
+        "Nematóides antagonistas"
+      ],
+      "manejo_cultural": [
+        "Rotação de culturas",
+        "Manejo de solo"
+      ],
+      "observacoes": "Frequente em solo leve e úmido",
+      "icone": "🪱",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Ataque isolado",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Redução de raízes",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de nematicida"
+        },
+        "alto": {
+          "descricao": "Comprometimento severo das raízes",
+          "perda_produtividade": "26-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de nematicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Umidade moderada",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Não aplicável",
+        "solo": "Solo leve e úmido"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Presença confirmada na área",
+        "floracao": "Presença confirmada na área",
+        "enchimento": "Presença confirmada na área"
+      }
+    },
+    {
+      "id": "soja_deficiencias_nutrientes",
+      "nome": "Deficiências de nutrientes",
+      "nome_cientifico": "N, K, S, Mn, Zn",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Clorose, necrose, deformações"
+      ],
+      "dano_economico": "Redução do desenvolvimento e produtividade",
+      "partes_afetadas": ["Folhas", "Plantas"],
+      "fenologia": ["Emergência", "R6"],
+      "nivel_acao": "Presença de sintomas visíveis",
+      "manejo_quimico": [
+        "Fertilizantes específicos"
+      ],
+      "manejo_biologico": [
+        "Biofertilizantes"
+      ],
+      "manejo_cultural": [
+        "Adubação correta e balanceada"
+      ],
+      "observacoes": "Frequente em solos pobres em nutrientes",
+      "icone": "🌱",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Sintomas iniciais",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Sintomas visíveis em várias folhas",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fertilizante"
+        },
+        "alto": {
+          "descricao": "Plantas atrofiadas e perda de produtividade",
+          "perda_produtividade": "26-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fertilizante"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Umidade moderada",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Não aplicável",
+        "solo": "Solos pobres em nutrientes"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Presença de sintomas visíveis",
+        "floracao": "Presença de sintomas visíveis",
+        "enchimento": "Presença de sintomas visíveis"
+      }
+    },
+    {
+      "id": "soja_podridao_rhizoctonia",
+      "nome": "Podridão radicular de Rhizoctonia",
+      "nome_cientifico": "Rhizoctonia solani",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Lesões na base do caule",
+        "Falhas no estande",
+        "Tombamento"
+      ],
+      "dano_economico": "Comprometimento do desenvolvimento inicial",
+      "partes_afetadas": ["Raiz", "Colo da planta"],
+      "fenologia": ["Emergência", "V4"],
+      "nivel_acao": "≥ 5% de falhas no estande",
+      "manejo_quimico": [
+        "Tratamento de sementes com fungicidas (Carboxamidas)"
+      ],
+      "manejo_biologico": [
+        "Trichoderma harzianum"
+      ],
+      "manejo_cultural": [
+        "Solo bem drenado",
+        "Plantio em época ideal"
+      ],
+      "observacoes": "Ocorre mais em solos mal estruturados e com excesso de umidade",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "soja_antracnose",
+      "nome": "Antracnose",
+      "nome_cientifico": "Colletotrichum truncatum",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Lesões escuras em folhas e vagens"
+      ],
+      "dano_economico": "Redução no número e peso das vagens",
+      "partes_afetadas": ["Folhas", "Vagens"],
+      "fenologia": ["R2", "R6"],
+      "nivel_acao": "Presença em ≥ 5% das plantas",
+      "manejo_quimico": [
+        "Protioconazol + Trifloxistrobina"
+      ],
+      "manejo_biologico": [
+        "Bacillus subtilis"
+      ],
+      "manejo_cultural": [
+        "Plantio precoce",
+        "Tratamento de sementes"
+      ],
+      "observacoes": "Frequente em áreas com umidade alta e pouca rotação",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Lesões isoladas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Lesões coalescentes",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Desfolha significativa",
+          "perda_produtividade": "26-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Alta umidade",
+        "chuva": "Chuva e alta umidade",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "5% das plantas com lesões",
+        "enchimento": "5% das plantas com lesões"
+      }
+    },
+    {
+      "id": "soja_cancro_haste",
+      "nome": "Cancro-da-haste",
+      "nome_cientifico": "Diaporthe phaseolorum f. sp. meridionalis",
+      "categoria": "Doença",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Manchas alongadas e necroses no caule"
+      ],
+      "dano_economico": "Comprometimento de condução da seiva, redução drástica de produtividade",
+      "partes_afetadas": ["Caule"],
+      "fenologia": ["V6", "R4"],
+      "nivel_acao": "≥ 1 planta com sintomas/10 m",
+      "manejo_quimico": [
+        "Não há controle químico eficaz"
+      ],
+      "manejo_biologico": [
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Sementes certificadas",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Doença persistente, difícil controle após instalação",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Ataque isolado",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Plantas com 1-2 manchas",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Murcha e tombamento",
+          "perda_produtividade": "26-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25°C",
+        "umidade": "Alta umidade",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "1 planta com sintomas/10 m",
+        "enchimento": "1 planta com sintomas/10 m"
+      }
+    },
+    {
+      "id": "soja_percevejo_verde",
+      "nome": "Percevejo-verde",
+      "nome_cientifico": "Nezara viridula",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Grãos malformados",
+        "Manchas nas sementes",
+        "Abortamento de vagens"
+      ],
+      "dano_economico": "Redução da qualidade e peso de grãos",
+      "partes_afetadas": ["Vagens", "Grãos"],
+      "fenologia": ["R4", "R7"],
+      "nivel_acao": "≥ 2 percevejos por metro",
+      "manejo_quimico": [
+        "Tiametoxam + Lambda-cialotrina (IRAC 4A + 3A)"
+      ],
+      "manejo_biologico": [
+        "Telenomus podisi",
+        "Beauveria bassiana"
+      ],
+      "manejo_cultural": [
+        "Semeadura precoce",
+        "Controle de plantas hospedeiras"
+      ],
+      "observacoes": "Costuma migrar de lavouras vizinhas, exige manejo regional",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "soja_mosca_branca",
+      "nome": "Mosca-branca",
+      "nome_cientifico": "Bemisia tabaci",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Fumagina nas folhas",
+        "Enrolamento e clorose"
+      ],
+      "dano_economico": "Redução de fotossíntese e transmissão de viroses como o vírus-da-necrose-da-haste",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V4", "R6"],
+      "nivel_acao": "≥ 10 moscas por folha",
+      "manejo_quimico": [
+        "Spiromesifeno",
+        "Pimetrozina"
+      ],
+      "manejo_biologico": [
+        "Encarsia formosa"
+      ],
+      "manejo_cultural": [
+        "Eliminar soqueiras",
+        "Evitar cultivos consecutivos"
+      ],
+      "observacoes": "Muito comum em regiões quentes e secas",
+      "icone": "🦋",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.2",
+          "danos": "Postura nas folhas",
+          "duracao_dias": "3-5",
+          "caracteristicas": "Postura em folhas, cor esbranquiçada"
+        },
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "0.5",
+          "danos": "Sucção de seiva; pode transmitir vírus",
+          "duracao_dias": "10-15",
+          "caracteristicas": "Ninfas pequenas, cor clara"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "1-1.5",
+          "danos": "Sucção intensa de seiva; favorece a proliferação de fumagina",
+          "duracao_dias": "20-30",
+          "caracteristicas": "Adultos brancos, formato oval"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 5 moscas por folha",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-15 moscas por folha",
+          "perda_produtividade": "6-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 15 moscas por folha",
+          "perda_produtividade": "21-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Baixa umidade relativa (<60%)",
+        "chuva": "Períodos secos",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos secos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "10 moscas por folha",
+        "floracao": "10 moscas por folha",
+        "enchimento": "10 moscas por folha"
+      }
+    },
+    {
+      "id": "soja_vaquinha",
+      "nome": "Vaquinha",
+      "nome_cientifico": "Diabrotica speciosa",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Consumo de folhas e flores",
+        "Danos em raízes jovens"
+      ],
+      "dano_economico": "Redução do desenvolvimento inicial e pequenas perdas foliares",
+      "partes_afetadas": ["Folhas", "Flores", "Raízes"],
+      "fenologia": ["Emergência", "V4"],
+      "nivel_acao": "≥ 5% de falhas no estande",
+      "manejo_quimico": [
+        "Fipronil (tratamento de sementes)"
+      ],
+      "manejo_biologico": [
+        "Metarhizium anisopliae"
+      ],
+      "manejo_cultural": [
+        "Preparo do solo",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Frequente em áreas de pousio ou pastagens anteriores",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.5",
+          "danos": "Início de infestação",
+          "duracao_dias": "7-10",
+          "caracteristicas": "Postura no solo, cor esbranquiçada"
+        },
+        {
+          "fase": "Larva",
+          "tamanho_mm": "5-10",
+          "danos": "Alimenta-se de raízes jovens, prejudicando desenvolvimento",
+          "duracao_dias": "20-30",
+          "caracteristicas": "Larvas brancas, formato cilíndrico"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "8-12",
+          "danos": "Consome folhas e flores; pequenas perdas foliares",
+          "duracao_dias": "30-45",
+          "caracteristicas": "Besouros pequenos, cor verde com manchas"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 2% de falhas no estande",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "3-5% de falhas no estande",
+          "perda_produtividade": "6-15%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 5% de falhas no estande",
+          "perda_produtividade": "16-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% de falhas no estande",
+        "floracao": "Não aplicável",
+        "enchimento": "Não aplicável"
+      }
+    },
+    {
+      "id": "soja_caramujo",
+      "nome": "Caramujo",
+      "nome_cientifico": "Achatina fulica",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Raspagem de folhas e brotos",
+        "Danos em plântulas"
+      ],
+      "dano_economico": "Redução do estande inicial e danos em plântulas",
+      "partes_afetadas": ["Folhas", "Brotos", "Plântulas"],
+      "fenologia": ["Emergência", "V4"],
+      "nivel_acao": "≥ 5% de falhas no estande",
+      "manejo_quimico": [
+        "Metaldeído",
+        "Fosfato de ferro"
+      ],
+      "manejo_biologico": [
+        "Nematóides parasitas"
+      ],
+      "manejo_cultural": [
+        "Controle de umidade",
+        "Eliminação de restos culturais"
+      ],
+      "observacoes": "Frequente em áreas úmidas e com restos culturais",
+      "icone": "🐌",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "50-150",
+          "danos": "Raspa folhas e brotos; pode danificar plântulas",
+          "duracao_dias": "365+",
+          "caracteristicas": "Caramujos grandes, concha espiralada"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 2% de falhas no estande",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "3-5% de falhas no estande",
+          "perda_produtividade": "6-15%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de moluscicida"
+        },
+        "alto": {
+          "descricao": "Acima de 5% de falhas no estande",
+          "perda_produtividade": "16-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de moluscicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Períodos de chuva frequente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos úmidos e com restos culturais"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% de falhas no estande",
+        "floracao": "Não aplicável",
+        "enchimento": "Não aplicável"
+      }
+    },
+    {
+      "id": "soja_acaro_rajado",
+      "nome": "Ácaro-rajado",
+      "nome_cientifico": "Tetranychus urticae",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Pontuações cloróticas nas folhas",
+        "Teias e bronzeamento"
+      ],
+      "dano_economico": "Redução da área fotossintética, queda precoce das folhas",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["Qualquer fase", "Aumenta em estiagem"],
+      "nivel_acao": "Presença em ≥ 10% das plantas",
+      "manejo_quimico": [
+        "Abamectina (IRAC 6)"
+      ],
+      "manejo_biologico": [
+        "Phytoseiulus macropilis"
+      ],
+      "manejo_cultural": [
+        "Evitar estresse hídrico",
+        "Aumentar umidade"
+      ],
+      "observacoes": "Prolifera em estiagens prolongadas",
+      "icone": "🕷️",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "soja_lagarta_maca",
+      "nome": "Lagarta-da-maçã",
+      "nome_cientifico": "Helicoverpa armigera",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Perfuração de vagens",
+        "Consumo direto dos grãos"
+      ],
+      "dano_economico": "Danos severos e diretos na fase de enchimento",
+      "partes_afetadas": ["Vagens"],
+      "fenologia": ["R3", "R6"],
+      "nivel_acao": "≥ 1 larva por metro",
+      "manejo_quimico": [
+        "Espinetoram",
+        "Clorantraniliprole"
+      ],
+      "manejo_biologico": [
+        "Trichogramma pretiosum",
+        "Baculovirus Helicoverpa"
+      ],
+      "manejo_cultural": [
+        "Monitoramento noturno",
+        "Eliminação de soqueiras"
+      ],
+      "observacoes": "Populações explosivas em safrinha",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "soja_coros",
+      "nome": "Corós (larvas de besouros)",
+      "nome_cientifico": "Phyllophaga spp.",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Plantas murchas",
+        "Falhas de estande",
+        "Raízes cortadas"
+      ],
+      "dano_economico": "Redução do estande e dificuldade de recuperação",
+      "partes_afetadas": ["Raízes"],
+      "fenologia": ["Emergência", "V4"],
+      "nivel_acao": "≥ 5% de falhas no estande",
+      "manejo_quimico": [
+        "Fipronil (tratamento de sementes)"
+      ],
+      "manejo_biologico": [
+        "Metarhizium anisopliae"
+      ],
+      "manejo_cultural": [
+        "Preparo do solo",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Frequente em áreas de pousio ou pastagens anteriores",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-01-01T00:00:00Z",
+      "data_atualizacao": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "soja_lagarta_rosca",
+      "nome": "Lagarta-rosca",
+      "nome_cientifico": "Agrotis ipsilon",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Plantas cortadas na base, morte de mudas"
+      ],
+      "dano_economico": "Pode causar perdas de até 30% devido à redução do estande",
+      "partes_afetadas": ["Caule", "Raiz"],
+      "fenologia": ["V1-V3"],
+      "nivel_acao": "2 lagartas por metro quadrado",
+      "manejo_quimico": [
+        "Clorantraniliprole",
+        "Teflubenzuron"
+      ],
+      "manejo_biologico": [
+        "Bacillus thuringiensis"
+      ],
+      "manejo_cultural": [
+        "Plantio direto",
+        "Eliminação de restos"
+      ],
+      "observacoes": "Crítico em plantio direto",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.5",
+          "danos": "Postura no solo",
+          "duracao_dias": "3-5",
+          "caracteristicas": "Postura no solo, cor esbranquiçada"
+        },
+        {
+          "fase": "Larva",
+          "tamanho_mm": "25-35",
+          "danos": "Corta plantas na base",
+          "duracao_dias": "20-30",
+          "caracteristicas": "Lagartas grandes, cor marrom"
+        },
+        {
+          "fase": "Pupa",
+          "tamanho_mm": "20",
+          "danos": "Não causa danos diretos",
+          "duracao_dias": "15-20",
+          "caracteristicas": "Pupas no solo, cor marrom"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "35-40",
+          "danos": "Somente reprodução",
+          "duracao_dias": "10-15",
+          "caracteristicas": "Mariposas marrons, formato triangular"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 1 lagarta por metro quadrado",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "2-3 lagartas por metro quadrado",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 3 lagartas por metro quadrado",
+          "perda_produtividade": "21-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "2 lagartas por metro quadrado",
+        "floracao": "Não aplicável",
+        "enchimento": "Não aplicável"
+      }
+    },
+    {
+      "id": "soja_lagarta_das_folhas",
+      "nome": "Lagarta-das-folhas",
+      "nome_cientifico": "Spodoptera eridania",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Folhas com orifícios, desfolha progressiva"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% devido à desfolha",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V2-R6"],
+      "nivel_acao": "20% de desfolha",
+      "manejo_quimico": [
+        "Bacillus thuringiensis",
+        "Spinosad"
+      ],
+      "manejo_biologico": [
+        "Trichogramma pretiosum"
+      ],
+      "manejo_cultural": [
+        "Eliminação de restos culturais",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Resistente a alguns inseticidas",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.4",
+          "danos": "Postura em folhas",
+          "duracao_dias": "2-4",
+          "caracteristicas": "Postura em massas, cor esbranquiçada"
+        },
+        {
+          "fase": "Larva inicial",
+          "tamanho_mm": "1-3",
+          "danos": "Pequenas perfurações em folhas",
+          "duracao_dias": "2-3",
+          "caracteristicas": "Lagartas pequenas, cor clara"
+        },
+        {
+          "fase": "Larva média",
+          "tamanho_mm": "15-25",
+          "danos": "Destruição parcial das folhas",
+          "duracao_dias": "8-10",
+          "caracteristicas": "Lagartas com listras longitudinais"
+        },
+        {
+          "fase": "Larva adulta",
+          "tamanho_mm": "35-45",
+          "danos": "Desfolha progressiva",
+          "duracao_dias": "5-7",
+          "caracteristicas": "Lagartas grandes, alta voracidade"
+        },
+        {
+          "fase": "Pupa",
+          "tamanho_mm": "20",
+          "danos": "Não causa danos diretos",
+          "duracao_dias": "8-12",
+          "caracteristicas": "Pupas no solo, cor marrom"
+        },
+        {
+          "fase": "Mariposa",
+          "tamanho_mm": "35-40",
+          "danos": "Somente reprodução",
+          "duracao_dias": "10-15",
+          "caracteristicas": "Mariposas marrons, formato triangular"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 10% de desfolha",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "11-20% de desfolha",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 20% de desfolha",
+          "perda_produtividade": "26-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "20% de desfolha",
+        "floracao": "15% de desfolha",
+        "enchimento": "10% de desfolha"
+      }
+    },
+    {
+      "id": "soja_lagarta_elasmo",
+      "nome": "Lagarta-elasmo",
+      "nome_cientifico": "Elasmopalpus lignosellus",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Plantas com colo danificado, morte de mudas"
+      ],
+      "dano_economico": "Pode causar perdas de até 25% devido à redução do estande",
+      "partes_afetadas": ["Colo", "Caule"],
+      "fenologia": ["V1-V3"],
+      "nivel_acao": "2 lagartas por metro quadrado",
+      "manejo_quimico": [
+        "Clorantraniliprole",
+        "Teflubenzuron"
+      ],
+      "manejo_biologico": [
+        "Bacillus thuringiensis"
+      ],
+      "manejo_cultural": [
+        "Plantio direto",
+        "Eliminação de restos"
+      ],
+      "observacoes": "Crítico em solos arenosos",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.3",
+          "danos": "Postura no solo",
+          "duracao_dias": "2-3",
+          "caracteristicas": "Postura no solo, cor esbranquiçada"
+        },
+        {
+          "fase": "Larva",
+          "tamanho_mm": "15-20",
+          "danos": "Ataca o colo da planta",
+          "duracao_dias": "15-20",
+          "caracteristicas": "Lagartas pequenas, cor clara"
+        },
+        {
+          "fase": "Pupa",
+          "tamanho_mm": "12",
+          "danos": "Não causa danos diretos",
+          "duracao_dias": "8-12",
+          "caracteristicas": "Pupas no solo, cor marrom"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "20-25",
+          "danos": "Somente reprodução",
+          "duracao_dias": "8-12",
+          "caracteristicas": "Mariposas pequenas, cor marrom"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 1 lagarta por metro quadrado",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "2-3 lagartas por metro quadrado",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 3 lagartas por metro quadrado",
+          "perda_produtividade": "21-25%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Solo úmido",
+        "chuva": "Períodos de chuva",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos arenosos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "2 lagartas por metro quadrado",
+        "floracao": "Não aplicável",
+        "enchimento": "Não aplicável"
+      }
+    },
+    {
+      "id": "soja_lagarta_das_raizes",
+      "nome": "Lagarta-das-raízes",
+      "nome_cientifico": "Diabrotica speciosa",
+      "categoria": "Praga",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Raízes danificadas, plantas amareladas"
+      ],
+      "dano_economico": "Pode causar perdas de até 25% na produtividade",
+      "partes_afetadas": ["Raízes"],
+      "fenologia": ["V1-R6"],
+      "nivel_acao": "5 vaquinhas por planta",
+      "manejo_quimico": [
+        "Fipronil",
+        "Clorantraniliprole",
+        "Lambda-cialotrina"
+      ],
+      "manejo_biologico": [
+        "Fungos entomopatogênicos",
+        "Nematoides"
+      ],
+      "manejo_cultural": [
+        "Controle de plantas daninhas",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Mais comum em solos arenosos",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Larva",
+          "tamanho_mm": "8-12",
+          "danos": "Consome raízes jovens",
+          "duracao_dias": "20-30",
+          "caracteristicas": "Larvas brancas, formato cilíndrico"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "10-12",
+          "danos": "Morde folhas e flores, menor impacto que larva",
+          "duracao_dias": "30-45",
+          "caracteristicas": "Besouros pequenos, cor verde"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Até 2 vaquinhas por planta",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "3-5 vaquinhas por planta",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "Acima de 5 vaquinhas por planta",
+          "perda_produtividade": "21-25%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos arenosos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5 vaquinhas por planta",
+        "floracao": "5 vaquinhas por planta",
+        "enchimento": "5 vaquinhas por planta"
+      }
+    },
+    {
+      "id": "soja_ferrugem_asiatica",
+      "nome": "Ferrugem-asiática",
+      "nome_cientifico": "Phakopsora pachyrhizi",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Pontuações escuras na face inferior da folha",
+        "Amarelamento das folhas",
+        "Necrose e desfolha precoce"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Pontuações escuras na face inferior da folha.",
+        "avancados": "Amarelamento, necrose, desfolha precoce."
+      },
+      "dano_economico": "Pode causar perdas de até 80% da produtividade",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "1-2 pústulas por folha",
+        "medio": "10-20% da área foliar afetada",
+        "alto": "20-40% da área foliar afetada",
+        "critico": ">40% da área foliar afetada"
+      },
+      "manejo_quimico": [
+        "Triazóis",
+        "Estrobilurinas",
+        "Carboxamidas"
+      ],
+      "manejo_biologico": [
+        "Uso de fungos antagônicos"
+      ],
+      "manejo_cultural": [
+        "Cultivares precoces",
+        "Eliminação de plantas voluntárias"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares precoces", "Eliminação de plantas voluntárias"],
+        "biologico": ["Uso de fungos antagônicos"],
+        "quimico": ["Triazóis", "Estrobilurinas", "Carboxamidas"]
+      },
+      "observacoes": "Doença mais importante da soja no Brasil. Controle preventivo é fundamental.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "1-2 pústulas por folha",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "10-20% da área foliar afetada",
+          "perda_produtividade": "11-40%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "20-40% da área foliar afetada",
+          "perda_produtividade": "41-80%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "18-26°C",
+        "umidade": "Alta umidade (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "enchimento": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "soja_mancha_alvo",
+      "nome": "Mancha-alvo",
+      "nome_cientifico": "Corynespora cassiicola",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Manchas circulares com centro claro e borda escura",
+        "Lesões nas folhas, hastes e vagens",
+        "Desfolha precoce"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Manchas pequenas e circulares nas folhas.",
+        "avancados": "Lesões grandes com centro claro e borda escura, desfolha precoce."
+      },
+      "dano_economico": "Pode causar perdas de até 60% da produtividade",
+      "partes_afetadas": ["Folhas", "Hastes", "Vagens"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5% das folhas com sintomas",
+      "niveis_severidade": {
+        "baixo": "1-5% das folhas com manchas",
+        "medio": "6-20% das folhas afetadas",
+        "alto": "21-40% das folhas afetadas",
+        "critico": ">40% das folhas afetadas"
+      },
+      "manejo_quimico": [
+        "Triazóis",
+        "Estrobilurinas",
+        "Carboxamidas"
+      ],
+      "manejo_biologico": [
+        "Bacillus subtilis",
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Rotação de culturas",
+        "Destruição de restos culturais"
+      ],
+      "manejo": {
+        "cultural": ["Cultivares resistentes", "Rotação de culturas", "Destruição de restos culturais"],
+        "biologico": ["Bacillus subtilis", "Trichoderma spp."],
+        "quimico": ["Triazóis", "Estrobilurinas", "Carboxamidas"]
+      },
+      "observacoes": "Doença importante em regiões tropicais e subtropicais.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5% das folhas com manchas",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-20% das folhas afetadas",
+          "perda_produtividade": "16-35%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "21-40% das folhas afetadas",
+          "perda_produtividade": "36-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% das folhas com sintomas",
+        "floracao": "5% das folhas com sintomas",
+        "enchimento": "5% das folhas com sintomas"
+      }
+    },
+    {
+      "id": "soja_mosca_branca",
+      "nome": "Mosca-branca",
+      "nome_cientifico": "Bemisia tabaci",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Sucção de seiva das folhas",
+        "Transmissão de vírus",
+        "Fumagina nas folhas"
+      ],
+      "dano_economico": "Pode causar perdas de até 50% devido à transmissão de vírus",
+      "partes_afetadas": ["Folhas", "Brotos"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "10 moscas-brancas/folha",
+      "niveis_infestacao": {
+        "baixo": "1-5 moscas por folha",
+        "medio": "6-10 moscas por folha",
+        "alto": "11-20 moscas por folha",
+        "critico": ">20 moscas por folha"
+      },
+      "manejo_quimico": [
+        "Imidacloprido",
+        "Tiametoxam",
+        "Acetamiprido"
+      ],
+      "manejo_biologico": [
+        "Encarsia formosa",
+        "Eretmocerus mundus"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas hospedeiras",
+        "Controle de plantas daninhas",
+        "Rotação de culturas"
+      ],
+      "manejo": {
+        "cultural": ["Eliminação de plantas hospedeiras", "Controle de plantas daninhas", "Rotação de culturas"],
+        "biologico": ["Encarsia formosa", "Eretmocerus mundus"],
+        "quimico": ["Imidacloprido", "Tiametoxam", "Acetamiprido"]
+      },
+      "observacoes": "Vetor importante de vírus como o mosaico dourado. Controle preventivo é essencial.",
+      "icone": "🦋",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.2",
+          "tamanho": "0,2 mm",
+          "danos": "Postura em folhas",
+          "dano": "Postura em folhas, sem danos diretos.",
+          "duracao_dias": "3-5",
+          "duracao": "3-5 dias",
+          "caracteristicas": "Postura na face inferior das folhas"
+        },
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "0.3-0.8",
+          "tamanho": "0,3-0,8 mm",
+          "danos": "Sucção de seiva",
+          "dano": "Sucção de seiva, excreção de melada.",
+          "duracao_dias": "10-15",
+          "duracao": "10-15 dias",
+          "caracteristicas": "Ninfas imóveis na face inferior das folhas"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "1-1.5",
+          "tamanho": "1-1,5 mm",
+          "danos": "Sucção de seiva e transmissão de vírus",
+          "dano": "Sucção de seiva e transmissão de vírus importantes.",
+          "duracao_dias": "20-30",
+          "duracao": "20-30 dias",
+          "caracteristicas": "Adultos brancos, voam quando perturbados"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5 moscas por folha",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-10 moscas por folha",
+          "perda_produtividade": "11-30%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "11-20 moscas por folha",
+          "perda_produtividade": "31-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "10 moscas por folha",
+        "floracao": "10 moscas por folha",
+        "enchimento": "10 moscas por folha"
+      }
+    },
+    {
+      "id": "soja_mosaico_dourado",
+      "nome": "Mosaico Dourado",
+      "nome_cientifico": "Begomovirus",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Amarelecimento das folhas",
+        "Mosaico nas folhas",
+        "Redução do crescimento",
+        "Baixa produtividade"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Amarelecimento leve das folhas, mosaico sutil.",
+        "avancados": "Amarelecimento intenso, mosaico evidente, redução do crescimento."
+      },
+      "dano_economico": "Pode causar perdas de até 80% da produtividade",
+      "partes_afetadas": ["Folhas", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "Amarelecimento leve das folhas",
+        "medio": "Amarelecimento moderado com mosaico",
+        "alto": "Amarelecimento intenso e redução de crescimento",
+        "critico": "Paralisação do crescimento"
+      },
+      "manejo_quimico": [
+        "Controle da mosca-branca",
+        "Inseticidas sistêmicos"
+      ],
+      "manejo_biologico": [
+        "Controle biológico da mosca-branca",
+        "Cultivares resistentes"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas doentes",
+        "Controle da mosca-branca",
+        "Cultivares resistentes"
+      ],
+      "manejo": {
+        "cultural": ["Eliminação de plantas doentes", "Controle da mosca-branca", "Cultivares resistentes"],
+        "biologico": ["Controle biológico da mosca-branca", "Cultivares resistentes"],
+        "quimico": ["Controle da mosca-branca", "Inseticidas sistêmicos"]
+      },
+      "observacoes": "Doença viral transmitida pela mosca-branca. Controle preventivo é essencial.",
+      "icone": "🦠",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Amarelecimento leve das folhas",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Amarelecimento moderado com mosaico",
+          "perda_produtividade": "21-50%",
+          "cor_alerta": "#FF9800",
+          "acao": "Controle da mosca-branca"
+        },
+        "alto": {
+          "descricao": "Amarelecimento intenso e redução de crescimento",
+          "perda_produtividade": "51-80%",
+          "cor_alerta": "#F44336",
+          "acao": "Controle imediato da mosca-branca"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "enchimento": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "soja_deficiencia_enxofre",
+      "nome": "Deficiência de Enxofre",
+      "nome_cientifico": "Deficiência nutricional",
+      "categoria": "Deficiência Nutricional",
+      "tipo": "DEFICIENCIA_NUTRICIONAL",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Amarelecimento das folhas novas",
+        "Redução do crescimento",
+        "Baixa produtividade",
+        "Folhas pequenas"
+      ],
+      "sintomas_detalhados": {
+        "iniciais": "Amarelecimento das folhas novas, redução do crescimento.",
+        "avancados": "Folhas pequenas, baixa produtividade, paralisação do crescimento."
+      },
+      "dano_economico": "Pode causar perdas de até 35% da produtividade",
+      "partes_afetadas": ["Folhas novas", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiros sintomas visíveis",
+      "niveis_severidade": {
+        "baixo": "Amarelecimento leve das folhas novas",
+        "medio": "Amarelecimento moderado com redução de crescimento",
+        "alto": "Amarelecimento intenso e paralisação do crescimento",
+        "critico": "Morte das folhas"
+      },
+      "manejo_quimico": [
+        "Sulfato de amônio",
+        "Sulfato de potássio",
+        "Gesso agrícola"
+      ],
+      "manejo_biologico": [
+        "Adubação com matéria orgânica",
+        "Rotação com culturas que reciclam enxofre"
+      ],
+      "manejo_cultural": [
+        "Adubação de base adequada",
+        "Adubação foliar",
+        "Análise de solo"
+      ],
+      "manejo": {
+        "cultural": ["Adubação de base adequada", "Adubação foliar", "Análise de solo"],
+        "biologico": ["Adubação com matéria orgânica", "Rotação com culturas que reciclam enxofre"],
+        "quimico": ["Sulfato de amônio", "Sulfato de potássio", "Gesso agrícola"]
+      },
+      "observacoes": "Deficiência importante que afeta o crescimento e produtividade da soja.",
+      "icone": "🌿",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Amarelecimento leve das folhas novas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento e adubação preventiva"
+        },
+        "medio": {
+          "descricao": "Amarelecimento moderado com redução de crescimento",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Adubação foliar imediata"
+        },
+        "alto": {
+          "descricao": "Amarelecimento intenso e paralisação do crescimento",
+          "perda_produtividade": "26-35%",
+          "cor_alerta": "#F44336",
+          "acao": "Adubação de emergência"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "Qualquer temperatura",
+        "umidade": "Solo com baixa capacidade de retenção",
+        "chuva": "Lixiviação por chuvas intensas",
+        "vento": "Não aplicável",
+        "solo": "Solos arenosos e com baixo teor de matéria orgânica"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiros sintomas visíveis",
+        "floracao": "Primeiros sintomas visíveis",
+        "enchimento": "Primeiros sintomas visíveis"
+      }
+    },
+    {
+      "id": "soja_pulgao_preto",
+      "nome": "Pulgão-preto",
+      "nome_cientifico": "Aphis craccivora",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Sucção de seiva das folhas",
+        "Transmissão de vírus",
+        "Fumagina nas folhas"
+      ],
+      "dano_economico": "Pode causar perdas de até 30% devido à sucção de seiva e transmissão de vírus",
+      "partes_afetadas": ["Folhas", "Brotos"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "5 pulgões por folha",
+      "niveis_infestacao": {
+        "baixo": "1-3 pulgões por folha",
+        "medio": "4-7 pulgões por folha",
+        "alto": "8-15 pulgões por folha",
+        "critico": ">15 pulgões por folha"
+      },
+      "manejo_quimico": [
+        "Imidacloprido",
+        "Tiametoxam",
+        "Acetamiprido"
+      ],
+      "manejo_biologico": [
+        "Aphidius colemani",
+        "Chrysoperla carnea"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas hospedeiras",
+        "Controle de plantas daninhas",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Vetor importante de vírus. Controle preventivo é essencial.",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "0.5-1.0",
+          "tamanho": "0,5-1,0 mm",
+          "danos": "Sucção de seiva",
+          "dano": "Sucção de seiva, início da infestação.",
+          "duracao_dias": "5-7",
+          "duracao": "5-7 dias",
+          "caracteristicas": "Ninfas pequenas, cor preta"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "2-3",
+          "tamanho": "2-3 mm",
+          "danos": "Sucção intensa de seiva e transmissão de vírus",
+          "dano": "Sucção intensa de seiva e transmissão de vírus importantes.",
+          "duracao_dias": "15-20",
+          "duracao": "15-20 dias",
+          "caracteristicas": "Adultos pequenos, cor preta"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-3 pulgões por folha",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "4-7 pulgões por folha",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "8-15 pulgões por folha",
+          "perda_produtividade": "21-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5 pulgões por folha",
+        "floracao": "5 pulgões por folha",
+        "enchimento": "5 pulgões por folha"
+      }
+    },
+    {
+      "id": "soja_formiga_cortadeira",
+      "nome": "Formiga-cortadeira",
+      "nome_cientifico": "Atta spp., Acromyrmex spp.",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Corte de folhas",
+        "Plantas desfolhadas",
+        "Acúmulo de material vegetal no formigueiro"
+      ],
+      "dano_economico": "Pode causar perdas de até 25% devido à desfolha severa",
+      "partes_afetadas": ["Folhas", "Brotos"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Presença de formigueiro ativo",
+      "niveis_infestacao": {
+        "baixo": "Formigueiro pequeno (< 5m²)",
+        "medio": "Formigueiro médio (5-20m²)",
+        "alto": "Formigueiro grande (20-50m²)",
+        "critico": "Formigueiro muito grande (>50m²)"
+      },
+      "manejo_quimico": [
+        "Sulfuramida",
+        "Fipronil",
+        "Hidrametilnon"
+      ],
+      "manejo_biologico": [
+        "Fungos entomopatogênicos",
+        "Nematoides"
+      ],
+      "manejo_cultural": [
+        "Eliminação de formigueiros",
+        "Controle preventivo",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Praga muito importante em áreas de Cerrado e Mata Atlântica.",
+      "icone": "🐜",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "Formigueiro pequeno (< 5m²)",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Formigueiro médio (5-20m²)",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de formicida"
+        },
+        "alto": {
+          "descricao": "Formigueiro grande (20-50m²)",
+          "perda_produtividade": "21-25%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de formicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Presença de formigueiro ativo",
+        "floracao": "Presença de formigueiro ativo",
+        "enchimento": "Presença de formigueiro ativo"
+      }
+    },
+    {
+      "id": "soja_coró",
+      "nome": "Coró",
+      "nome_cientifico": "Phyllophaga spp.",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Plantas murchas",
+        "Falhas de estande",
+        "Raízes cortadas"
+      ],
+      "dano_economico": "Pode causar perdas de até 30% devido à redução do estande",
+      "partes_afetadas": ["Raízes"],
+      "fenologia": ["Emergência", "V4"],
+      "nivel_acao": "≥ 5% de falhas no estande",
+      "niveis_infestacao": {
+        "baixo": "1-2 larvas por metro quadrado",
+        "medio": "3-5 larvas por metro quadrado",
+        "alto": "6-10 larvas por metro quadrado",
+        "critico": ">10 larvas por metro quadrado"
+      },
+      "manejo_quimico": [
+        "Fipronil (tratamento de sementes)",
+        "Clorantraniliprole"
+      ],
+      "manejo_biologico": [
+        "Metarhizium anisopliae",
+        "Nematoides entomopatogênicos"
+      ],
+      "manejo_cultural": [
+        "Preparo do solo",
+        "Rotação de culturas",
+        "Controle de plantas daninhas"
+      ],
+      "observacoes": "Frequente em áreas de pousio ou pastagens anteriores.",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "2",
+          "tamanho": "2 mm",
+          "danos": "Postura no solo",
+          "dano": "Postura no solo, sem danos diretos às plantas.",
+          "duracao_dias": "10-15",
+          "duracao": "10-15 dias",
+          "caracteristicas": "Postura no solo"
+        },
+        {
+          "fase": "Larva",
+          "tamanho_mm": "20-30",
+          "tamanho": "20-30 mm",
+          "danos": "Consumo de raízes",
+          "dano": "Consumo de raízes, causando falhas no estande.",
+          "duracao_dias": "60-90",
+          "duracao": "60-90 dias",
+          "caracteristicas": "Larvas brancas, formato C"
+        },
+        {
+          "fase": "Pupa",
+          "tamanho_mm": "15",
+          "tamanho": "15 mm",
+          "danos": "Não causa danos diretos",
+          "dano": "Não causa danos diretos às plantas.",
+          "duracao_dias": "15-20",
+          "duracao": "15-20 dias",
+          "caracteristicas": "Pupas no solo, cor marrom"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "15-20",
+          "tamanho": "15-20 mm",
+          "danos": "Consumo de folhas",
+          "dano": "Consumo de folhas, menor impacto que larva.",
+          "duracao_dias": "30-45",
+          "duracao": "30-45 dias",
+          "caracteristicas": "Besouros marrons, formato oval"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-2 larvas por metro quadrado",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "3-5 larvas por metro quadrado",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "6-10 larvas por metro quadrado",
+          "perda_produtividade": "21-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% de falhas no estande",
+        "floracao": "Não aplicável",
+        "enchimento": "Não aplicável"
+      }
+    },
+    {
+      "id": "soja_mancha_parda",
+      "nome": "Mancha-parda",
+      "nome_cientifico": "Septoria glycines",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Lesões marrons em folhas",
+        "Manchas circulares com halo amarelado",
+        "Desfolha precoce"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% da produtividade",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V4", "R5"],
+      "nivel_acao": "≥ 10% da folha infectada",
+      "niveis_severidade": {
+        "baixo": "1-5% das folhas com manchas",
+        "medio": "6-20% das folhas afetadas",
+        "alto": "21-40% das folhas afetadas",
+        "critico": ">40% das folhas afetadas"
+      },
+      "manejo_quimico": [
+        "Azoxistrobina + Difenoconazol",
+        "Protioconazol + Trifloxistrobina"
+      ],
+      "manejo_biologico": [
+        "Bacillus amyloliquefaciens",
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Eliminação de restos culturais",
+        "Rotação de culturas",
+        "Cultivares resistentes"
+      ],
+      "observacoes": "Doença secundária, mas comum em cultivos sem rotação.",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Lesões pequenas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Lesões maiores e algumas desfolhas",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Perda de folhas severa",
+          "perda_produtividade": "26-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Alta umidade",
+        "chuva": "Alta umidade e chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "10% da folha infectada",
+        "enchimento": "10% da folha infectada"
+      }
+    },
+    {
+      "id": "soja_mosaico_da_soja",
+      "nome": "Mosaico-da-soja",
+      "nome_cientifico": "Soybean mosaic virus",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Mosaico nas folhas",
+        "Amarelecimento das nervuras",
+        "Redução do crescimento",
+        "Baixa produtividade"
+      ],
+      "dano_economico": "Pode causar perdas de até 60% da produtividade",
+      "partes_afetadas": ["Folhas", "Crescimento geral"],
+      "fenologia": ["Todo o ciclo"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "Mosaico leve nas folhas",
+        "medio": "Mosaico moderado com amarelecimento",
+        "alto": "Mosaico intenso e redução de crescimento",
+        "critico": "Paralisação do crescimento"
+      },
+      "manejo_quimico": [
+        "Controle de vetores",
+        "Tratamento de sementes"
+      ],
+      "manejo_biologico": [
+        "Cultivares resistentes",
+        "Controle biológico de vetores"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas doentes",
+        "Controle de vetores",
+        "Cultivares resistentes"
+      ],
+      "observacoes": "Doença viral transmitida por pulgões e sementes infectadas.",
+      "icone": "🦠",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Mosaico leve nas folhas",
+          "perda_produtividade": "0-20%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Mosaico moderado com amarelecimento",
+          "perda_produtividade": "21-40%",
+          "cor_alerta": "#FF9800",
+          "acao": "Controle de vetores"
+        },
+        "alto": {
+          "descricao": "Mosaico intenso e redução de crescimento",
+          "perda_produtividade": "41-60%",
+          "cor_alerta": "#F44336",
+          "acao": "Controle imediato de vetores"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "enchimento": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "soja_acaro_vermelho",
+      "nome": "Ácaro-vermelho",
+      "nome_cientifico": "Mononychellus planki",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Pontuações cloróticas nas folhas",
+        "Bronzeamento e teias",
+        "Desfolha precoce"
+      ],
+      "dano_economico": "Pode causar perdas de até 35% da produtividade",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V4", "R6"],
+      "nivel_acao": "Presença em ≥ 10% das plantas",
+      "niveis_infestacao": {
+        "baixo": "1-5 ácaros por folha",
+        "medio": "6-15 ácaros por folha",
+        "alto": "16-30 ácaros por folha",
+        "critico": ">30 ácaros por folha"
+      },
+      "manejo_quimico": [
+        "Abamectina (IRAC 6)",
+        "Spiromesifeno (IRAC 23)"
+      ],
+      "doses_defensivos": {
+        "abamectina": {
+          "dose": "0,5-0,75 L/ha",
+          "concentracao": "18 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        },
+        "spiromesifeno": {
+          "dose": "0,3-0,4 L/ha",
+          "concentracao": "240 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Phytoseiulus macropilis",
+        "Neoseiulus californicus"
+      ],
+      "manejo_cultural": [
+        "Evitar estresse hídrico",
+        "Aumentar umidade relativa",
+        "Irrigação por aspersão"
+      ],
+      "observacoes": "Prolifera em períodos de estiagem prolongada",
+      "icone": "🕷️",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.1",
+          "tamanho": "0,1 mm",
+          "danos": "Início da infestação",
+          "dano": "Sem danos diretos; representa início da infestação.",
+          "duracao_dias": "2-3",
+          "duracao": "2-3 dias",
+          "caracteristicas": "Postura em folhas, cor vermelha"
+        },
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "0.2-0.3",
+          "tamanho": "0,2-0,3 mm",
+          "danos": "Sucção de seiva",
+          "dano": "Sucção de seiva, início dos danos.",
+          "duracao_dias": "3-5",
+          "duracao": "3-5 dias",
+          "caracteristicas": "Ninfas pequenas, cor vermelha"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "0.4-0.5",
+          "tamanho": "0,4-0,5 mm",
+          "danos": "Sucção intensa de seiva, bronzeamento das folhas",
+          "dano": "Sucção intensa de seiva, bronzeamento e desfolha precoce.",
+          "duracao_dias": "15-20",
+          "duracao": "15-20 dias",
+          "caracteristicas": "Adultos vermelhos, formato oval"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5 ácaros por folha",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-15 ácaros por folha",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de acaricida"
+        },
+        "alto": {
+          "descricao": "16-30 ácaros por folha",
+          "perda_produtividade": "26-35%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de acaricida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Baixa umidade relativa (<60%)",
+        "chuva": "Períodos secos",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos secos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "10 ácaros por folha",
+        "floracao": "10 ácaros por folha",
+        "enchimento": "10 ácaros por folha"
+      }
+    },
+    {
+      "id": "soja_cigarrinha_verde",
+      "nome": "Cigarrinha-verde",
+      "nome_cientifico": "Empoasca kraemeri",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Amarelecimento das bordas das folhas",
+        "Queima das pontas das folhas",
+        "Redução do crescimento"
+      ],
+      "dano_economico": "Pode causar perdas de até 25% da produtividade",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V2", "R6"],
+      "nivel_acao": "≥ 2 cigarrinhas por folha",
+      "niveis_infestacao": {
+        "baixo": "1-2 cigarrinhas por folha",
+        "medio": "3-5 cigarrinhas por folha",
+        "alto": "6-10 cigarrinhas por folha",
+        "critico": ">10 cigarrinhas por folha"
+      },
+      "manejo_quimico": [
+        "Imidacloprido (IRAC 4A)",
+        "Tiametoxam (IRAC 4A)"
+      ],
+      "doses_defensivos": {
+        "imidacloprido": {
+          "dose": "0,2-0,3 L/ha",
+          "concentracao": "200 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        },
+        "tiametoxam": {
+          "dose": "0,15-0,2 L/ha",
+          "concentracao": "250 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Anagrus spp.",
+        "Gonatocerus spp."
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas hospedeiras",
+        "Controle de plantas daninhas",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Vetor de vírus e causa danos diretos por sucção",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.5",
+          "tamanho": "0,5 mm",
+          "danos": "Postura em folhas",
+          "dano": "Postura em folhas, sem danos diretos.",
+          "duracao_dias": "5-7",
+          "duracao": "5-7 dias",
+          "caracteristicas": "Postura no interior das folhas"
+        },
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "1-2",
+          "tamanho": "1-2 mm",
+          "danos": "Sucção de seiva",
+          "dano": "Sucção de seiva, início dos danos.",
+          "duracao_dias": "10-15",
+          "duracao": "10-15 dias",
+          "caracteristicas": "Ninfas pequenas, cor verde clara"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "3-4",
+          "tamanho": "3-4 mm",
+          "danos": "Sucção intensa de seiva, amarelecimento das folhas",
+          "dano": "Sucção intensa de seiva, amarelecimento e queima das bordas das folhas.",
+          "duracao_dias": "20-30",
+          "duracao": "20-30 dias",
+          "caracteristicas": "Adultos verdes, formato alongado"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-2 cigarrinhas por folha",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "3-5 cigarrinhas por folha",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "6-10 cigarrinhas por folha",
+          "perda_produtividade": "21-25%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "2 cigarrinhas por folha",
+        "floracao": "2 cigarrinhas por folha",
+        "enchimento": "2 cigarrinhas por folha"
+      }
+    },
+    {
+      "id": "soja_trips",
+      "nome": "Trips",
+      "nome_cientifico": "Caliothrips phaseoli",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Pontuações prateadas nas folhas",
+        "Deformação das folhas",
+        "Redução do crescimento"
+      ],
+      "dano_economico": "Pode causar perdas de até 20% da produtividade",
+      "partes_afetadas": ["Folhas", "Brotos"],
+      "fenologia": ["V2", "R4"],
+      "nivel_acao": "≥ 5 trips por folha",
+      "niveis_infestacao": {
+        "baixo": "1-3 trips por folha",
+        "medio": "4-7 trips por folha",
+        "alto": "8-15 trips por folha",
+        "critico": ">15 trips por folha"
+      },
+      "manejo_quimico": [
+        "Spinosad (IRAC 5)",
+        "Abamectina (IRAC 6)"
+      ],
+      "doses_defensivos": {
+        "spinosad": {
+          "dose": "0,08-0,12 L/ha",
+          "concentracao": "480 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        },
+        "abamectina": {
+          "dose": "0,5-0,75 L/ha",
+          "concentracao": "18 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Orius insidiosus",
+        "Amblyseius swirskii"
+      ],
+      "manejo_cultural": [
+        "Eliminação de plantas hospedeiras",
+        "Controle de plantas daninhas",
+        "Irrigação por aspersão"
+      ],
+      "observacoes": "Praga muito pequena, difícil de detectar",
+      "icone": "🦗",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Ovo",
+          "tamanho_mm": "0.1",
+          "tamanho": "0,1 mm",
+          "danos": "Postura em folhas",
+          "dano": "Postura em folhas, sem danos diretos.",
+          "duracao_dias": "2-3",
+          "duracao": "2-3 dias",
+          "caracteristicas": "Postura no interior das folhas"
+        },
+        {
+          "fase": "Ninfa",
+          "tamanho_mm": "0.5-1.0",
+          "tamanho": "0,5-1,0 mm",
+          "danos": "Sucção de seiva",
+          "dano": "Sucção de seiva, início dos danos.",
+          "duracao_dias": "5-7",
+          "duracao": "5-7 dias",
+          "caracteristicas": "Ninfas pequenas, cor clara"
+        },
+        {
+          "fase": "Adulto",
+          "tamanho_mm": "1-2",
+          "tamanho": "1-2 mm",
+          "danos": "Sucção intensa de seiva, pontuações prateadas",
+          "dano": "Sucção intensa de seiva, pontuações prateadas e deformação das folhas.",
+          "duracao_dias": "15-20",
+          "duracao": "15-20 dias",
+          "caracteristicas": "Adultos pequenos, formato alongado"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-3 trips por folha",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "4-7 trips por folha",
+          "perda_produtividade": "6-15%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de inseticida"
+        },
+        "alto": {
+          "descricao": "8-15 trips por folha",
+          "perda_produtividade": "16-20%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de inseticida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Baixa velocidade do vento",
+        "solo": "Solos bem drenados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5 trips por folha",
+        "floracao": "5 trips por folha",
+        "enchimento": "5 trips por folha"
+      }
+    },
+    {
+      "id": "soja_torraozinho",
+      "nome": "Torraozinho",
+      "nome_cientifico": "Larvas de solo diversas",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Plantas murchas",
+        "Falhas no estande",
+        "Raízes danificadas"
+      ],
+      "dano_economico": "Pode causar perdas de até 20% devido à redução do estande",
+      "partes_afetadas": ["Raízes", "Sementes"],
+      "fenologia": ["Emergência", "V3"],
+      "nivel_acao": "≥ 3% de falhas no estande",
+      "niveis_infestacao": {
+        "baixo": "1-2 larvas por metro quadrado",
+        "medio": "3-5 larvas por metro quadrado",
+        "alto": "6-10 larvas por metro quadrado",
+        "critico": ">10 larvas por metro quadrado"
+      },
+      "manejo_quimico": [
+        "Fipronil (tratamento de sementes)",
+        "Clorantraniliprole (tratamento de sementes)"
+      ],
+      "doses_defensivos": {
+        "fipronil": {
+          "dose": "50-100 mL/100 kg sementes",
+          "concentracao": "250 g/L",
+          "volume_calda": "1-2 L/100 kg sementes",
+          "intervalo_seguranca": "Não aplicável"
+        },
+        "clorantraniliprole": {
+          "dose": "30-50 mL/100 kg sementes",
+          "concentracao": "200 g/L",
+          "volume_calda": "1-2 L/100 kg sementes",
+          "intervalo_seguranca": "Não aplicável"
+        }
+      },
+      "manejo_biologico": [
+        "Metarhizium anisopliae",
+        "Beauveria bassiana"
+      ],
+      "manejo_cultural": [
+        "Preparo adequado do solo",
+        "Rotação de culturas",
+        "Eliminação de restos culturais"
+      ],
+      "observacoes": "Grupo de larvas de diferentes espécies de besouros",
+      "icone": "🐛",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "fases": [
+        {
+          "fase": "Larva",
+          "tamanho_mm": "5-15",
+          "tamanho": "5-15 mm",
+          "danos": "Consumo de raízes e sementes",
+          "dano": "Consumo de raízes e sementes, causando falhas no estande.",
+          "duracao_dias": "30-60",
+          "duracao": "30-60 dias",
+          "caracteristicas": "Larvas brancas, formato C"
+        }
+      ],
+      "severidade": {
+        "baixo": {
+          "descricao": "1-2 larvas por metro quadrado",
+          "perda_produtividade": "0-5%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "3-5 larvas por metro quadrado",
+          "perda_produtividade": "6-15%",
+          "cor_alerta": "#FF9800",
+          "acao": "Tratamento de sementes"
+        },
+        "alto": {
+          "descricao": "6-10 larvas por metro quadrado",
+          "perda_produtividade": "16-20%",
+          "cor_alerta": "#F44336",
+          "acao": "Tratamento imediato de sementes"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Umidade relativa moderada (60-80%)",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Não aplicável",
+        "solo": "Solos úmidos e bem estruturados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "3% de falhas no estande",
+        "floracao": "Não aplicável",
+        "enchimento": "Não aplicável"
+      }
+    },
+    {
+      "id": "soja_crestamento_bacteriano",
+      "nome": "Crestamento bacteriano",
+      "nome_cientifico": "Xanthomonas axonopodis pv. glycines",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Lesões aquosas nas folhas",
+        "Manchas angulares com halo amarelado",
+        "Desfolha precoce"
+      ],
+      "dano_economico": "Pode causar perdas de até 30% da produtividade",
+      "partes_afetadas": ["Folhas", "Vagens"],
+      "fenologia": ["V4", "R6"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "1-5% das folhas com lesões",
+        "medio": "6-20% das folhas afetadas",
+        "alto": "21-40% das folhas afetadas",
+        "critico": ">40% das folhas afetadas"
+      },
+      "manejo_quimico": [
+        "Cobre (oxicloreto de cobre)",
+        "Mancozebe + Cobre"
+      ],
+      "doses_defensivos": {
+        "oxicloreto_cobre": {
+          "dose": "2-3 kg/ha",
+          "concentracao": "84%",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        },
+        "mancozebe_cobre": {
+          "dose": "2-2.5 kg/ha",
+          "concentracao": "64% + 8%",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Bacillus subtilis",
+        "Pseudomonas fluorescens"
+      ],
+      "manejo_cultural": [
+        "Sementes certificadas",
+        "Rotação de culturas",
+        "Eliminação de restos culturais"
+      ],
+      "observacoes": "Doença bacteriana importante em regiões tropicais",
+      "icone": "🦠",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "1-5% das folhas com lesões",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "6-20% das folhas afetadas",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de bactericida"
+        },
+        "alto": {
+          "descricao": "21-40% das folhas afetadas",
+          "perda_produtividade": "26-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de bactericida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "enchimento": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "soja_pustula_bacteriana",
+      "nome": "Pústula bacteriana",
+      "nome_cientifico": "Xanthomonas spp.",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Pústulas pequenas nas folhas",
+        "Lesões circulares com centro escuro",
+        "Desfolha em casos severos"
+      ],
+      "dano_economico": "Pode causar perdas de até 25% da produtividade",
+      "partes_afetadas": ["Folhas", "Vagens"],
+      "fenologia": ["V4", "R6"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "Poucas pústulas isoladas",
+        "medio": "Pústulas coalescentes",
+        "alto": "Desfolha significativa",
+        "critico": "Desfolha severa"
+      },
+      "manejo_quimico": [
+        "Cobre (oxicloreto de cobre)",
+        "Mancozebe + Cobre"
+      ],
+      "doses_defensivos": {
+        "oxicloreto_cobre": {
+          "dose": "2-3 kg/ha",
+          "concentracao": "84%",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Bacillus subtilis",
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Sementes certificadas",
+        "Rotação de culturas",
+        "Eliminação de restos culturais"
+      ],
+      "observacoes": "Doença bacteriana secundária",
+      "icone": "🦠",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Poucas pústulas isoladas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Pústulas coalescentes",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de bactericida"
+        },
+        "alto": {
+          "descricao": "Desfolha significativa",
+          "perda_produtividade": "21-25%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de bactericida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Alta umidade relativa (>80%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "enchimento": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "soja_podridao_fusarium",
+      "nome": "Podridão radicular por Fusarium",
+      "nome_cientifico": "Fusarium solani",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Murcha das plantas",
+        "Lesões escuras nas raízes",
+        "Falhas no estande"
+      ],
+      "dano_economico": "Pode causar perdas de até 40% da produtividade",
+      "partes_afetadas": ["Raízes", "Colo da planta"],
+      "fenologia": ["Emergência", "V6"],
+      "nivel_acao": "≥ 5% de falhas no estande",
+      "niveis_severidade": {
+        "baixo": "Poucas plantas afetadas",
+        "medio": "Falhas moderadas no estande",
+        "alto": "Falhas severas no estande",
+        "critico": "Perda total do estande"
+      },
+      "manejo_quimico": [
+        "Tratamento de sementes com fungicidas (Carboxamidas)",
+        "Fluxapyroxad + Piraclostrobina"
+      ],
+      "doses_defensivos": {
+        "fluxapyroxad_piraclostrobina": {
+          "dose": "0,5-0,75 L/ha",
+          "concentracao": "250 g/L + 250 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Trichoderma harzianum",
+        "Bacillus subtilis"
+      ],
+      "manejo_cultural": [
+        "Solo bem drenado",
+        "Plantio em época ideal",
+        "Rotação de culturas"
+      ],
+      "observacoes": "Fungo de solo, comum em solos mal drenados",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Poucas plantas afetadas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Falhas moderadas no estande",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Falhas severas no estande",
+          "perda_produtividade": "26-40%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Alta umidade do solo",
+        "chuva": "Chuvas frequentes",
+        "vento": "Não aplicável",
+        "solo": "Solos mal drenados e compactados"
+      },
+      "limiares_especificos": {
+        "vegetativo": "5% de falhas no estande",
+        "floracao": "5% de falhas no estande",
+        "enchimento": "5% de falhas no estande"
+      }
+    },
+    {
+      "id": "soja_nematoide_reniforme",
+      "nome": "Nematoide reniforme",
+      "nome_cientifico": "Rotylenchulus reniformis",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Plantas atrofiadas",
+        "Amarelecimento das folhas",
+        "Redução do sistema radicular"
+      ],
+      "dano_economico": "Pode causar perdas de até 35% da produtividade",
+      "partes_afetadas": ["Raízes"],
+      "fenologia": ["Emergência", "R6"],
+      "nivel_acao": "Presença confirmada na área",
+      "niveis_severidade": {
+        "baixo": "Infestação inicial",
+        "medio": "Plantas com sintomas visíveis",
+        "alto": "Plantas severamente afetadas",
+        "critico": "Perda significativa de produtividade"
+      },
+      "manejo_quimico": [
+        "Nematicidas específicos",
+        "Fluensulfone"
+      ],
+      "doses_defensivos": {
+        "fluensulfone": {
+          "dose": "3-4 L/ha",
+          "concentracao": "480 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "30 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Nematóides antagonistas",
+        "Fungos nematófagos"
+      ],
+      "manejo_cultural": [
+        "Rotação de culturas",
+        "Cultivares resistentes",
+        "Manejo de solo"
+      ],
+      "observacoes": "Frequente em solos argilosos",
+      "icone": "🪱",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Infestação inicial",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Plantas com sintomas visíveis",
+          "perda_produtividade": "11-25%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de nematicida"
+        },
+        "alto": {
+          "descricao": "Plantas severamente afetadas",
+          "perda_produtividade": "26-35%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de nematicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Umidade moderada",
+        "chuva": "Períodos de chuva intermitente",
+        "vento": "Não aplicável",
+        "solo": "Solos argilosos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Presença confirmada na área",
+        "floracao": "Presença confirmada na área",
+        "enchimento": "Presença confirmada na área"
+      }
+    },
+    {
+      "id": "soja_podridao_haste",
+      "nome": "Podridão-da-haste",
+      "nome_cientifico": "Phialophora gregata",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Lesões escuras no caule",
+        "Murcha das plantas",
+        "Redução da produtividade"
+      ],
+      "dano_economico": "Pode causar perdas de até 50% da produtividade",
+      "partes_afetadas": ["Caule", "Haste"],
+      "fenologia": ["V6", "R4"],
+      "nivel_acao": "≥ 1 planta com sintomas/10 m",
+      "niveis_severidade": {
+        "baixo": "Poucas plantas afetadas",
+        "medio": "Plantas com lesões moderadas",
+        "alto": "Plantas severamente afetadas",
+        "critico": "Perda significativa de produtividade"
+      },
+      "manejo_quimico": [
+        "Não há controle químico eficaz"
+      ],
+      "manejo_biologico": [
+        "Trichoderma spp.",
+        "Bacillus subtilis"
+      ],
+      "manejo_cultural": [
+        "Sementes certificadas",
+        "Rotação de culturas",
+        "Cultivares resistentes"
+      ],
+      "observacoes": "Doença persistente, difícil controle após instalação",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Poucas plantas afetadas",
+          "perda_produtividade": "0-15%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Plantas com lesões moderadas",
+          "perda_produtividade": "16-35%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Plantas severamente afetadas",
+          "perda_produtividade": "36-50%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Alta umidade",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "1 planta com sintomas/10 m",
+        "floracao": "1 planta com sintomas/10 m",
+        "enchimento": "1 planta com sintomas/10 m"
+      }
+    },
+    {
+      "id": "soja_queima_vagens",
+      "nome": "Queima-das-vagens",
+      "nome_cientifico": "Phomopsis sojae",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Lesões escuras nas vagens",
+        "Grãos malformados",
+        "Redução da qualidade"
+      ],
+      "dano_economico": "Pode causar perdas de até 30% da produtividade",
+      "partes_afetadas": ["Vagens", "Grãos"],
+      "fenologia": ["R3", "R6"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "Poucas vagens afetadas",
+        "medio": "Vagens com lesões moderadas",
+        "alto": "Vagens severamente afetadas",
+        "critico": "Perda significativa de qualidade"
+      },
+      "manejo_quimico": [
+        "Protioconazol + Trifloxistrobina",
+        "Azoxistrobina + Difenoconazol"
+      ],
+      "doses_defensivos": {
+        "protioconazol_trifloxistrobina": {
+          "dose": "0,5-0,75 L/ha",
+          "concentracao": "250 g/L + 250 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Bacillus subtilis",
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Sementes certificadas",
+        "Rotação de culturas",
+        "Eliminação de restos culturais"
+      ],
+      "observacoes": "Doença de final de ciclo",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Poucas vagens afetadas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Vagens com lesões moderadas",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Vagens severamente afetadas",
+          "perda_produtividade": "21-30%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "25-30°C",
+        "umidade": "Alta umidade",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Não aplicável",
+        "floracao": "Primeiro sintoma detectado",
+        "enchimento": "Primeiro sintoma detectado"
+      }
+    },
+    {
+      "id": "soja_mildio",
+      "nome": "Míldio",
+      "nome_cientifico": "Peronospora manshurica",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "soja",
+      "sintomas": [
+        "Manchas amareladas nas folhas",
+        "Míldio na face inferior das folhas",
+        "Desfolha precoce"
+      ],
+      "dano_economico": "Pode causar perdas de até 25% da produtividade",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V4", "R4"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "niveis_severidade": {
+        "baixo": "Poucas folhas afetadas",
+        "medio": "Folhas com míldio moderado",
+        "alto": "Folhas severamente afetadas",
+        "critico": "Desfolha significativa"
+      },
+      "manejo_quimico": [
+        "Metalaxil + Mancozebe",
+        "Fosetyl-Al"
+      ],
+      "doses_defensivos": {
+        "metalaxil_mancozebe": {
+          "dose": "2-2.5 kg/ha",
+          "concentracao": "8% + 64%",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "7 dias"
+        }
+      },
+      "manejo_biologico": [
+        "Bacillus subtilis",
+        "Trichoderma spp."
+      ],
+      "manejo_cultural": [
+        "Cultivares resistentes",
+        "Rotação de culturas",
+        "Eliminação de restos culturais"
+      ],
+      "observacoes": "Doença comum em regiões úmidas",
+      "icone": "🍄",
+      "ativo": true,
+      "data_criacao": "2024-12-19T00:00:00Z",
+      "data_atualizacao": "2024-12-19T00:00:00Z",
+      "severidade": {
+        "baixo": {
+          "descricao": "Poucas folhas afetadas",
+          "perda_produtividade": "0-10%",
+          "cor_alerta": "#4CAF50",
+          "acao": "Monitoramento intensificado"
+        },
+        "medio": {
+          "descricao": "Folhas com míldio moderado",
+          "perda_produtividade": "11-20%",
+          "cor_alerta": "#FF9800",
+          "acao": "Aplicação de fungicida"
+        },
+        "alto": {
+          "descricao": "Folhas severamente afetadas",
+          "perda_produtividade": "21-25%",
+          "cor_alerta": "#F44336",
+          "acao": "Aplicação imediata de fungicida"
+        }
+      },
+      "condicoes_favoraveis": {
+        "temperatura": "20-25°C",
+        "umidade": "Alta umidade relativa (>90%)",
+        "chuva": "Chuvas frequentes",
+        "vento": "Vento para dispersão",
+        "solo": "Solos úmidos"
+      },
+      "limiares_especificos": {
+        "vegetativo": "Primeiro sintoma detectado",
+        "floracao": "Primeiro sintoma detectado",
+        "enchimento": "Primeiro sintoma detectado"
+      }
+    }
+  ]
+} 

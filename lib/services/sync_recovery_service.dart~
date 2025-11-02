@@ -1,0 +1,2413 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as path;
+import 'package:sqflite/sqflite.dart';
+
+import '../models/soil_sample.dart';
+import '../models/notification.dart';
+import '../models/storage_models.dart';
+import '../repositories/soil_sample_repository.dart';
+import '../repositories/sample_point_repository.dart';
+import '../services/database_integrity_service.dart';
+import '../services/soil_sample_sync_service.dart';
+import '../services/connectivity_monitor_service.dart';
+import '../services/storage_management_service.dart';
+import '../services/image_management_service.dart';
+import '../services/image_integrity_service.dart';
+import '../services/image_repair_service.dart';
+import '../services/sync_failure_manager.dart';
+import '../services/notification_service.dart';
+import '../services/device_info_service.dart';
+import '../utils/logger.dart';
+import '../utils/config.dart';
+import '../utils/enums.dart';
+
+/// Classe para representar o progresso da recuperação
+class RecoveryProgress {
+  final String sampleId;
+  final int progress;
+  final String status;
+  final String message;
+  final DateTime timestamp;
+  final Map<String, dynamic> details;
+  final int? current;
+  final int? total;
+  final int? percentage;
+
+  RecoveryProgress({
+    required this.sampleId,
+    required this.progress,
+    required this.status,
+    required this.message,
+    required this.timestamp,
+    this.details = const {},
+    this.current,
+    this.total,
+    this.percentage,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'sampleId': sampleId,
+      'progress': progress,
+      'status': status,
+      'message': message,
+      'timestamp': timestamp.toIso8601String(),
+      'details': details,
+      'current': current,
+      'total': total,
+      'percentage': percentage,
+    };
+  }
+}
+
+/// Serviço responsável pela recuperação de sincronização
+class SyncRecoveryService {
+  static final SyncRecoveryService _instance = SyncRecoveryService._internal();
+  final SoilSampleRepository _repository = SoilSampleRepository();
+  final SamplePointRepository _samplePointRepository = SamplePointRepository();
+  final DatabaseIntegrityService _dbIntegrityService = DatabaseIntegrityService();
+  late final SoilSampleSyncService _syncService;
+  final ConnectivityMonitorService _connectivityService = ConnectivityMonitorService();
+  final StorageManagementService _storageService = StorageManagementService();
+  final ImageManagementService _imageService = ImageManagementService();
+  ImageIntegrityService? _imageIntegrityService;
+  ImageRepairService? _imageRepairService;
+  SyncFailureManager? _failureManager;
+  NotificationService? _notificationService;
+  DeviceInfoService? _deviceInfoService;
+  bool _isInitialized = false;
+
+  // Stream para notificar sobre o status da recuperação
+  final _recoveryStatusController = StreamController<RecoveryStatus>.broadcast();
+  Stream<RecoveryStatus> get recoveryStatusStream => _recoveryStatusController.stream;
+
+  // Stream para notificar sobre o progresso da recuperação
+  final _recoveryProgressController = StreamController<RecoveryProgress>.broadcast();
+  Stream<RecoveryProgress> get recoveryProgressStream => _recoveryProgressController.stream;
+
+  // Stream para monitorar o progresso detalhado da recuperação
+  final _detailedProgressController = StreamController<Map<String, dynamic>>.broadcast();
+  Stream<Map<String, dynamic>> get detailedProgress => _detailedProgressController.stream;
+
+  bool _isRecovering = false;
+  int _recoveryAttempts = 0;
+  final Map<String, int> _sampleRetryCount = {};
+
+  // Singleton pattern
+  factory SyncRecoveryService() {
+    return _instance;
+  }
+
+  SyncRecoveryService._internal();
+
+  /// Inicializa o serviço de recuperação
+  Future<void> initialize(SoilSampleSyncService syncService) async {
+    if (_isInitialized) return;
+    try {
+      _syncService = syncService;
+
+      // Inicializar gerenciador de falhas
+      _failureManager = SyncFailureManager();
+      await _failureManager!.initialize();
+
+      // Inicializar serviço de integridade de imagens
+      final db = await openDatabase(Config.databasePath);
+      _imageIntegrityService = ImageIntegrityService(db);
+      _imageRepairService = ImageRepairService(db);
+
+      // Inicializar serviço de notificações
+      _notificationService = NotificationService();
+
+      // Inicializar serviço de informações do dispositivo
+      _deviceInfoService = DeviceInfoService();
+
+      _isInitialized = true;
+
+      // Verificar se há logs de sincronização falha para recuperar
+      await _checkForFailedSyncLogs();
+
+      // Iniciar timer para verificação periódica
+      Timer.periodic(Duration(minutes: Config.autoRetryIntervalMinutes), (timer) {
+        if (Config.enableAutoRetryFailedSync && !_isRecovering) {
+          recoverFailedSyncs();
+        }
+      });
+
+      // Escutar mudanças de conectividade
+      _connectivityService.connectivityStream.listen((isConnected) {
+        if (isConnected && Config.enableAutoRetryFailedSync && !_isRecovering) {
+          Future.delayed(Duration(seconds: 5), () {
+            recoverFailedSyncs();
+          });
+        }
+      });
+
+      // Escutar novas falhas de sincronização
+      _failureManager!.onFailure.listen((failure) {
+        _handleNewSyncFailure(failure);
+      });
+
+      Logger.log('Serviço de recuperação de sincronização inicializado');
+    } catch (e) {
+      Logger.error('Erro ao inicializar serviço de recuperação: $e');
+      _isInitialized = false;
+    }
+  }
+
+  /// Verifica se há logs de sincronização falha para recuperar
+  Future<void> _checkForFailedSyncLogs() async {
+    try {
+      final logsDir = Directory(Config.logsPath);
+      if (!await logsDir.exists()) {
+        await logsDir.create(recursive: true);
+        return;
+      }
+
+      final now = DateTime.now();
+      final files = await logsDir.list().toList();
+      int logCount = 0;
+
+      for (final entity in files) {
+        if (entity is File && entity.path.contains('sync_') && entity.path.endsWith('.txt')) {
+          final stat = await entity.stat();
+          final fileAge = now.difference(stat.modified).inDays;
+
+          if (fileAge > Config.failedSyncLogRetentionDays) {
+            await entity.delete();
+          } else {
+            logCount++;
+            if (Config.enableSyncRecovery) {
+              await _analyzeFailedSyncLog(entity);
+            }
+          }
+        }
+      }
+
+      Logger.log('Verificação de logs de sincronização concluída: $logCount logs encontrados');
+    } catch (e) {
+      Logger.error('Erro ao verificar logs de sincronização: $e');
+    }
+  }
+
+  /// Analisa um log de sincronização falha para extrair informações
+  Future<void> _analyzeFailedSyncLog(File logFile) async {
+    try {
+      final content = await logFile.readAsString();
+      final lines = content.split('\n');
+
+      String? sampleId;
+      List<String> errors = [];
+
+      for (final line in lines) {
+        if (line.contains('ID da amostra:')) {
+          sampleId = line.split('ID da amostra:').last.trim();
+        } else if (line.contains('ERRO:')) {
+          errors.add(line.split('ERRO:').last.trim());
+        }
+      }
+
+      if (sampleId != null && errors.isNotEmpty) {
+        final sample = await _repository.getSampleById(sampleId);
+        if (sample != null && (sample.syncStatus == SyncStatus.error || sample.syncStatus == SyncStatus.partialError)) {
+          _sampleRetryCount[sampleId] = (_sampleRetryCount[sampleId] ?? 0) + 1;
+          if (_sampleRetryCount[sampleId]! >= Config.maxSyncRetries) {
+            await _markAsPermanentFailure(sampleId, errors.join('; '));
+          }
+        }
+      }
+    } catch (e) {
+      Logger.error('Erro ao analisar log de sincronização: $e');
+    }
+  }
+
+  /// Marca uma amostra como falha permanente
+  Future<bool> _markAsPermanentFailure(String sampleId, String errorDetails) async {
+    try {
+      final sample = await _repository.getSampleById(sampleId);
+      if (sample == null) {
+        Logger.error('Amostra não encontrada: $sampleId');
+        return false;
+      }
+
+      final updatedSample = sample.copyWith(
+        syncStatus: SyncStatus.permanentError,
+        updatedAt: DateTime.now(),
+        lastErrorMessage: errorDetails.length > 255 ? errorDetails.substring(0, 255) : errorDetails,
+      );
+
+      await _repository.updateSample(updatedSample);
+
+      final logsDir = Directory(Config.logsPath);
+      try {
+        await logsDir.create(recursive: true);
+      } catch (e) {
+        Logger.error('Erro ao criar diretório de logs: $e');
+        return false;
+      }
+
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final logFile = File(path.join(
+        Config.logsPath,
+        'permanent_failure_${sampleId}_$timestamp.txt',
+      ));
+
+      final logContent = StringBuffer();
+      logContent.writeln('FALHA PERMANENTE DE SINCRONIZAÇÃO');
+      logContent.writeln('===================================');
+      logContent.writeln('ID da Amostra: $sampleId');
+      logContent.writeln('Data: ${DateTime.now().toIso8601String()}');
+      logContent.writeln('Erro: $errorDetails');
+      logContent.writeln('\nDETALHES DA AMOSTRA:');
+      logContent.writeln('Fazenda: ${sample.farmId}');
+      logContent.writeln('Talhão: ${sample.plotId}');
+      logContent.writeln('Data de coleta: ${sample.collectionDate}');
+      logContent.writeln('Pontos: ${sample.samplePoints.length}');
+
+      int pointsWithImages = 0;
+      int pointsWithCompressedImages = 0;
+      int pointsWithInvalidImages = 0;
+
+      for (final point in sample.samplePoints) {
+        if (point.hasLocalPhoto && point.localPhotoPath != null) {
+          pointsWithImages++;
+          if (point.photoCompressed) {
+            pointsWithCompressedImages++;
+          }
+
+          final file = File(point.localPhotoPath!);
+          if (!await file.exists()) {
+            pointsWithInvalidImages++;
+          }
+        }
+      }
+
+      logContent.writeln('\nRESUMO DE IMAGENS:');
+      logContent.writeln('Pontos com imagens: $pointsWithImages/${sample.samplePoints.length}');
+      logContent.writeln('Imagens comprimidas: $pointsWithCompressedImages');
+      logContent.writeln('Imagens inválidas: $pointsWithInvalidImages');
+      logContent.writeln('\nTENTATIVAS: ${_sampleRetryCount[sampleId] ?? 0}/${Config.maxSyncRetries}');
+
+      try {
+        await logFile.writeAsString(logContent.toString());
+      } catch (e) {
+        Logger.error('Erro ao salvar log de falha permanente: $e');
+        return false;
+      }
+
+      Logger.error('Amostra $sampleId marcada como falha permanente: $errorDetails');
+      return true;
+    } catch (e) {
+      Logger.error('Erro ao marcar amostra como falha permanente: $e');
+      return false;
+    }
+  }
+
+  /// Registra um erro de sincronização para uma amostra
+  Future<void> logSyncError(String sampleId, String error, {Map<String, dynamic>? details}) async {
+    try {
+      final timestamp = DateTime.now();
+      final formattedDate = '${timestamp.year}-${timestamp.month.toString().padLeft(2, '0')}-${timestamp.day.toString().padLeft(2, '0')}';
+      final logFilePath = path.join(Config.logsPath, 'sync_${sampleId}_$formattedDate.txt');
+
+      final logFile = File(logFilePath);
+      final exists = await logFile.exists();
+
+      final logEntry = '''
+=== ${timestamp.toIso8601String()} ===
+ID da amostra: $sampleId
+ERRO: $error
+${details != null ? 'DETALHES: ${jsonEncode(details)}' : ''}
+''';
+
+      if (exists) {
+        await logFile.writeAsString(logEntry, mode: FileMode.append);
+      } else {
+        await logFile.writeAsString(logEntry);
+      }
+
+      _sampleRetryCount[sampleId] = (_sampleRetryCount[sampleId] ?? 0) + 1;
+      if (_sampleRetryCount[sampleId]! >= Config.maxSyncRetries) {
+        await _markAsPermanentFailure(sampleId, error);
+      }
+    } catch (e) {
+      Logger.error('Erro ao registrar erro de sincronização: $e');
+    }
+  }
+
+  /// Recupera amostras com falha de sincronização
+  ///
+  /// Retorna um mapa com o status da recuperação, número de amostras recuperadas e detalhes.
+  /// Exemplo de retorno:
+  /// ```dart
+  /// {
+  ///   'status': 'completed',
+  ///   'recovered': 5,
+  ///   'total': 10,
+  ///   'details': {...}
+  /// }
+  /// ```
+  Future<Map<String, dynamic>> recoverFailedSyncs() async {
+    if (!_isInitialized) {
+      Logger.error('Serviço de recuperação não inicializado');
+      return {'status': 'not_initialized', 'error': 'Serviço não inicializado'};
+    }
+
+    if (_isRecovering) {
+      return {'status': 'already_running'};
+    }
+
+    try {
+      _isRecovering = true;
+      _recoveryAttempts++;
+      _recoveryStatusController.add(RecoveryStatus.running);
+
+      Logger.log('Iniciando recuperação de sincronização (tentativa $_recoveryAttempts)');
+
+      final isConnected = await _isConnected();
+      if (!isConnected) {
+        Logger.log('Sem conexão com a internet. Recuperação adiada.');
+        _recoveryStatusController.add(RecoveryStatus.offline);
+        _isRecovering = false;
+        return {'status': 'offline'};
+      }
+
+      if (Config.avoidPoorConnections) {
+        final connectionQuality = await _connectivityService.getConnectionQuality();
+        if (connectionQuality < Config.networkQualityThreshold) {
+          Logger.log('Qualidade da conexão insuficiente. Recuperação adiada.');
+          _recoveryStatusController.add(RecoveryStatus.poorConnection);
+          _isRecovering = false;
+          return {'status': 'poor_connection'};
+        }
+      }
+
+      final storageStatus = await _storageService.checkStorage();
+      if (storageStatus.needsCleanup || storageStatus.availableSpaceMB < Config.minStorageForSyncRecoveryMB) {
+        Logger.log('Espaço de armazenamento insuficiente (${storageStatus.availableSpaceMB.toStringAsFixed(2)}MB). Tentando liberar espaço...');
+
+        final cleanupResult = await _storageService.cleanupStorage(StorageCleanupStrategy.oldestFirst);
+        final newStorageStatus = await _storageService.checkStorage();
+        if (newStorageStatus.availableSpaceMB < Config.minStorageForSyncRecoveryMB) {
+          Logger.error('Espaço de armazenamento insuficiente mesmo após limpeza: ${newStorageStatus.availableSpaceMB.toStringAsFixed(2)}MB disponíveis');
+          _recoveryStatusController.add(RecoveryStatus.storageError);
+          _isRecovering = false;
+          return {
+            'status': 'storage_error',
+            'availableSpace': newStorageStatus.availableSpaceMB,
+            'requiredSpace': Config.minStorageForSyncRecoveryMB,
+            'cleanupAttempted': true,
+            'cleanupResult': cleanupResult,
+          };
+        }
+
+        Logger.log('Limpeza de armazenamento concluída. Espaço disponível: ${newStorageStatus.availableSpaceMB.toStringAsFixed(2)}MB');
+      }
+
+      final dbIntegrityResult = await _dbIntegrityService.checkDatabaseIntegrity(detailed: true);
+      if (!dbIntegrityResult['integrity_ok']) {
+        Logger.error('Falha na verificação de integridade do banco. Tentando reparar...');
+
+        final backupResult = await _dbIntegrityService.createBackup('pre_repair_recovery');
+        if (!backupResult['success']) {
+          Logger.error('Falha ao criar backup antes do reparo: ${backupResult['error']}');
+        }
+
+        final repairResult = await _dbIntegrityService.repairDatabase();
+        if (!repairResult['success']) {
+          _recoveryStatusController.add(RecoveryStatus.databaseError);
+          _isRecovering = false;
+          return {
+            'status': 'database_error',
+            'error': 'Falha na integridade do banco de dados',
+            'details': repairResult,
+          };
+        }
+
+        Logger.log('Banco de dados reparado com sucesso');
+      }
+
+      if (Config.createBackupBeforeSync) {
+        final backupResult = await _dbIntegrityService.createBackup('pre_sync_recovery');
+        Logger.log('Backup criado: ${backupResult['path']}');
+      }
+
+      final failedSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+      final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+      final permanentErrorSamples = await _repository.getSamplesByStatus(SyncStatus.permanentError);
+      final permanentErrorIds = permanentErrorSamples.map((s) => s.id!).toSet();
+
+      final allFailedSamples = [...failedSamples, ...partialErrorSamples].where((s) => !permanentErrorIds.contains(s.id)).toList();
+
+      if (allFailedSamples.isEmpty) {
+        Logger.log('Nenhuma amostra com falha de sincronização encontrada.');
+        _recoveryStatusController.add(RecoveryStatus.completed);
+        _isRecovering = false;
+        return {'status': 'completed', 'recovered': 0, 'total': 0};
+      }
+
+      Logger.log('Encontradas ${allFailedSamples.length} amostras com falha de sincronização.');
+
+      allFailedSamples.sort((a, b) => (a.updatedAt ?? DateTime.now()).compareTo(b.updatedAt ?? DateTime.now()));
+
+      int recoveredCount = 0;
+      int currentIndex = 0;
+      final results = <String, dynamic>{};
+
+      for (final sample in allFailedSamples) {
+        currentIndex++;
+
+        _recoveryProgressController.add(
+          RecoveryProgress(
+            sampleId: sample.id!,
+            progress: ((currentIndex / allFailedSamples.length) * 100).round(),
+            status: "sincronizando",
+            message: "Sincronizando amostra ${currentIndex} de ${allFailedSamples.length}",
+            timestamp: DateTime.now(),
+            current: currentIndex,
+            total: allFailedSamples.length,
+            percentage: ((currentIndex / allFailedSamples.length) * 100).round(),
+          ),
+        );
+
+        try {
+          final currentStorageStatus = await _storageService.checkStorage();
+          if (currentStorageStatus.availableSpaceMB < Config.minStoragePerSampleMB) {
+            Logger.error('Espaço insuficiente para continuar recuperação. Pausando...');
+            results[sample.id!] = {
+              'status': 'skipped',
+              'reason': 'storage_insufficient',
+              'available': currentStorageStatus.availableSpaceMB,
+            };
+            continue;
+          }
+
+          if (!sample.isReadyForSync) {
+            final fixResult = await _fixIncompleteData(sample);
+            results[sample.id!] = {
+              'fixAttempted': true,
+              'fixResult': fixResult,
+            };
+
+            if (!fixResult['fixed'] || !fixResult['readyForSync']) {
+              Logger.error('Amostra ${sample.id} não está pronta para sincronização após tentativa de correção');
+              results[sample.id!]['status'] = 'skipped';
+              results[sample.id!]['reason'] = 'incomplete_data';
+              continue;
+            }
+          }
+
+          final imageValidationResult = await _validateSampleImages(sample);
+          results[sample.id!]['imageValidation'] = imageValidationResult;
+
+          if (!imageValidationResult['allValid']) {
+            Logger.error('Imagens da amostra ${sample.id} não são válidas após tentativa de reparo');
+            results[sample.id!]['status'] = 'skipped';
+            results[sample.id!]['reason'] = 'invalid_images';
+            continue;
+          }
+
+          _recoveryStatusController.add(RecoveryStatus.syncing);
+          final success = await _syncService.syncSingleSample(sample.id!);
+
+          if (success) {
+            recoveredCount++;
+            results[sample.id!]['status'] = 'recovered';
+            await _removeErrorLogs(sample.id!);
+            _sampleRetryCount.remove(sample.id!);
+          } else {
+            results[sample.id!]['status'] = 'failed';
+            _sampleRetryCount[sample.id!] = (_sampleRetryCount[sample.id!] ?? 0) + 1;
+            results[sample.id!]['retryCount'] = _sampleRetryCount[sample.id!];
+            if (_sampleRetryCount[sample.id!]! >= Config.maxSyncRetries) {
+              await _markAsPermanentFailure(sample.id!, "Excedido número máximo de tentativas");
+              results[sample.id!]['permanentFailure'] = true;
+            }
+          }
+        } catch (e) {
+          Logger.error('Erro ao recuperar amostra ${sample.id}: $e');
+          results[sample.id!] = {
+            'status': 'error',
+            'error': e.toString(),
+          };
+          await logSyncError(sample.id!, e.toString());
+        }
+
+        if (currentIndex % 5 == 0) {
+          final isStillConnected = await _isConnected();
+          if (!isStillConnected) {
+            Logger.error('Conexão perdida durante recuperação. Pausando...');
+            break;
+          }
+
+          final storageCheck = await _storageService.checkStorage();
+          if (storageCheck.availableSpaceMB < Config.minStorageForSyncRecoveryMB) {
+            Logger.error('Espaço de armazenamento crítico durante recuperação. Pausando...');
+            break;
+          }
+        }
+      }
+
+      final status = recoveredCount == allFailedSamples.length
+          ? 'completed'
+          : recoveredCount > 0
+              ? 'partial'
+              : 'failed';
+
+      _recoveryStatusController.add(
+        recoveredCount == allFailedSamples.length
+            ? RecoveryStatus.success
+            : recoveredCount > 0
+                ? RecoveryStatus.partialSuccess
+                : RecoveryStatus.failed,
+      );
+
+      if (recoveredCount > 0 && Config.cleanupOrphanedImagesAfterRecovery) {
+        try {
+          final cleanupResult = await _imageService.cleanupOrphanedImages();
+          Logger.log('Limpeza de imagens órfãs após recuperação: ${cleanupResult['removedCount']} imagens removidas');
+        } catch (e) {
+          Logger.error('Erro ao limpar imagens órfãs após recuperação: $e');
+        }
+      }
+
+      Logger.log('Recuperação concluída: $recoveredCount de ${allFailedSamples.length} amostras recuperadas');
+
+      return {
+        'status': status,
+        'recovered': recoveredCount,
+        'total': allFailedSamples.length,
+        'details': results,
+        'storageAfter': (await _storageService.checkStorage()).toMap(),
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+    } catch (e) {
+      Logger.error('Erro durante recuperação: $e');
+      _recoveryStatusController.add(RecoveryStatus.failed);
+      return {
+        'status': 'failed',
+        'error': e.toString(),
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+    } finally {
+      _isRecovering = false;
+    }
+  }
+
+  /// Remove logs de erro de uma amostra após sincronização bem-sucedida
+  Future<void> _removeErrorLogs(String sampleId) async {
+    try {
+      final logsDir = Directory(Config.logsPath);
+      if (!await logsDir.exists()) {
+        return;
+      }
+
+      final files = await logsDir.list().toList();
+      for (final entity in files) {
+        if (entity is File &&
+            (entity.path.contains('sync_${sampleId}_') || entity.path.contains('permanent_failure_${sampleId}_'))) {
+          await entity.delete();
+        }
+      }
+
+      _sampleRetryCount.remove(sampleId);
+    } catch (e) {
+      Logger.error('Erro ao remover logs de erro: $e');
+    }
+  }
+
+  /// Valida as imagens de uma amostra e tenta repará-las se possível
+  Future<Map<String, dynamic>> _validateSampleImages(SoilSample sample) async {
+    try {
+      bool allValid = true;
+      final results = <String, dynamic>{
+        'validatedImages': 0,
+        'repairedImages': 0,
+        'failedImages': 0,
+        'details': <String, String>{},
+      };
+
+      for (final point in sample.samplePoints) {
+        if (point.hasLocalPhoto && point.localPhotoPath != null && point.localPhotoPath!.isNotEmpty) {
+          final file = File(point.localPhotoPath!);
+          if (!await file.exists()) {
+            Logger.error('Imagem não encontrada: ${point.localPhotoPath}');
+            allValid = false;
+            results['failedImages']++;
+            results['details'][point.id!] = 'imagem_nao_encontrada';
+
+            final updatedPoint = point.copyWith(
+              localPhotoPath: null,
+              photoCompressed: false,
+              photoSizeKb: 0,
+              hasLocalPhoto: false,
+              updatedAt: DateTime.now(),
+            );
+
+            await _repository.updateSamplePoint(sample.id!, updatedPoint);
+            continue;
+          }
+
+          try {
+            final bytes = await file.readAsBytes();
+            final validationResult = await _imageIntegrityService!.validateImage(bytes);
+
+            if (!validationResult['isValid']) {
+              if (validationResult['canRepair']) {
+                final repairResult = await _imageIntegrityService!.repairImage(
+                  bytes,
+                  'repaired_${path.basename(file.path)}',
+                );
+
+                if (repairResult['success']) {
+                  final repairedFile = File(repairResult['path']);
+                  final compressResult = await _imageService.savePhoto(
+                    photoFile: repairedFile,
+                    prefix: 'sample_point_${point.id}',
+                    compress: true,
+                    quality: Config.photoCompressionQuality,
+                    maxWidth: Config.photoMaxWidth,
+                    maxHeight: Config.photoMaxHeight,
+                    generateThumbnail: true,
+                  );
+
+                  if (compressResult['success']) {
+                    final compressedFile = File(compressResult['path']);
+                    final compressedSize = await compressedFile.length();
+
+                    final updatedPoint = point.copyWith(
+                      localPhotoPath: compressResult['path'],
+                      thumbnailPath: compressResult['thumbnailPath'],
+                      photoCompressed: true,
+                      photoSizeKb: compressedSize ~/ 1024,
+                      updatedAt: DateTime.now(),
+                    );
+
+                    await _repository.updateSamplePoint(sample.id!, updatedPoint);
+                    results['repairedImages']++;
+                    results['details'][point.id!] = 'comprimida';
+                  }
+                } else {
+                  throw Exception('Falha ao reparar imagem');
+                }
+              } else {
+                Logger.error('Imagem corrompida e não reparável: ${point.localPhotoPath}');
+                allValid = false;
+                results['failedImages']++;
+                results['details'][point.id!] = 'corrompida_irreparavel';
+
+                final updatedPoint = point.copyWith(
+                  hasLocalPhoto: false,
+                  localPhotoPath: null,
+                  thumbnailPath: null,
+                  photoCompressed: false,
+                  photoSizeKb: 0,
+                  updatedAt: DateTime.now(),
+                );
+
+                await _repository.updateSamplePoint(sample.id!, updatedPoint);
+              }
+            } else if (!point.photoCompressed || point.photoSizeKb > Config.maxUploadImageSizeKB) {
+              final compressResult = await _imageService.savePhoto(
+                photoFile: file,
+                prefix: 'sample_point_${point.id}',
+                compress: true,
+                quality: Config.photoCompressionQuality,
+                maxWidth: Config.photoMaxWidth,
+                maxHeight: Config.photoMaxHeight,
+                generateThumbnail: true,
+              );
+
+              if (compressResult['success']) {
+                final compressedFile = File(compressResult['path']);
+                final compressedSize = await compressedFile.length();
+
+                final updatedPoint = point.copyWith(
+                  localPhotoPath: compressResult['path'],
+                  thumbnailPath: compressResult['thumbnailPath'],
+                  photoCompressed: true,
+                  photoSizeKb: compressedSize ~/ 1024,
+                  updatedAt: DateTime.now(),
+                );
+
+                await _repository.updateSamplePoint(sample.id!, updatedPoint);
+                results['repairedImages']++;
+                results['details'][point.id!] = 'comprimida';
+              }
+            }
+          } catch (e) {
+            Logger.error('Erro ao validar/reparar imagem ${point.localPhotoPath}: $e');
+            allValid = false;
+            results['failedImages']++;
+            results['details'][point.id!] = 'erro: ${e.toString().substring(0, 50)}';
+          }
+        }
+      }
+
+      results['allValid'] = allValid;
+      return results;
+    } catch (e) {
+      Logger.error('Erro ao validar imagens da amostra: $e');
+      return {
+        'allValid': false,
+        'error': e.toString(),
+        'validatedImages': 0,
+        'repairedImages': 0,
+        'failedImages': 0,
+      };
+    }
+  }
+
+  /// Tenta corrigir dados incompletos em uma amostra
+  Future<Map<String, dynamic>> _fixIncompleteData(SoilSample sample) async {
+    try {
+      final result = <String, dynamic>{
+        'fixed': false,
+        'readyForSync': false,
+        'details': <String, dynamic>{},
+        'errors': <String>[],
+      };
+
+      bool metadataFixed = false;
+
+      if (sample.farmId == null || sample.farmId!.isEmpty) {
+        result['errors'].add('Amostra ${sample.id} com fazenda inválida');
+        result['details']['farmId'] = 'inválido';
+        return result;
+      }
+
+      if (sample.plotId == null || sample.plotId!.isEmpty) {
+        result['errors'].add('Amostra ${sample.id} com talhão inválido');
+        result['details']['plotId'] = 'inválido';
+        return result;
+      }
+
+      if (sample.samplePoints.isEmpty) {
+        result['errors'].add('Amostra ${sample.id} sem pontos de coleta');
+        result['details']['samplePoints'] = 'vazio';
+        return result;
+      }
+
+      if (sample.collectionDate == null) {
+        final updatedSample = sample.copyWith(
+          collectionDate: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+        await _repository.updateSample(updatedSample);
+        metadataFixed = true;
+        result['details']['collectionDate'] = 'corrigido';
+      }
+
+      if (sample.syncStatus != SyncStatus.error && sample.syncStatus != SyncStatus.partialError) {
+        final updatedSample = sample.copyWith(
+          syncStatus: SyncStatus.error,
+          updatedAt: DateTime.now(),
+        );
+        await _repository.updateSample(updatedSample);
+        metadataFixed = true;
+        result['details']['syncStatus'] = 'corrigido';
+      }
+
+      int fixedImagesCount = 0;
+      int failedImagesCount = 0;
+
+      for (final point in sample.samplePoints) {
+        if (point.hasLocalPhoto && point.localPhotoPath != null && point.localPhotoPath!.isNotEmpty && !point.photoCompressed) {
+          try {
+            final file = File(point.localPhotoPath!);
+            if (await file.exists()) {
+              final compressResult = await _imageService.savePhoto(
+                photoFile: file,
+                prefix: 'sample_point_${point.id}',
+                compress: true,
+                quality: Config.photoCompressionQuality,
+                maxWidth: Config.photoMaxWidth,
+                maxHeight: Config.photoMaxHeight,
+                generateThumbnail: true,
+              );
+
+              if (compressResult['success']) {
+                final compressedFile = File(compressResult['path']);
+                final compressedSize = await compressedFile.length();
+
+                final updatedPoint = point.copyWith(
+                  localPhotoPath: compressResult['path'],
+                  thumbnailPath: compressResult['thumbnailPath'],
+                  photoCompressed: true,
+                  photoSizeKb: compressedSize ~/ 1024,
+                  updatedAt: DateTime.now(),
+                );
+
+                await _repository.updateSamplePoint(sample.id!, updatedPoint);
+                fixedImagesCount++;
+              } else {
+                failedImagesCount++;
+                result['errors'].add('Falha ao comprimir imagem do ponto ${point.id}: ${compressResult['error']}');
+              }
+            } else {
+              final updatedPoint = point.copyWith(
+                hasLocalPhoto: false,
+                localPhotoPath: null,
+                thumbnailPath: null,
+                photoCompressed: false,
+                photoSizeKb: 0,
+                updatedAt: DateTime.now(),
+              );
+
+              await _repository.updateSamplePoint(sample.id!, updatedPoint);
+              failedImagesCount++;
+              result['errors'].add('Arquivo de imagem não encontrado para o ponto ${point.id}');
+            }
+          } catch (e) {
+            failedImagesCount++;
+            Logger.error('Erro ao corrigir imagem do ponto ${point.id}: $e');
+            result['errors'].add('Erro ao processar imagem do ponto ${point.id}: ${e.toString().substring(0, 100)}');
+          }
+        }
+
+        if (point.latitude == null || point.longitude == null || (point.latitude == 0 && point.longitude == 0)) {
+          result['errors'].add('Ponto ${point.id} com coordenadas inválidas');
+          result['details']['invalidCoordinates'] = (result['details']['invalidCoordinates'] ?? 0) + 1;
+        }
+      }
+
+      result['details']['fixedImages'] = fixedImagesCount;
+      result['details']['failedImages'] = failedImagesCount;
+      result['details']['metadataFixed'] = metadataFixed;
+
+      result['fixed'] = metadataFixed || fixedImagesCount > 0;
+
+      final updatedSample = await _repository.getSampleById(sample.id!);
+      result['readyForSync'] = updatedSample?.isReadyForSync ?? false;
+
+      return result;
+    } catch (e) {
+      Logger.error('Erro ao corrigir dados incompletos da amostra ${sample.id}: $e');
+      return {
+        'fixed': false,
+        'error': e.toString(),
+        'readyForSync': false,
+      };
+    }
+  }
+
+  /// Verifica se há amostras com falha de sincronização
+  Future<bool> hasFailedSyncs() async {
+    try {
+      final failedSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+      final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+      return failedSamples.isNotEmpty || partialErrorSamples.isNotEmpty;
+    } catch (e) {
+      Logger.error('Erro ao verificar amostras com falha: $e');
+      return false;
+    }
+  }
+
+  /// Retorna o número de amostras com falha de sincronização
+  Future<int> getFailedSyncCount() async {
+    try {
+      final failedSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+      final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+      final permanentErrorSamples = await _repository.getSamplesByStatus(SyncStatus.permanentError);
+      return failedSamples.length + partialErrorSamples.length + permanentErrorSamples.length;
+    } catch (e) {
+      Logger.error('Erro ao contar amostras com falha: $e');
+      return 0;
+    }
+  }
+
+  /// Retorna estatísticas de recuperação
+  Future<Map<String, dynamic>> getRecoveryStats() async {
+    try {
+      final failedSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+      final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+      final permanentErrorSamples = await _repository.getSamplesByStatus(SyncStatus.permanentError);
+
+      int logCount = 0;
+      final logsDir = Directory(Config.logsPath);
+      if (await logsDir.exists()) {
+        final files = await logsDir.list().toList();
+        for (final entity in files) {
+          if (entity is File && entity.path.contains('sync_') && entity.path.endsWith('.txt')) {
+            logCount++;
+          }
+        }
+      }
+
+      return {
+        'failedCount': failedSamples.length,
+        'partialErrorCount': partialErrorSamples.length,
+        'permanentErrorCount': permanentErrorSamples.length,
+        'totalErrorCount': failedSamples.length + partialErrorSamples.length + permanentErrorSamples.length,
+        'errorLogCount': logCount,
+        'recoveryAttempts': _recoveryAttempts,
+        'lastRecoveryTime': _recoveryAttempts > 0 ? DateTime.now().toIso8601String() : null,
+      };
+    } catch (e) {
+      Logger.error('Erro ao obter estatísticas de recuperação: $e');
+      return {
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Limpa todos os registros de erro
+  Future<bool> clearAllErrorLogs() async {
+    try {
+      final logsDir = Directory(Config.logsPath);
+      if (!await logsDir.exists()) {
+        return true;
+      }
+
+      final files = await logsDir.list().toList();
+      for (final entity in files) {
+        if (entity is File &&
+            (entity.path.contains('sync_') || entity.path.contains('permanent_failure_')) &&
+            entity.path.endsWith('.txt')) {
+          await entity.delete();
+        }
+      }
+
+      _sampleRetryCount.clear();
+      return true;
+    } catch (e) {
+      Logger.error('Erro ao limpar logs de erro: $e');
+      return false;
+    }
+  }
+
+  /// Fecha os streams
+  void dispose() {
+    if (!_recoveryStatusController.isClosed) {
+      _recoveryStatusController.close();
+    }
+    if (!_recoveryProgressController.isClosed) {
+      _recoveryProgressController.close();
+    }
+    if (!_detailedProgressController.isClosed) {
+      _detailedProgressController.close();
+    }
+  }
+
+  /// Gera um relatório detalhado sobre falhas de sincronização
+  Future<Map<String, dynamic>> generateSyncFailureReport() async {
+    try {
+      final report = <String, dynamic>{
+        'timestamp': DateTime.now().toIso8601String(),
+        'summary': <String, dynamic>{},
+        'failedSamples': <Map<String, dynamic>>[],
+        'imageIssues': <String, dynamic>{},
+        'storageStatus': <String, dynamic>{},
+      };
+
+      final failedSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+      final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+      final permanentErrorSamples = await _repository.getSamplesByStatus(SyncStatus.permanentError);
+
+      report['summary']['totalFailedCount'] = failedSamples.length + partialErrorSamples.length;
+      report['summary']['errorSamplesCount'] = failedSamples.length;
+      report['summary']['partialErrorSamplesCount'] = partialErrorSamples.length;
+      report['summary']['permanentErrorSamplesCount'] = permanentErrorSamples.length;
+      report['summary']['recoveryAttempts'] = _recoveryAttempts;
+
+      final storageStatus = await _storageService.checkStorageStatus();
+      report['storageStatus'] = storageStatus.toMap();
+
+      int totalImageIssues = 0;
+      int missingImages = 0;
+      int corruptedImages = 0;
+      int oversizedImages = 0;
+      int uncompressedImages = 0;
+
+      final allSamples = [...failedSamples, ...partialErrorSamples, ...permanentErrorSamples];
+
+      for (final sample in allSamples) {
+        final sampleReport = <String, dynamic>{
+          'id': sample.id,
+          'status': sample.syncStatus.toString(),
+          'lastUpdate': sample.updatedAt?.toIso8601String(),
+          'retryCount': _sampleRetryCount[sample.id] ?? 0,
+          'imageIssues': <Map<String, dynamic>>[],
+        };
+
+        for (final point in sample.samplePoints) {
+          if (point.hasLocalPhoto && point.localPhotoPath != null) {
+            final file = File(point.localPhotoPath!);
+
+            if (!await file.exists()) {
+              sampleReport['imageIssues'].add({
+                'pointId': point.id,
+                'issue': 'missing_image',
+                'path': point.localPhotoPath,
+              });
+              missingImages++;
+              totalImageIssues++;
+            } else {
+              try {
+                final bytes = await file.readAsBytes();
+                final validationResult = await _imageIntegrityService!.validateImage(bytes);
+
+                if (!validationResult['isValid']) {
+                  if (validationResult['canRepair']) {
+                    final repairResult = await _imageIntegrityService!.repairImage(
+                      bytes,
+                      'repaired_${path.basename(file.path)}',
+                    );
+
+                    if (repairResult['success']) {
+                      final repairedFile = File(repairResult['path']);
+                      final compressResult = await _imageService.savePhoto(
+                        photoFile: repairedFile,
+                        prefix: 'sample_point_${point.id}',
+                        compress: true,
+                        quality: Config.photoCompressionQuality,
+                        maxWidth: Config.photoMaxWidth,
+                        maxHeight: Config.photoMaxHeight,
+                        generateThumbnail: true,
+                      );
+
+                      if (compressResult['success']) {
+                        final compressedFile = File(compressResult['path']);
+                        final compressedSize = await compressedFile.length();
+
+                        final updatedPoint = point.copyWith(
+                          localPhotoPath: compressResult['path'],
+                          thumbnailPath: compressResult['thumbnailPath'],
+                          photoCompressed: true,
+                          photoSizeKb: compressedSize ~/ 1024,
+                          updatedAt: DateTime.now(),
+                        );
+
+                        await _repository.updateSamplePoint(sample.id!, updatedPoint);
+                        sampleReport['imageIssues'].add({
+                          'pointId': point.id,
+                          'issue': 'repaired',
+                          'path': point.localPhotoPath,
+                        });
+                      }
+                    } else {
+                      throw Exception('Falha ao reparar imagem');
+                    }
+                  } else {
+                    corruptedImages++;
+                    totalImageIssues++;
+                    sampleReport['imageIssues'].add({
+                      'pointId': point.id,
+                      'issue': 'corrupted',
+                      'message': 'Imagem corrompida ou inválida',
+                      'canRepair': false,
+                    });
+                  }
+                } else if (!point.photoCompressed || point.photoSizeKb > Config.maxUploadImageSizeKB) {
+                  final compressResult = await _imageService.savePhoto(
+                    photoFile: file,
+                    prefix: 'sample_point_${point.id}',
+                    compress: true,
+                    quality: Config.photoCompressionQuality,
+                    maxWidth: Config.photoMaxWidth,
+                    maxHeight: Config.photoMaxHeight,
+                    generateThumbnail: true,
+                  );
+
+                  if (compressResult['success']) {
+                    final compressedFile = File(compressResult['path']);
+                    final compressedSize = await compressedFile.length();
+
+                    final updatedPoint = point.copyWith(
+                      localPhotoPath: compressResult['path'],
+                      thumbnailPath: compressResult['thumbnailPath'],
+                      photoCompressed: true,
+                      photoSizeKb: compressedSize ~/ 1024,
+                      updatedAt: DateTime.now(),
+                    );
+
+                    await _repository.updateSamplePoint(sample.id!, updatedPoint);
+                    sampleReport['imageIssues'].add({
+                      'pointId': point.id,
+                      'issue': 'compressed',
+                      'path': point.localPhotoPath,
+                    });
+                  } else {
+                    uncompressedImages++;
+                    totalImageIssues++;
+                    sampleReport['imageIssues'].add({
+                      'pointId': point.id,
+                      'issue': 'uncompressed',
+                      'path': point.localPhotoPath,
+                    });
+                  }
+                }
+              } catch (e) {
+                Logger.error('Erro ao validar/reparar imagem ${point.localPhotoPath}: $e');
+                corruptedImages++;
+                totalImageIssues++;
+                sampleReport['imageIssues'].add({
+                  'pointId': point.id,
+                  'issue': 'validation_error',
+                  'message': 'Erro ao validar imagem',
+                  'canRepair': false,
+                });
+              }
+            }
+          }
+        }
+
+        report['failedSamples'].add(sampleReport);
+      }
+
+      report['imageIssues'] = {
+        'totalIssues': totalImageIssues,
+        'missingImages': missingImages,
+        'corruptedImages': corruptedImages,
+        'oversizedImages': oversizedImages,
+        'uncompressedImages': uncompressedImages,
+      };
+
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final reportFile = File(path.join(Config.exportsPath, 'sync_failure_report_$timestamp.json'));
+
+      await reportFile.writeAsString(jsonEncode(report));
+
+      return {
+        'success': true,
+        'reportPath': reportFile.path,
+        'summary': report['summary'],
+        'imageIssues': report['imageIssues'],
+      };
+    } catch (e) {
+      Logger.error('Erro ao gerar relatório de falhas de sincronização: $e');
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Repara imagens com problemas em amostras com falha de sincronização
+  Future<Map<String, dynamic>> repairSampleImagesWithOptions({String? specificSampleId, bool fixCorruptedOnly = false}) async {
+    try {
+      final result = <String, dynamic>{
+        'success': true,
+        'imagesChecked': 0,
+        'imagesRepaired': 0,
+        'imagesFailed': 0,
+        'details': <String, dynamic>{},
+      };
+
+      if (!await _isConnected()) {
+        return {
+          'success': false,
+          'error': 'Sem conexão com a internet',
+        };
+      }
+
+      List<SoilSample> samples = [];
+
+      if (specificSampleId != null) {
+        final sample = await _repository.getSampleById(specificSampleId);
+        if (sample != null) {
+          samples = [sample];
+        } else {
+          return {
+            'success': false,
+            'error': 'Amostra não encontrada: $specificSampleId',
+          };
+        }
+      } else {
+        final failedSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+        final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+        samples = [...failedSamples, ...partialErrorSamples];
+      }
+
+      if (samples.isEmpty) {
+        return {
+          'success': true,
+          'message': 'Nenhuma amostra para processar',
+          'samplesProcessed': 0,
+        };
+      }
+
+      final storageStatus = await _storageService.checkStorageStatus();
+      if (storageStatus.availableSpaceMB < Config.minStorageForImageRepairMB) {
+        await _storageService.cleanupStorage(StorageCleanupStrategy.oldestFirst);
+        final newStatus = await _storageService.checkStorageStatus();
+        if (newStatus.availableSpaceMB < Config.minStorageForImageRepairMB) {
+          return {
+            'success': false,
+            'error': 'Espaço insuficiente para reparar imagens',
+            'availableSpace': newStatus.availableSpaceMB,
+            'requiredSpace': Config.minStorageForImageRepairMB,
+          };
+        }
+      }
+
+      int totalImagesProcessed = 0;
+      int totalRepairableImages = 0;
+      int imageIssuesCount = 0;
+      final imageIssues = <Map<String, dynamic>>[];
+
+      for (final sample in samples) {
+        final sampleResult = <String, dynamic>{
+          'imagesRepaired': 0,
+          'imagesFailed': 0,
+          'pointsProcessed': 0,
+          'imageIssues': <Map<String, dynamic>>[],
+        };
+
+        for (final point in sample.samplePoints) {
+          if (point.hasLocalPhoto && point.localPhotoPath != null && point.localPhotoPath!.isNotEmpty) {
+            totalImagesProcessed++;
+            result['imagesChecked'] = totalImagesProcessed;
+
+            final file = File(point.localPhotoPath!);
+            final exists = await file.exists();
+
+            if (!exists) {
+              imageIssuesCount++;
+              imageIssues.add({
+                'pointId': point.id,
+                'issue': 'missing',
+                'message': 'Arquivo de imagem não encontrado',
+                'canRepair': false,
+              });
+              continue;
+            }
+
+            try {
+              final bytes = await file.readAsBytes();
+              final validationResult = await _imageIntegrityService!.validateImage(bytes);
+
+              if (!validationResult['isValid']) {
+                imageIssuesCount++;
+                result['imagesFailed'] = (result['imagesFailed'] as int) + 1;
+                sampleResult['imagesFailed'] = (sampleResult['imagesFailed'] as int) + 1;
+
+                if (validationResult['canRepair']) {
+                  totalRepairableImages++;
+                  (sampleResult['imageIssues'] as List<Map<String, dynamic>>).add({
+                    'pointId': point.id,
+                    'issue': 'corrupted',
+                    'message': 'Imagem corrompida ou inválida',
+                    'canRepair': true,
+                  });
+                } else {
+                  (sampleResult['imageIssues'] as List<Map<String, dynamic>>).add({
+                    'pointId': point.id,
+                    'issue': 'corrupted',
+                    'message': 'Imagem corrompida ou inválida',
+                    'canRepair': false,
+                  });
+                }
+              }
+            } catch (e) {
+              Logger.error('Erro ao verificar imagem ${point.localPhotoPath}: $e');
+              imageIssuesCount++;
+              imageIssues.add({
+                'pointId': point.id,
+                'issue': 'validation_error',
+                'message': 'Erro ao verificar imagem',
+                'canRepair': false,
+              });
+            }
+          }
+        }
+
+        result['samplesProcessed'] = result.containsKey('samplesProcessed') ? (result['samplesProcessed'] as int) + 1 : 1;
+        result['imagesRepaired'] = (result['imagesRepaired'] as int) + (sampleResult['imagesRepaired'] as int);
+        result['imagesFailed'] = (result['imagesFailed'] as int) + (sampleResult['imagesFailed'] as int);
+        result['details'][sample.id!] = sampleResult;
+      }
+
+      result['imageIssues'] = imageIssues;
+      result['imagesChecked'] = totalImagesProcessed;
+      result['repairableImages'] = totalRepairableImages;
+      result['imageIssuesCount'] = imageIssuesCount;
+
+      return result;
+    } catch (e) {
+      Logger.error('Erro ao reparar imagens: $e');
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Exporta logs de sincronização para análise
+  Future<Map<String, dynamic>> exportSyncLogs({bool includeImages = false}) async {
+    try {
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final exportDir = Directory(path.join(Config.exportsPath, 'sync_logs_$timestamp'));
+
+      if (!await exportDir.exists()) {
+        await exportDir.create(recursive: true);
+      }
+
+      final logsDir = Directory(Config.logsPath);
+      final logFiles = <File>[];
+
+      if (await logsDir.exists()) {
+        await for (final entity in logsDir.list()) {
+          if (entity is File &&
+              (entity.path.contains('sync_') || entity.path.contains('permanent_failure_')) &&
+              entity.path.endsWith('.txt')) {
+            logFiles.add(entity);
+          }
+        }
+      }
+
+      final exportedFiles = <String>[];
+      for (final logFile in logFiles) {
+        final fileName = path.basename(logFile.path);
+        final targetFile = File(path.join(exportDir.path, fileName));
+        await logFile.copy(targetFile.path);
+        exportedFiles.add(fileName);
+      }
+
+      final report = await generateSyncFailureReport();
+      final reportFile = File(path.join(exportDir.path, 'sync_failure_report.json'));
+      await reportFile.writeAsString(jsonEncode(report));
+
+      if (includeImages) {
+        final imageExportDir = Directory(path.join(exportDir.path, 'images'));
+        await imageExportDir.create();
+
+        final failedSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+        final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+        final permanentErrorSamples = await _repository.getSamplesByStatus(SyncStatus.permanentError);
+
+        final allSamples = [...failedSamples, ...partialErrorSamples, ...permanentErrorSamples];
+        final exportedImages = <String>[];
+
+        for (final sample in allSamples) {
+          for (final point in sample.samplePoints) {
+            if (point.hasLocalPhoto && point.localPhotoPath != null) {
+              final file = File(point.localPhotoPath!);
+              if (await file.exists()) {
+                try {
+                  final bytes = await file.readAsBytes();
+                  final validationResult = await _imageIntegrityService!.validateImage(bytes);
+
+                  if (!validationResult['isValid'] || !point.photoCompressed || point.photoSizeKb > Config.maxUploadImageSizeKB) {
+                    final fileName = 'sample_${sample.id}_point_${point.id}_${path.basename(file.path)}';
+                    final targetFile = File(path.join(imageExportDir.path, fileName));
+                    await file.copy(targetFile.path);
+                    exportedImages.add(fileName);
+                  }
+                } catch (e) {
+                  Logger.error('Erro ao exportar imagem ${point.localPhotoPath}: $e');
+                }
+              }
+            }
+          }
+        }
+
+        final imageInfoFile = File(path.join(imageExportDir.path, 'image_info.json'));
+        await imageInfoFile.writeAsString(jsonEncode({
+          'exportedImagesCount': exportedImages.length,
+          'exportedImages': exportedImages,
+        }));
+      }
+
+      final zipFile = File(path.join(Config.exportsPath, 'sync_logs_$timestamp.zip'));
+      final zipResult = await _fileService.createZipArchive(
+        sourceDir: exportDir.path,
+        targetZipPath: zipFile.path,
+      );
+
+      if (!zipResult['success']) {
+        return {
+          'success': true,
+          'warning': 'Logs exportados, mas falha ao criar arquivo ZIP',
+          'exportPath': exportDir.path,
+          'logCount': exportedFiles.length,
+        };
+      }
+
+      await exportDir.delete(recursive: true);
+
+      return {
+        'success': true,
+        'exportPath': zipFile.path,
+        'logCount': exportedFiles.length,
+        'includesImages': includeImages,
+        'timestamp': timestamp,
+      };
+    } catch (e) {
+      Logger.error('Erro ao exportar logs de sincronização: $e');
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Exporta o relatório de integridade do sistema para um arquivo JSON
+  Future<Map<String, dynamic>> exportSystemIntegrityReport() async {
+    try {
+      final reportResult = await generateSystemIntegrityReport();
+
+      if (!reportResult['success']) {
+        return reportResult;
+      }
+
+      final appDir = await getApplicationDocumentsDirectory();
+      final reportsDir = Directory(path.join(appDir.path, 'reports'));
+
+      if (!await reportsDir.exists()) {
+        await reportsDir.create(recursive: true);
+      }
+
+      final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-').replaceAll('.', '-');
+      final fileName = 'system_integrity_report_$timestamp.json';
+      final filePath = path.join(reportsDir.path, fileName);
+
+      final jsonReport = jsonEncode(reportResult['report']);
+      final file = File(filePath);
+      await file.writeAsString(jsonReport, flush: true);
+
+      Logger.log('Relatório de integridade do sistema exportado para: $filePath');
+
+      return {
+        'success': true,
+        'filePath': filePath,
+        'fileName': fileName,
+        'report': reportResult['report'],
+      };
+    } catch (e) {
+      Logger.error('Erro ao exportar relatório de integridade do sistema: $e');
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Verifica a integridade do banco de dados antes de iniciar o processo de recuperação
+  Future<Map<String, dynamic>> checkDatabaseIntegrity() async {
+    try {
+      _recoveryStatusController.add(RecoveryStatus.databaseError);
+
+      final databaseService = _dbIntegrityService;
+      final result = await databaseService.checkIntegrity();
+
+      if (!result['isValid']) {
+        Logger.error('Problemas de integridade no banco de dados: ${result['errors']}');
+
+        if (result['canRepair']) {
+          Logger.log('Tentando reparar banco de dados automaticamente...');
+
+          final backupResult = await databaseService.createBackup('pre_repair_recovery');
+          if (!backupResult['success']) {
+            Logger.error('Falha ao criar backup antes do reparo: ${backupResult['error']}');
+          }
+
+          final repairResult = await databaseService.repairDatabase();
+          if (!repairResult['success']) {
+            _recoveryStatusController.add(RecoveryStatus.databaseError);
+            _isRecovering = false;
+            return {
+              'success': false,
+              'error': 'Falha na integridade do banco de dados',
+              'details': repairResult,
+            };
+          }
+
+          Logger.log('Banco de dados reparado com sucesso');
+        }
+
+        final verifyResult = await databaseService.checkIntegrity();
+        if (!verifyResult['isValid']) {
+          Logger.error('Banco de dados ainda apresenta problemas após reparo: ${verifyResult['errors']}');
+          return {
+            'success': false,
+            'error': 'Banco de dados ainda apresenta problemas após reparo',
+            'details': verifyResult,
+          };
+        }
+
+        Logger.log('Banco de dados reparado com sucesso');
+      }
+
+      _recoveryStatusController.add(RecoveryStatus.idle);
+      return {
+        'success': true,
+        'message': 'Banco de dados íntegro e pronto para recuperação',
+      };
+    } catch (e) {
+      Logger.error('Erro ao verificar integridade do banco de dados: $e');
+      _recoveryStatusController.add(RecoveryStatus.idle);
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Inicia o processo de recuperação com verificação de integridade do banco
+  Future<Map<String, dynamic>> startRecoveryWithIntegrityCheck() async {
+    try {
+      if (!_isInitialized) {
+        Logger.error('Serviço de recuperação não inicializado');
+        return {'status': 'not_initialized', 'error': 'Serviço não inicializado'};
+      }
+
+      if (_isRecovering) {
+        return {'status': 'already_running'};
+      }
+
+      _isRecovering = true;
+      _recoveryStatusController.add(RecoveryStatus.running);
+
+      final isConnected = await _isConnected();
+      if (!isConnected) {
+        Logger.log('Sem conexão com a internet. Recuperação adiada.');
+        _recoveryStatusController.add(RecoveryStatus.offline);
+        _isRecovering = false;
+        return {'status': 'offline'};
+      }
+
+      Logger.log('Verificando integridade do banco de dados antes de iniciar recuperação...');
+      final dbIntegrityResult = await checkDatabaseIntegrity();
+
+      if (!dbIntegrityResult['success']) {
+        Logger.error('Falha na verificação de integridade do banco de dados: ${dbIntegrityResult['error']}');
+
+        Logger.log('Tentando corrigir problemas estruturais do banco de dados...');
+        final fixResult = await verifyAndFixDatabaseStructure();
+
+        if (!fixResult['success']) {
+          Logger.error('Não foi possível corrigir problemas do banco de dados: ${fixResult['error']}');
+          _recoveryStatusController.add(RecoveryStatus.databaseError);
+          _isRecovering = false;
+          return {
+            'status': 'database_error',
+            'error': 'Problemas críticos no banco de dados impedem a recuperação',
+            'details': fixResult,
+          };
+        }
+
+        Logger.log('Estrutura do banco de dados corrigida. Continuando com a recuperação...');
+      }
+
+      Logger.log('Verificando integridade das imagens antes de iniciar recuperação...');
+      _recoveryStatusController.add(RecoveryStatus.validatingImages);
+
+      final imageIntegrityResult = await batchVerifyImagesIntegrity(repairAutomatically: true);
+
+      if (!imageIntegrityResult['success']) {
+        Logger.error('Falha na verificação de integridade das imagens: ${imageIntegrityResult['error']}');
+        _isRecovering = false;
+        return {
+          'status': 'image_validation_error',
+          'error': 'Falha ao verificar integridade das imagens',
+          'details': imageIntegrityResult,
+        };
+      }
+
+      Logger.log(
+          'Verificação de imagens concluída: ${imageIntegrityResult['totalImagesChecked']} imagens verificadas, '
+              '${imageIntegrityResult['totalImagesWithIssues']} com problemas');
+
+      if (imageIntegrityResult['samplesWithIssues'] > 0) {
+        Logger.log(
+            '${imageIntegrityResult['samplesWithIssues']} amostras apresentaram problemas com imagens. '
+                'Reparos automáticos foram ${imageIntegrityResult['repairsAttempted'] ? 'tentados' : 'ignorados'}.');
+      }
+
+      Logger.log('Iniciando processo de recuperação de sincronização...');
+      _recoveryStatusController.add(RecoveryStatus.running);
+
+      final recoveryResult = await recoverFailedSyncs();
+
+      return {
+        'status': recoveryResult['status'],
+        'dbIntegrityCheck': dbIntegrityResult,
+        'imageIntegrityCheck': imageIntegrityResult,
+        'recoveryResult': recoveryResult,
+      };
+    } catch (e) {
+      Logger.error('Erro durante processo de recuperação com verificação de integridade: $e');
+      _recoveryStatusController.add(RecoveryStatus.failed);
+      _isRecovering = false;
+      return {
+        'status': 'error',
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Atualiza o progresso detalhado da recuperação
+  Future<void> _updateDetailedProgress(String sampleId, String statusMessage, {Map<String, dynamic>? details}) async {
+    try {
+      final progressData = RecoveryProgress(
+        sampleId: sampleId,
+        progress: 0,
+        status: statusMessage,
+        message: statusMessage,
+        timestamp: DateTime.now(),
+        details: details ?? {},
+      );
+
+      _recoveryProgressController.add(progressData);
+    } catch (e) {
+      Logger.error('Erro ao atualizar progresso detalhado: $e');
+    }
+  }
+
+  /// Trata uma nova falha de sincronização registrada pelo gerenciador de falhas
+  Future<void> _handleNewSyncFailure(SyncFailure failure) async {
+    try {
+      Logger.log('Nova falha de sincronização detectada: ${failure.entityType} ${failure.entityId}');
+
+      final errorMessage = failure.errorMessage.toLowerCase();
+      final isImageRelated = errorMessage.contains('imagem') ||
+          errorMessage.contains('foto') ||
+          errorMessage.contains('image') ||
+          errorMessage.contains('upload');
+
+      if (failure.entityType == 'sample') {
+        _sampleRetryCount[failure.entityId] = (_sampleRetryCount[failure.entityId] ?? 0) + 1;
+
+        if (isImageRelated) {
+          final sample = await _repository.getSampleById(failure.entityId);
+          if (sample != null) {
+            await _validateSampleImages(sample);
+            _detailedProgressController.add({
+              'action': 'image_repair_attempt',
+              'sampleId': sample.id,
+              'timestamp': DateTime.now().toIso8601String(),
+              'details': 'Tentativa de reparo de imagens após falha de sincronização',
+            });
+          }
+        }
+
+        if (_sampleRetryCount[failure.entityId]! >= Config.maxSyncRetries) {
+          await _markAsPermanentFailure(failure.entityId, failure.errorMessage);
+          _detailedProgressController.add({
+            'action': 'permanent_failure',
+            'entityId': failure.entityId,
+            'entityType': failure.entityType,
+            'timestamp': DateTime.now().toIso8601String(),
+            'reason': 'Excedeu o número máximo de tentativas (${Config.maxSyncRetries})',
+          });
+        }
+      }
+
+      await logSyncError(
+        failure.entityId,
+        failure.errorMessage,
+        details: {
+          'entityType': failure.entityType,
+          'timestamp': failure.timestamp.toIso8601String(),
+          'retryCount': _sampleRetryCount[failure.entityId] ?? 0,
+        },
+      );
+    } catch (e) {
+      Logger.error('Erro ao processar nova falha de sincronização: $e');
+    }
+  }
+
+  /// Verifica a integridade de uma amostra específica
+  Future<Map<String, dynamic>> verifySampleIntegrity(String sampleId) async {
+    try {
+      Logger.log('Verificando integridade da amostra: $sampleId');
+
+      final sample = await _repository.getSampleById(sampleId);
+      if (sample == null) {
+        return {
+          'hasIssues': true,
+          'canRepair': false,
+          'error': 'Amostra não encontrada',
+          'imagesChecked': 0,
+          'imageIssuesCount': 0,
+        };
+      }
+
+      final samplePoints = await _samplePointRepository.getPointsBySampleId(sampleId);
+      if (samplePoints.isEmpty) {
+        return {
+          'hasIssues': false,
+          'canRepair': false,
+          'imagesChecked': 0,
+          'imageIssuesCount': 0,
+          'message': 'Amostra não possui pontos',
+        };
+      }
+
+      int imagesChecked = 0;
+      int imageIssuesCount = 0;
+      bool canRepairAny = false;
+      final imageIssues = <Map<String, dynamic>>[];
+
+      for (final point in samplePoints) {
+        if (point.localPhotoPath != null && point.localPhotoPath!.isNotEmpty) {
+          imagesChecked++;
+
+          final file = File(point.localPhotoPath!);
+          final exists = await file.exists();
+
+          if (!exists) {
+            imageIssuesCount++;
+            imageIssues.add({
+              'pointId': point.id,
+              'issue': 'missing',
+              'message': 'Arquivo de imagem não encontrado',
+              'canRepair': false,
+            });
+            continue;
+          }
+
+          try {
+            final bytes = await file.readAsBytes();
+            final validationResult = await _imageIntegrityService!.validateImage(bytes);
+
+            if (!validationResult['isValid']) {
+              imageIssuesCount++;
+              if (validationResult['canRepair']) {
+                canRepairAny = true;
+                imageIssues.add({
+                  'pointId': point.id,
+                  'issue': 'corrupted',
+                  'message': 'Imagem corrompida ou inválida',
+                  'canRepair': true,
+                });
+              } else {
+                imageIssues.add({
+                  'pointId': point.id,
+                  'issue': 'corrupted',
+                  'message': 'Imagem corrompida ou inválida',
+                  'canRepair': false,
+                });
+              }
+            }
+          } catch (e) {
+            Logger.error('Erro ao verificar imagem ${point.localPhotoPath}: $e');
+            imageIssuesCount++;
+            imageIssues.add({
+              'pointId': point.id,
+              'issue': 'validation_error',
+              'message': 'Erro ao verificar imagem',
+              'canRepair': false,
+            });
+          }
+        }
+      }
+
+      return {
+        'hasIssues': imageIssuesCount > 0,
+        'canRepair': canRepairAny,
+        'imagesChecked': imagesChecked,
+        'imageIssuesCount': imageIssuesCount,
+        'imageIssues': imageIssues,
+        'message': imageIssuesCount > 0
+            ? 'Encontrados $imageIssuesCount problemas em $imagesChecked imagens'
+            : 'Todas as $imagesChecked imagens estão íntegras',
+      };
+    } catch (e) {
+      Logger.error('Erro ao verificar integridade da amostra $sampleId: $e');
+      return {
+        'hasIssues': true,
+        'canRepair': false,
+        'error': e.toString(),
+        'imagesChecked': 0,
+        'imageIssuesCount': 0,
+      };
+    }
+  }
+
+  /// Repara imagens com problemas para uma amostra específica
+  Future<Map<String, dynamic>> repairSampleImagesAdvanced({String? specificSampleId}) async {
+    try {
+      Logger.log('Iniciando reparo de imagens para a amostra $specificSampleId...');
+
+      final integrityResult = await verifySampleIntegrity(specificSampleId!);
+
+      if (!integrityResult['hasIssues']) {
+        return {
+          'success': true,
+          'message': 'Não há problemas de imagens para reparar nesta amostra',
+          'sampleId': specificSampleId,
+          'repairedCount': 0,
+        };
+      }
+
+      if (!integrityResult['canRepair']) {
+        return {
+          'success': false,
+          'message': 'Existem problemas nas imagens, mas não podem ser reparados automaticamente',
+          'sampleId': specificSampleId,
+          'repairedCount': 0,
+        };
+      }
+
+      final sample = await _repository.getSampleById(specificSampleId!);
+      if (sample == null) {
+        return {
+          'success': false,
+          'message': 'Amostra não encontrada',
+          'sampleId': specificSampleId,
+        };
+      }
+
+      final points = await _samplePointRepository.getPointsBySampleId(specificSampleId!);
+
+      int repairedCount = 0;
+      final repairs = <String, Map<String, dynamic>>{};
+
+      if (sample.localPhotoPath != null && sample.localPhotoPath!.isNotEmpty) {
+        final imageFile = File(sample.localPhotoPath!);
+        if (await imageFile.exists()) {
+          try {
+            final validationResult = await _imageIntegrityService!.validateImage(await imageFile.readAsBytes());
+
+            if (!validationResult['isValid'] && validationResult['canRepair']) {
+              final repairResult = await _imageRepairService!.repairImage(imageFile);
+
+              if (repairResult['success']) {
+                final repairedFile = repairResult['repairedFile'] as File;
+                if (repairedFile.path != sample.localPhotoPath) {
+                  await _repository.updateSamplePhotoPath(specificSampleId!, repairedFile.path);
+                }
+                repairedCount++;
+                repairs['sample_main'] = repairResult;
+              }
+            }
+          } catch (e) {
+            Logger.error('Erro ao reparar imagem principal da amostra $specificSampleId!: $e');
+            repairs['sample_main'] = {
+              'success': false,
+              'error': e.toString(),
+            };
+          }
+        }
+      }
+
+      for (final point in points) {
+        if (point.localPhotoPath != null && point.localPhotoPath!.isNotEmpty) {
+          final imageFile = File(point.localPhotoPath!);
+          if (await imageFile.exists()) {
+            try {
+              final validationResult = await _imageIntegrityService!.validateImage(await imageFile.readAsBytes());
+
+              if (!validationResult['isValid'] && validationResult['canRepair']) {
+                final repairResult = await _imageRepairService!.repairImage(imageFile);
+
+                if (repairResult['success']) {
+                  final repairedFile = repairResult['repairedFile'] as File;
+                  if (repairedFile.path != point.localPhotoPath) {
+                    await _samplePointRepository.updatePointPhotoPath(point.id, repairedFile.path);
+                  }
+                  repairedCount++;
+                  repairs['point_${point.id}'] = repairResult;
+                }
+              }
+            } catch (e) {
+              Logger.error('Erro ao reparar imagem do ponto ${point.id}: $e');
+              repairs['point_${point.id}'] = {
+                'success': false,
+                'error': e.toString(),
+              };
+            }
+          }
+        }
+      }
+
+      return {
+        'success': repairedCount > 0,
+        'message': repairedCount > 0 ? 'Reparadas $repairedCount imagens com sucesso' : 'Não foi possível reparar nenhuma imagem',
+        'sampleId': specificSampleId,
+        'repairedCount': repairedCount,
+        'repairs': repairs,
+      };
+    } catch (e) {
+      Logger.error('Erro ao reparar imagens da amostra $specificSampleId!: $e');
+      return {
+        'success': false,
+        'message': 'Erro ao reparar imagens: $e',
+        'sampleId': specificSampleId,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Verifica a integridade das imagens em lote para múltiplas amostras
+  Future<Map<String, dynamic>> batchVerifyImagesIntegrity({
+    List<String>? specificSampleIds,
+    bool repairAutomatically = false,
+  }) async {
+    try {
+      Logger.log('Iniciando verificação em lote de integridade das imagens...');
+      _recoveryStatusController.add(RecoveryStatus.validatingImages);
+
+      List<SoilSample> samplesToCheck = [];
+
+      if (specificSampleIds != null && specificSampleIds.isNotEmpty) {
+        for (final sampleId in specificSampleIds) {
+          final sample = await _repository.getSampleById(sampleId);
+          if (sample != null) {
+            samplesToCheck.add(sample);
+          }
+        }
+      } else {
+        final pendingSamples = await _repository.getSamplesByStatus(SyncStatus.pending);
+        final errorSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+        final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+        samplesToCheck = [...pendingSamples, ...errorSamples, ...partialErrorSamples];
+      }
+
+      if (samplesToCheck.isEmpty) {
+        Logger.log('Nenhuma amostra para verificar integridade das imagens.');
+        _recoveryStatusController.add(RecoveryStatus.idle);
+        return {
+          'success': true,
+          'message': 'Nenhuma amostra para verificar',
+          'samplesChecked': 0,
+        };
+      }
+
+      Logger.log('Verificando integridade das imagens de ${samplesToCheck.length} amostras...');
+
+      final results = <String, Map<String, dynamic>>{};
+      final samplesWithIssues = <String>[];
+      int totalImagesChecked = 0;
+      int totalImagesWithIssues = 0;
+
+      for (int i = 0; i < samplesToCheck.length; i++) {
+        final sample = samplesToCheck[i];
+        final percentage = ((i + 1) / samplesToCheck.length * 100).round();
+
+        _recoveryProgressController.add(
+          RecoveryProgress(
+            sampleId: sample.id!,
+            progress: percentage,
+            status: "verificando",
+            message: "Verificando integridade da amostra ${i + 1} de ${samplesToCheck.length}",
+            timestamp: DateTime.now(),
+            current: i + 1,
+            total: samplesToCheck.length,
+            percentage: percentage,
+          ),
+        );
+
+        final integrityResult = await verifySampleIntegrity(sample.id!);
+        results[sample.id!] = integrityResult;
+
+        if (integrityResult['hasIssues']) {
+          samplesWithIssues.add(sample.id!);
+          totalImagesWithIssues += (integrityResult['imageIssuesCount'] as num).toInt();
+
+          if (repairAutomatically && integrityResult['canRepair']) {
+            _recoveryStatusController.add(RecoveryStatus.fixingData);
+            await _updateDetailedProgress(sample.id!, 'reparando_imagens_automaticamente');
+
+            final repairResult = await repairSampleImagesAdvanced(specificSampleId: sample.id!);
+            results[sample.id!]!['repairResult'] = repairResult;
+
+            await _updateDetailedProgress(
+              sample.id!,
+              repairResult['success'] ? 'imagens_reparadas' : 'falha_reparo_imagens',
+              details: repairResult,
+            );
+          }
+        }
+      }
+
+      _recoveryStatusController.add(RecoveryStatus.idle);
+
+      return {
+        'success': true,
+        'samplesChecked': samplesToCheck.length,
+        'samplesWithIssues': samplesWithIssues.length,
+        'samplesWithIssuesIds': samplesWithIssues,
+        'totalImagesChecked': totalImagesChecked,
+        'totalImagesWithIssues': totalImagesWithIssues,
+        'detailedResults': results,
+        'repairsAttempted': repairAutomatically,
+      };
+    } catch (e) {
+      Logger.error('Erro durante verificação em lote de integridade das imagens: $e');
+      _recoveryStatusController.add(RecoveryStatus.idle);
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Gera um relatório completo de integridade do sistema
+  Future<Map<String, dynamic>> generateSystemIntegrityReport() async {
+    try {
+      Logger.log('Gerando relatório de integridade do sistema...');
+
+      final report = <String, dynamic>{
+        'timestamp': DateTime.now().toIso8601String(),
+        'appVersion': await Config.getAppVersion(),
+        'deviceInfo': await _deviceInfoService!.getDeviceInfo(),
+      };
+
+      Logger.log('Verificando integridade do banco de dados...');
+      final dbIntegrityResult = await _dbIntegrityService.checkIntegrity();
+      report['databaseIntegrity'] = dbIntegrityResult;
+
+      Logger.log('Verificando integridade das imagens...');
+      final imageIntegrityResult = await batchVerifyImagesIntegrity();
+      report['imageIntegrity'] = imageIntegrityResult;
+
+      Logger.log('Verificando integridade do armazenamento...');
+      final storageIntegrityResult = await _storageService.checkStorageStatus();
+      report['storageIntegrity'] = storageIntegrityResult;
+
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final reportFile = File(path.join(Config.exportsPath, 'system_integrity_report_$timestamp.json'));
+
+      await reportFile.writeAsString(jsonEncode(report));
+
+      return {
+        'success': true,
+        'reportPath': reportFile.path,
+        'report': report,
+      };
+    } catch (e) {
+      Logger.error('Erro ao gerar relatório de integridade do sistema: $e');
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Remove logs de erro para uma amostra após sincronização bem-sucedida
+  Future<void> _removeErrorLogs(String sampleId) async {
+    try {
+      final logsDir = Directory(Config.logsPath);
+      if (!await logsDir.exists()) {
+        return;
+      }
+
+      final files = await logsDir.list().toList();
+      for (final entity in files) {
+        if (entity is File && 
+            entity.path.contains('sync_${sampleId}_') && 
+            entity.path.endsWith('.txt')) {
+          await entity.delete();
+          Logger.log('Log de erro removido: ${entity.path}');
+        }
+      }
+    } catch (e) {
+      Logger.error('Erro ao remover logs de erro: $e');
+    }
+  }
+
+  /// Repara imagens de amostras com problemas
+  /// 
+  /// Verifica e tenta reparar imagens corrompidas ou inválidas
+  /// associadas às amostras de solo.
+  Future<Map<String, dynamic>> repairSampleImages() async {
+    if (!_isInitialized) {
+      return {'success': false, 'error': 'Serviço não inicializado'};
+    }
+
+    try {
+      Logger.log('Iniciando reparo de imagens de amostras...');
+      final result = <String, dynamic>{
+        'success': false,
+        'samplesChecked': 0,
+        'imagesChecked': 0,
+        'imagesRepaired': 0,
+        'imagesFailed': 0,
+        'details': <String, dynamic>{},
+      };
+
+      // Obter todas as amostras com status de erro ou erro parcial
+      final failedSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+      final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+      final allSamples = [...failedSamples, ...partialErrorSamples];
+
+      if (allSamples.isEmpty) {
+        Logger.log('Nenhuma amostra com falha encontrada para reparo de imagens');
+        result['success'] = true;
+        return result;
+      }
+
+      result['samplesChecked'] = allSamples.length;
+      int imagesChecked = 0;
+      int imagesRepaired = 0;
+      int imagesFailed = 0;
+
+      for (final sample in allSamples) {
+        if (sample.id == null) continue;
+
+        final sampleResult = <String, dynamic>{
+          'pointsChecked': 0,
+          'imagesChecked': 0,
+          'imagesRepaired': 0,
+          'imagesFailed': 0,
+          'details': <String, dynamic>{},
+        };
+
+        for (final point in sample.samplePoints) {
+          if (!point.hasLocalPhoto || point.localPhotoPath == null || point.localPhotoPath!.isEmpty) {
+            continue;
+          }
+
+          final photoPath = point.localPhotoPath!;
+          final photoFile = File(photoPath);
+          
+          sampleResult['pointsChecked'] = (sampleResult['pointsChecked'] as int) + 1;
+          
+          if (!await photoFile.exists()) {
+            sampleResult['details'][point.id!] = {
+              'status': 'missing',
+              'path': photoPath,
+            };
+            continue;
+          }
+
+          imagesChecked++;
+          sampleResult['imagesChecked'] = (sampleResult['imagesChecked'] as int) + 1;
+
+          final validationResult = await _imageIntegrityService!.validateImage(photoPath);
+          if (!validationResult['valid']) {
+            final repairResult = await _imageRepairService!.repairImage(photoPath);
+            sampleResult['details'][point.id!] = {
+              'validationResult': validationResult,
+              'repairResult': repairResult,
+            };
+
+            if (repairResult['success']) {
+              imagesRepaired++;
+              sampleResult['imagesRepaired'] = (sampleResult['imagesRepaired'] as int) + 1;
+              
+              // Atualizar o ponto com a informação de que a imagem foi reparada
+              final updatedPoint = point.copyWith(
+                photoCompressed: true,
+                updatedAt: DateTime.now(),
+              );
+              await _samplePointRepository.updateSamplePoint(updatedPoint);
+            } else {
+              imagesFailed++;
+              sampleResult['imagesFailed'] = (sampleResult['imagesFailed'] as int) + 1;
+            }
+          } else {
+            sampleResult['details'][point.id!] = {
+              'status': 'already_valid',
+              'validationResult': validationResult,
+            };
+          }
+        }
+
+        result['details'][sample.id!] = sampleResult;
+      }
+
+      result['imagesChecked'] = imagesChecked;
+      result['imagesRepaired'] = imagesRepaired;
+      result['imagesFailed'] = imagesFailed;
+      result['success'] = true;
+
+      Logger.log('Reparo de imagens concluído: $imagesRepaired de $imagesChecked imagens reparadas');
+      return result;
+    } catch (e) {
+      Logger.error('Erro ao reparar imagens: $e');
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// Repara imagens de amostras com opções avançadas
+  /// 
+  /// Permite especificar opções avançadas para o reparo de imagens,
+  /// como forçar recompressão, verificar apenas amostras específicas, etc.
+  Future<Map<String, dynamic>> repairSampleImagesWithOptions({
+    bool forceRecompress = false,
+    List<String>? sampleIds,
+    bool checkAllSamples = false,
+    bool skipValidImages = true,
+    int? compressionQuality,
+    bool generateThumbnails = false,
+  }) async {
+    if (!_isInitialized) {
+      return {'success': false, 'error': 'Serviço não inicializado'};
+    }
+
+    try {
+      Logger.log('Iniciando reparo de imagens com opções avançadas...');
+      final result = <String, dynamic>{
+        'success': false,
+        'samplesChecked': 0,
+        'imagesChecked': 0,
+        'imagesRepaired': 0,
+        'imagesRecompressed': 0,
+        'imagesFailed': 0,
+        'thumbnailsGenerated': 0,
+        'details': <String, dynamic>{},
+      };
+
+      List<SoilSample> samples = [];
+      
+      if (sampleIds != null && sampleIds.isNotEmpty) {
+        // Buscar apenas as amostras especificadas
+        for (final id in sampleIds) {
+          final sample = await _repository.getSampleById(id);
+          if (sample != null) {
+            samples.add(sample);
+          }
+        }
+      } else if (checkAllSamples) {
+        // Buscar todas as amostras
+        samples = await _repository.getAllSamples();
+      } else {
+        // Buscar apenas amostras com erro
+        final failedSamples = await _repository.getSamplesByStatus(SyncStatus.error);
+        final partialErrorSamples = await _repository.getSamplesByStatus(SyncStatus.partialError);
+        samples = [...failedSamples, ...partialErrorSamples];
+      }
+
+      if (samples.isEmpty) {
+        Logger.log('Nenhuma amostra encontrada para reparo de imagens');
+        result['success'] = true;
+        return result;
+      }
+
+      result['samplesChecked'] = samples.length;
+      int imagesChecked = 0;
+      int imagesRepaired = 0;
+      int imagesRecompressed = 0;
+      int imagesFailed = 0;
+      int thumbnailsGenerated = 0;
+
+      final quality = compressionQuality ?? Config.photoCompressionQuality;
+
+      for (final sample in samples) {
+        if (sample.id == null) continue;
+
+        final sampleResult = <String, dynamic>{
+          'pointsChecked': 0,
+          'imagesChecked': 0,
+          'imagesRepaired': 0,
+          'imagesRecompressed': 0,
+          'imagesFailed': 0,
+          'thumbnailsGenerated': 0,
+          'details': <String, dynamic>{},
+        };
+
+        for (final point in sample.samplePoints) {
+          if (!point.hasLocalPhoto || point.localPhotoPath == null || point.localPhotoPath!.isEmpty) {
+            continue;
+          }
+
+          final photoPath = point.localPhotoPath!;
+          final photoFile = File(photoPath);
+          
+          sampleResult['pointsChecked'] = (sampleResult['pointsChecked'] as int) + 1;
+          
+          if (!await photoFile.exists()) {
+            sampleResult['details'][point.id!] = {
+              'status': 'missing',
+              'path': photoPath,
+            };
+            continue;
+          }
+
+          imagesChecked++;
+          sampleResult['imagesChecked'] = (sampleResult['imagesChecked'] as int) + 1;
+
+          bool needsRepair = false;
+          Map<String, dynamic> validationResult = {'valid': true};
+          
+          if (!skipValidImages || forceRecompress) {
+            validationResult = await _imageIntegrityService!.validateImage(photoPath);
+            needsRepair = !validationResult['valid'] || forceRecompress;
+          }
+
+          if (needsRepair) {
+            Map<String, dynamic> repairResult;
+            
+            if (forceRecompress) {
+              repairResult = await _imageRepairService!.recompressImage(
+                photoPath, 
+                quality: quality,
+                maxWidth: Config.photoMaxWidth,
+                maxHeight: Config.photoMaxHeight,
+              );
+            } else {
+              repairResult = await _imageRepairService!.repairImage(photoPath);
+            }
+            
+            sampleResult['details'][point.id!] = {
+              'validationResult': validationResult,
+              'repairResult': repairResult,
+            };
+
+            if (repairResult['success']) {
+              if (forceRecompress) {
+                imagesRecompressed++;
+                sampleResult['imagesRecompressed'] = (sampleResult['imagesRecompressed'] as int) + 1;
+              } else {
+                imagesRepaired++;
+                sampleResult['imagesRepaired'] = (sampleResult['imagesRepaired'] as int) + 1;
+              }
+              
+              // Atualizar o ponto com a informação de que a imagem foi reparada
+              final updatedPoint = point.copyWith(
+                photoCompressed: true,
+                updatedAt: DateTime.now(),
+              );
+              await _samplePointRepository.updateSamplePoint(updatedPoint);
+              
+              // Gerar thumbnail se solicitado
+              if (generateThumbnails) {
+                try {
+                  final thumbnailResult = await _imageService.generateThumbnail(
+                    photoPath, 
+                    size: Config.thumbnailSize,
+                  );
+                  
+                  if (thumbnailResult['success']) {
+                    thumbnailsGenerated++;
+                    sampleResult['thumbnailsGenerated'] = (sampleResult['thumbnailsGenerated'] as int) + 1;
+                    sampleResult['details'][point.id!]['thumbnailResult'] = thumbnailResult;
+                  }
+                } catch (e) {
+                  Logger.error('Erro ao gerar thumbnail: $e');
+                }
+              }
+            } else {
+              imagesFailed++;
+              sampleResult['imagesFailed'] = (sampleResult['imagesFailed'] as int) + 1;
+            }
+          } else {
+            sampleResult['details'][point.id!] = {
+              'status': 'already_valid',
+              'validationResult': validationResult,
+            };
+          }
+        }
+
+        result['details'][sample.id!] = sampleResult;
+      }
+
+      result['imagesChecked'] = imagesChecked;
+      result['imagesRepaired'] = imagesRepaired;
+      result['imagesRecompressed'] = imagesRecompressed;
+      result['imagesFailed'] = imagesFailed;
+      result['thumbnailsGenerated'] = thumbnailsGenerated;
+      result['success'] = true;
+
+      Logger.log('Reparo de imagens concluído: $imagesRepaired reparadas, $imagesRecompressed recomprimidas de $imagesChecked imagens verificadas');
+      return result;
+    } catch (e) {
+      Logger.error('Erro ao reparar imagens com opções avançadas: $e');
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
+}

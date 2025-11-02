@@ -1,0 +1,167 @@
+{
+  "cultura": "Batata",
+  "nome_cientifico": "Solanum tuberosum",
+  "versao": "1.0",
+  "data_atualizacao": "2024-12-19T00:00:00Z",
+  "funcionalidades_extras": {
+    "fases_desenvolvimento": true,
+    "tamanhos_mm": true,
+    "severidade_detalhada": true,
+    "condicoes_favoraveis": true,
+    "manejo_integrado": true,
+    "limiares_especificos": true,
+    "niveis_infestacao": true,
+    "niveis_severidade": true,
+    "sintomas_detalhados": true
+  },
+  "organismos": [
+    {
+      "id": "batata_mildio",
+      "nome": "Míldio da batata",
+      "nome_cientifico": "Phytophthora infestans",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "batata",
+      "sintomas": [
+        "Lesões aquosas nas folhas",
+        "Manchas necróticas escuras",
+        "Podridão dos tubérculos"
+      ],
+      "dano_economico": "Pode causar perdas de até 100% se não controlado",
+      "partes_afetadas": ["Folhas", "Tubérculos"],
+      "fenologia": ["VE", "V1", "V2", "V3", "V4", "VT", "R1", "R2", "R3", "R4", "R5", "R6"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "manejo_quimico": [
+        "Cobre - 2,0-4,0 kg/ha",
+        "Fosetyl-Al - 2,5-3,5 kg/ha",
+        "Metalaxyl - 0,5-0,75 kg/ha"
+      ],
+      "doses_defensivos": {
+        "cobre": {
+          "dose": "2,0-4,0 kg/ha",
+          "concentracao": "500 g/kg",
+          "volume_calda": "400-600 L/ha",
+          "intervalo_seguranca": "7 dias",
+          "epoca_aplicacao": "Preventivo e curativo",
+          "condicoes_climaticas": "Temperatura < 25°C, sem chuva por 6h, umidade relativa > 80%",
+          "equipamento": "Pulverizador com bicos de jato cônico",
+          "adjuvante": "Não necessário",
+          "observacoes": "Aplicação preventiva semanal. Eficaz contra míldio e outras doenças fúngicas. Não aplicar em temperaturas > 25°C.",
+          "custo_aproximado": "R$ 35-50/ha"
+        },
+        "fosetyl_al": {
+          "dose": "2,5-3,5 kg/ha",
+          "concentracao": "800 g/kg",
+          "volume_calda": "400-600 L/ha",
+          "intervalo_seguranca": "14 dias",
+          "epoca_aplicacao": "Curativo",
+          "condicoes_climaticas": "Temperatura < 30°C, sem chuva por 4h, umidade relativa > 70%",
+          "equipamento": "Pulverizador com bicos de jato cônico",
+          "adjuvante": "Óleo mineral 0,5%",
+          "observacoes": "Fungicida sistêmico. Aplicar no início dos sintomas. Eficaz contra Phytophthora.",
+          "custo_aproximado": "R$ 80-120/ha"
+        },
+        "metalaxyl": {
+          "dose": "0,5-0,75 kg/ha",
+          "concentracao": "350 g/kg",
+          "volume_calda": "400-600 L/ha",
+          "intervalo_seguranca": "21 dias",
+          "epoca_aplicacao": "Preventivo",
+          "condicoes_climaticas": "Temperatura < 25°C, sem chuva por 6h, umidade relativa > 80%",
+          "equipamento": "Pulverizador com bicos de jato cônico",
+          "adjuvante": "Não necessário",
+          "observacoes": "Fungicida sistêmico preventivo. Aplicar antes da chuva. Eficaz contra míldio.",
+          "custo_aproximado": "R$ 60-90/ha"
+        }
+      },
+      "manejo_biologico": ["Controle biológico com Trichoderma"],
+      "manejo_cultural": ["Rotação de culturas", "Eliminação de restos culturais"],
+      "condicoes_favoraveis": {
+        "temperatura": "15-25°C",
+        "umidade": "Alta umidade relativa (>90%)",
+        "chuva": "Chuvas frequentes"
+      }
+    },
+    {
+      "id": "batata_alternaria",
+      "nome": "Alternária da batata",
+      "nome_cientifico": "Alternaria solani",
+      "categoria": "Doença",
+      "tipo": "DOENCA",
+      "cultura_id": "batata",
+      "sintomas": [
+        "Manchas necróticas nas folhas",
+        "Lesões concêntricas",
+        "Redução da área fotossintética"
+      ],
+      "dano_economico": "Pode causar perdas de até 50%",
+      "partes_afetadas": ["Folhas"],
+      "fenologia": ["V1", "V2", "V3", "V4", "VT", "R1", "R2", "R3"],
+      "nivel_acao": "Primeiro sintoma detectado",
+      "manejo_quimico": ["Fungicidas protetores"],
+      "manejo_cultural": ["Adubação equilibrada", "Irrigação adequada"]
+    },
+    {
+      "id": "batata_gorgulho",
+      "nome": "Gorgulho da batata",
+      "nome_cientifico": "Leptinotarsa decemlineata",
+      "categoria": "Praga",
+      "tipo": "PRAGA",
+      "cultura_id": "batata",
+      "sintomas": [
+        "Desfolha intensa",
+        "Redução da produtividade",
+        "Danos nos tubérculos"
+      ],
+      "dano_economico": "Pode causar perdas de até 80%",
+      "partes_afetadas": ["Folhas", "Tubérculos"],
+      "fenologia": ["V1", "V2", "V3", "V4", "VT", "R1", "R2", "R3"],
+      "nivel_acao": "≥2 adultos ou 10 ovos/planta",
+      "manejo_quimico": [
+        "Imidacloprido - 0,15-0,25 L/ha",
+        "Tiametoxam - 0,1-0,15 kg/ha",
+        "Acetamiprido - 0,2-0,3 kg/ha"
+      ],
+      "doses_defensivos": {
+        "imidacloprido": {
+          "dose": "0,15-0,25 L/ha",
+          "concentracao": "700 g/L",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "21 dias",
+          "epoca_aplicacao": "Vegetativo (V1-V4)",
+          "condicoes_climaticas": "Temperatura < 30°C, sem chuva por 4h, umidade relativa 60-80%",
+          "equipamento": "Pulverizador com bicos de jato cônico",
+          "adjuvante": "Óleo mineral 0,5%",
+          "observacoes": "Inseticida sistêmico. Aplicar no início da infestação. Eficaz contra adultos e larvas.",
+          "custo_aproximado": "R$ 50-70/ha"
+        },
+        "tiametoxam": {
+          "dose": "0,1-0,15 kg/ha",
+          "concentracao": "250 g/kg",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "28 dias",
+          "epoca_aplicacao": "Vegetativo (V1-V4)",
+          "condicoes_climaticas": "Temperatura < 30°C, sem chuva por 4h, umidade relativa 60-80%",
+          "equipamento": "Pulverizador com bicos de jato cônico",
+          "adjuvante": "Óleo mineral 0,5%",
+          "observacoes": "Inseticida sistêmico. Aplicar preventivamente. Eficaz contra adultos e larvas.",
+          "custo_aproximado": "R$ 60-80/ha"
+        },
+        "acetamiprido": {
+          "dose": "0,2-0,3 kg/ha",
+          "concentracao": "200 g/kg",
+          "volume_calda": "200-300 L/ha",
+          "intervalo_seguranca": "14 dias",
+          "epoca_aplicacao": "Vegetativo (V1-V4)",
+          "condicoes_climaticas": "Temperatura < 30°C, sem chuva por 4h, umidade relativa 60-80%",
+          "equipamento": "Pulverizador com bicos de jato cônico",
+          "adjuvante": "Óleo mineral 0,5%",
+          "observacoes": "Inseticida sistêmico. Aplicar no início da infestação. Eficaz contra adultos e larvas.",
+          "custo_aproximado": "R$ 45-65/ha"
+        }
+      },
+      "manejo_biologico": ["Controle biológico com Bacillus thuringiensis"],
+      "manejo_cultural": ["Eliminação de plantas voluntárias"]
+    }
+  ]
+}

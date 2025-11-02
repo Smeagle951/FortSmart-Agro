@@ -1,0 +1,86 @@
+{
+  "version": "2.0",
+  "last_updated": "2025-10-17",
+  "culture": "girassol",
+  "culture_id": "custom_girassol",
+  "scientific_name": "Helianthus annuus",
+  "common_name": "Girassol",
+  
+  "phenological_stages": {
+    "vegetative": ["VE", "V2", "V4", "V6", "V8", "V10", "V12"],
+    "reproductive": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9"],
+    "critical_stages": ["R4", "R5", "R6"]
+  },
+  
+  "susceptibility_curve": {
+    "V4": { "damage_potential": 70, "recovery_capacity": 40 },
+    "V8": { "damage_potential": 50, "recovery_capacity": 60 },
+    "R1": { "damage_potential": 60, "recovery_capacity": 40 },
+    "R4": { "damage_potential": 90, "recovery_capacity": 15 },
+    "R6": { "damage_potential": 95, "recovery_capacity": 10 },
+    "R9": { "damage_potential": 20, "recovery_capacity": 0 }
+  },
+  
+  "organisms": {
+    "pests": [
+      {
+        "id": "girassol_lagarta_cabeca",
+        "name": "Lagarta-da-cabeça",
+        "scientific_name": "Helicoverpa armigera",
+        "unit": "lagartas/capítulo",
+        "monitoring_method": "Inspeção de capítulos",
+        
+        "phenological_thresholds": {
+          "V4-R3": {
+            "low": 2,
+            "medium": 4,
+            "high": 6,
+            "critical": 10,
+            "damage_potential": 50,
+            "damage_type": "Desfolha",
+            "economic_loss": "< 10%"
+          },
+          "R4-R6": {
+            "low": 1,
+            "medium": 2,
+            "high": 4,
+            "critical": 6,
+            "damage_potential": 95,
+            "damage_type": "Alimenta-se de aquênios - perda direta",
+            "economic_loss": "40-70%",
+            "action_window_hours": 24
+          },
+          "R7-R9": {
+            "low": 3,
+            "medium": 6,
+            "high": 10,
+            "critical": 15,
+            "damage_potential": 30,
+            "damage_type": "Aquênios já formados",
+            "economic_loss": "< 10%"
+          }
+        }
+      },
+      {
+        "id": "girassol_percevejo",
+        "name": "Percevejo-do-girassol",
+        "scientific_name": "Euschistus heros",
+        "unit": "adultos/capítulo",
+        "monitoring_method": "Inspeção visual",
+        
+        "phenological_thresholds": {
+          "R4-R6": {
+            "low": 1,
+            "medium": 3,
+            "high": 5,
+            "critical": 8,
+            "damage_potential": 80,
+            "damage_type": "Sugamento de aquênios - chochamento",
+            "economic_loss": "20-40%"
+          }
+        }
+      }
+    ]
+  }
+}
+

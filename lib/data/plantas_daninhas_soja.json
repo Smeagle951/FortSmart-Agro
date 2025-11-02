@@ -1,0 +1,120 @@
+{
+  "cultura": "Soja",
+  "plantas_daninhas": [
+    {
+      "id": "soja_caruru",
+      "nome": "Caruru",
+      "nome_cientifico": "Amaranthus spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Amaranthaceae",
+      "ciclo": "Anual",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por luz, água e nutrientes",
+        "Redução da produtividade",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R2",
+      "densidade_critica": "2-4 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Flumioxazina", "Clomazona", "S-metolacloro"],
+        "pos_emergencia": ["Glyphosate", "2,4-D", "Dicamba"],
+        "cultural": ["Rotação de culturas", "Plantio direto", "Cobertura do solo"]
+      },
+      "observacoes": "Resistente a herbicidas em algumas regiões",
+      "icone": "🌿"
+    },
+    {
+      "id": "soja_buva",
+      "nome": "Buva",
+      "nome_cientifico": "Conyza spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Asteraceae",
+      "ciclo": "Bienal",
+      "tipo_germinacao": "Outono-Inverno",
+      "sintomas": [
+        "Competição severa por recursos",
+        "Redução de 15-40% na produtividade",
+        "Dificuldade na colheita"
+      ],
+      "periodo_critico": "V2 a R4",
+      "densidade_critica": "1-2 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Flumioxazina", "Clomazona"],
+        "pos_emergencia": ["Glyphosate + 2,4-D", "Paraquat"],
+        "cultural": ["Plantio direto", "Cobertura do solo", "Rotação"]
+      },
+      "observacoes": "Principal problema de resistência a herbicidas",
+      "icone": "🌾"
+    },
+    {
+      "id": "soja_capim_coloniao",
+      "nome": "Capim-colonião",
+      "nome_cientifico": "Panicum maximum",
+      "categoria": "Planta Daninha",
+      "familia": "Poaceae",
+      "ciclo": "Perene",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por água e nutrientes",
+        "Formação de touceiras",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R6",
+      "densidade_critica": "1 touceira/10m²",
+      "manejo": {
+        "pre_emergencia": ["S-metolacloro", "Dimetenamida"],
+        "pos_emergencia": ["Glyphosate", "Clethodim", "Quizalofop"],
+        "cultural": ["Gradagem", "Rotação com pastagem"]
+      },
+      "observacoes": "Muito comum em áreas de pastagem",
+      "icone": "🌱"
+    },
+    {
+      "id": "soja_corda_viola",
+      "nome": "Corda-de-viola",
+      "nome_cientifico": "Ipomoea spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Convolvulaceae",
+      "ciclo": "Anual",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Envolvimento das plantas",
+        "Competição por luz",
+        "Dificuldade na aplicação de defensivos"
+      ],
+      "periodo_critico": "V3 a R3",
+      "densidade_critica": "2-3 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Flumioxazina", "Clomazona"],
+        "pos_emergencia": ["2,4-D", "Dicamba", "Glyphosate"],
+        "cultural": ["Rotação", "Plantio direto"]
+      },
+      "observacoes": "Trepa nas plantas de soja",
+      "icone": "🌿"
+    },
+    {
+      "id": "soja_picão_preto",
+      "nome": "Picão-preto",
+      "nome_cientifico": "Bidens pilosa",
+      "categoria": "Planta Daninha",
+      "familia": "Asteraceae",
+      "ciclo": "Anual",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por recursos",
+        "Redução da produtividade",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R2",
+      "densidade_critica": "4-6 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Flumioxazina", "Clomazona"],
+        "pos_emergencia": ["2,4-D", "Glyphosate"],
+        "cultural": ["Plantio direto", "Cobertura do solo"]
+      },
+      "observacoes": "Comum em todo o Brasil",
+      "icone": "🌼"
+    }
+  ]
+}

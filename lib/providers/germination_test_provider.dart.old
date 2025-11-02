@@ -1,0 +1,1194 @@
+import 'package:flutter/foundation.dart';
+import '../screens/plantio/submods/germination_test/models/germination_test_model.dart';
+import '../screens/plantio/submods/germination_test/database/daos/germination_test_dao.dart';
+import '../screens/plantio/submods/germination_test/database/daos/germination_daily_record_dao.dart';
+import '../screens/plantio/submods/germination_test/database/daos/germination_subtest_dao.dart';
+import '../database/app_database.dart';
+
+class GerminationTestProvider with ChangeNotifier {
+  // Serviços removidos - não existem mais
+  // GerminationTestService? _service;
+  // GerminationSubtestService? _subtestService;
+  // final GerminationPlantingIntegrationService _integrationService = 
+  //     GerminationPlantingIntegrationService();
+  // final GerminationModelIntegrationService _modelIntegrationService = 
+  //     GerminationModelIntegrationService();
+  // final GerminationSettingsService _settingsService = GerminationSettingsService();
+  
+  List<GerminationTest> _tests = [];
+  bool _isLoading = false;
+  String? _error;
+  Map<String, dynamic> _statistics = {};
+  // GerminationSettings? _settings; // Removido
+
+  GerminationTestProvider(dynamic database) {
+    _initializeDatabase(database);
+  }
+
+  /// Inicializa o serviço com o banco de dados correto
+  Future<void> _initializeService() async {
+    // Serviços removidos - método comentado
+    return;
+    /*
+    if (_service == null) {
+      try {
+        print('🔄 Iniciando inicialização do GerminationTestService...');
+        
+        // Usar o banco principal do aplicativo
+        final database = await AppDatabase.instance.database;
+        print('✅ Database principal obtido');
+        
+        // Verificar se as tabelas de germinação existem
+        final tables = await database.rawQuery(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'germination_%'"
+        );
+        print('📋 Tabelas de germinação encontradas: ${tables.map((t) => t['name']).toList()}');
+        
+        // Se as tabelas não existirem, criar
+        if (tables.isEmpty) {
+          print('📋 Criando tabelas de germinação no banco principal...');
+          await _createGerminationTables(database);
+        } else {
+          // Verificar se precisa migrar campos sanitários
+          await _migrateSanitaryFields(database);
+        }
+        
+        _service = GerminationTestService(
+          GerminationTestDaoSimple(database),
+          GerminationDailyRecordDaoSimple(database),
+        );
+        
+      _subtestService = GerminationSubtestService(
+        GerminationSubtestDaoConcrete(database),
+        GerminationSubtestDailyRecordDaoConcrete(database),
+        GerminationTestDaoSimple(database),
+      );
+        
+        // Carregar configurações
+        await _loadSettings();
+        
+        print('✅ GerminationTestService e GerminationSubtestService inicializados com sucesso');
+      } catch (e) {
+        print('❌ Erro ao inicializar serviço de germinação: $e');
+        print('❌ Stack trace: ${StackTrace.current}');
+        rethrow;
+      }
+    }
+  }
+
+  /// Carrega as configurações de germinação
+  Future<void> _loadSettings() async {
+    try {
+      _settings = await _settingsService.loadSettings();
+      print('✅ Configurações de germinação carregadas');
+    } catch (e) {
+      print('❌ Erro ao carregar configurações: $e');
+      _settings = GerminationSettings.defaultSettings();
+    }
+  }
+  
+  /// Cria as tabelas de germinação no banco principal
+  Future<void> _createGerminationTables(dynamic database) async {
+    try {
+      // Criar tabela de testes de germinação
+      await database.execute('''
+        CREATE TABLE IF NOT EXISTS germination_tests (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          culture TEXT NOT NULL,
+          variety TEXT NOT NULL,
+          seedLot TEXT NOT NULL,
+          totalSeeds INTEGER NOT NULL,
+          startDate TEXT NOT NULL,
+          expectedEndDate TEXT,
+          pureSeeds INTEGER NOT NULL,
+          brokenSeeds INTEGER NOT NULL,
+          stainedSeeds INTEGER NOT NULL,
+          finalGerminationPercentage REAL,
+          purityPercentage REAL,
+          diseasedPercentage REAL,
+          culturalValue REAL,
+          averageGerminationTime REAL,
+          firstCountDay INTEGER,
+          day50PercentGermination INTEGER,
+          status TEXT NOT NULL DEFAULT 'active',
+          observations TEXT,
+          photos TEXT,
+          createdAt TEXT NOT NULL,
+          updatedAt TEXT NOT NULL,
+          -- Campos de subtestes
+          hasSubtests INTEGER NOT NULL DEFAULT 0,
+          subtestSeedCount INTEGER NOT NULL DEFAULT 100,
+          subtestNames TEXT,
+          -- Posicionamento no canteiro
+          position TEXT
+        )
+      ''');
+      
+      // Criar tabela de registros diários
+      await database.execute('''
+        CREATE TABLE IF NOT EXISTS germination_daily_records (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          germinationTestId INTEGER NOT NULL,
+          day INTEGER NOT NULL,
+          recordDate TEXT NOT NULL,
+          normalGerminated INTEGER NOT NULL,
+          abnormalGerminated INTEGER NOT NULL,
+          diseasedFungi INTEGER NOT NULL,
+          notGerminated INTEGER NOT NULL,
+          observations TEXT,
+          photos TEXT,
+          -- Campos de qualidade sanitária
+          sanitarySymptoms TEXT,
+          sanitarySeverity TEXT,
+          sanitaryObservations TEXT,
+          sanitaryPhotos TEXT,
+          createdAt TEXT NOT NULL,
+          updatedAt TEXT NOT NULL,
+          FOREIGN KEY (germinationTestId) REFERENCES germination_tests (id) ON DELETE CASCADE
+        )
+      ''');
+      
+      // Criar tabela de subtestes
+      await database.execute('''
+        CREATE TABLE IF NOT EXISTS germination_subtests (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          germinationTestId INTEGER NOT NULL,
+          subtestCode TEXT NOT NULL,
+          subtestName TEXT NOT NULL,
+          seedCount INTEGER NOT NULL,
+          status TEXT NOT NULL DEFAULT 'active',
+          createdAt TEXT NOT NULL,
+          updatedAt TEXT NOT NULL,
+          FOREIGN KEY (germinationTestId) REFERENCES germination_tests (id) ON DELETE CASCADE
+        )
+      ''');
+      
+      // Criar tabela de registros diários de subtestes
+      await database.execute('''
+        CREATE TABLE IF NOT EXISTS germination_subtest_daily_records (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          subtestId INTEGER NOT NULL,
+          day INTEGER NOT NULL,
+          recordDate TEXT NOT NULL,
+          normalGerminated INTEGER NOT NULL,
+          abnormalGerminated INTEGER NOT NULL,
+          diseasedFungi INTEGER NOT NULL,
+          notGerminated INTEGER NOT NULL,
+          observations TEXT,
+          photos TEXT,
+          createdAt TEXT NOT NULL,
+          updatedAt TEXT NOT NULL,
+          FOREIGN KEY (subtestId) REFERENCES germination_subtests (id) ON DELETE CASCADE
+        )
+      ''');
+      
+      // Criar índices
+      await database.execute('CREATE INDEX IF NOT EXISTS idx_germination_tests_culture ON germination_tests(culture);');
+      await database.execute('CREATE INDEX IF NOT EXISTS idx_germination_tests_variety ON germination_tests(variety);');
+      await database.execute('CREATE INDEX IF NOT EXISTS idx_germination_tests_seedLot ON germination_tests(seedLot);');
+      await database.execute('CREATE INDEX IF NOT EXISTS idx_germination_tests_status ON germination_tests(status);');
+      await database.execute('CREATE INDEX IF NOT EXISTS idx_germination_daily_records_testId ON germination_daily_records(germinationTestId);');
+      await database.execute('CREATE INDEX IF NOT EXISTS idx_germination_subtests_testId ON germination_subtests(germinationTestId);');
+      await database.execute('CREATE INDEX IF NOT EXISTS idx_germination_subtest_daily_records_subtestId ON germination_subtest_daily_records(subtestId);');
+      
+      print('✅ Tabelas de germinação criadas com sucesso');
+    } catch (e) {
+      print('❌ Erro ao criar tabelas de germinação: $e');
+      rethrow;
+    }
+  }
+
+  /// Migra campos sanitários e de subtestes para tabelas existentes
+  Future<void> _migrateSanitaryFields(dynamic database) async {
+    try {
+      // Verificar se os campos sanitários já existem
+      final columns = await database.rawQuery(
+        "PRAGMA table_info(germination_daily_records)"
+      );
+      
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      
+      // Adicionar campos sanitários se não existirem
+      if (!columnNames.contains('sanitarySymptoms')) {
+        print('📋 Migrando campos sanitários...');
+        await database.execute('ALTER TABLE germination_daily_records ADD COLUMN sanitarySymptoms TEXT;');
+        await database.execute('ALTER TABLE germination_daily_records ADD COLUMN sanitarySeverity TEXT;');
+        await database.execute('ALTER TABLE germination_daily_records ADD COLUMN sanitaryObservations TEXT;');
+        await database.execute('ALTER TABLE germination_daily_records ADD COLUMN sanitaryPhotos TEXT;');
+        print('✅ Campos sanitários migrados com sucesso');
+      }
+      
+      // Verificar se os campos de subtestes já existem
+      final testColumns = await database.rawQuery(
+        "PRAGMA table_info(germination_tests)"
+      );
+      
+      final testColumnNames = testColumns.map((col) => col['name'] as String).toList();
+      
+      // Adicionar campos de subtestes se não existirem
+      if (!testColumnNames.contains('hasSubtests')) {
+        print('📋 Migrando campos de subtestes...');
+        await database.execute('ALTER TABLE germination_tests ADD COLUMN hasSubtests INTEGER NOT NULL DEFAULT 0;');
+        await database.execute('ALTER TABLE germination_tests ADD COLUMN subtestSeedCount INTEGER NOT NULL DEFAULT 100;');
+        await database.execute('ALTER TABLE germination_tests ADD COLUMN subtestNames TEXT;');
+        await database.execute('ALTER TABLE germination_tests ADD COLUMN position TEXT;');
+        print('✅ Campos de subtestes migrados com sucesso');
+      }
+    } catch (e) {
+      print('❌ Erro ao migrar campos: $e');
+      // Não rethrow para não quebrar a aplicação
+    }
+  }
+
+  // Getters
+  List<GerminationTest> get tests => _tests;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+  Map<String, dynamic> get statistics => _statistics;
+  GerminationSettings? get settings => _settings;
+  GerminationTestService? get service => _service;
+
+  /// Recarrega as configurações de germinação
+  Future<void> reloadSettings() async {
+    await _loadSettings();
+    notifyListeners();
+  }
+
+  /// Verifica se um teste atende aos critérios de aprovação baseado nas configurações
+  bool isTestApproved(double germinationPercentage, double diseasedPercentage) {
+    final settings = _settings ?? GerminationSettings.defaultSettings();
+    
+    return germinationPercentage >= settings.approvalThreshold && 
+           diseasedPercentage <= settings.diseaseThreshold;
+  }
+
+  /// Verifica se um teste deve gerar alerta baseado nas configurações
+  bool shouldGenerateAlert(double germinationPercentage) {
+    final settings = _settings ?? GerminationSettings.defaultSettings();
+    
+    return settings.autoAlerts && germinationPercentage < settings.alertThreshold;
+  }
+
+  /// Obtém a classificação baseada nas configurações do usuário
+  String getClassificationBasedOnSettings(double germinationPercentage, double vigor) {
+    final settings = _settings ?? GerminationSettings.defaultSettings();
+    
+    if (germinationPercentage >= settings.approvalThreshold) {
+      return "Excelente";
+    } else if (germinationPercentage >= settings.alertThreshold) {
+      return "Bom";
+    } else if (germinationPercentage >= 70) {
+      return "Regular";
+    } else {
+      return "Ruim";
+    }
+  }
+
+  // Carregar todos os testes
+  Future<void> loadTests() async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      _tests = await _service!.getAllTests();
+      await _calculateStatistics();
+      notifyListeners();
+    } catch (e) {
+      _setError('Erro ao carregar testes: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Carregar testes por status
+  Future<void> loadTestsByStatus(String status) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      if (status == 'all') {
+        _tests = await _service!.getAllTests();
+      } else {
+        _tests = await _service!.getTestsByStatus(status);
+      }
+      await _calculateStatistics();
+      notifyListeners();
+    } catch (e) {
+      _setError('Erro ao carregar testes: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Carregar testes por cultura
+  Future<void> loadTestsByCulture(String culture) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      _tests = await _service!.getTestsByCulture(culture);
+      await _calculateStatistics();
+      notifyListeners();
+    } catch (e) {
+      _setError('Erro ao carregar testes: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Carregar registros de um teste específico
+  Future<void> carregarRegistros(int testId) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      // Recarregar o teste específico para atualizar os registros
+      final test = await _service!.getTestById(testId);
+      if (test != null) {
+        // Atualizar o teste na lista
+        final index = _tests.indexWhere((t) => t.id == testId.toString());
+        if (index != -1) {
+          _tests[index] = test;
+        }
+        await _calculateStatistics();
+        notifyListeners();
+      }
+    } catch (e) {
+      _setError('Erro ao carregar registros: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Buscar testes
+  Future<void> searchTests({
+    String? culture,
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+    String? searchText,
+  }) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      _tests = await _service!.searchTestsWithFilters(
+        culture: culture,
+        status: status,
+        startDate: startDate,
+        endDate: endDate,
+        searchText: searchText,
+      );
+      await _calculateStatistics();
+      notifyListeners();
+    } catch (e) {
+      _setError('Erro ao buscar testes: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Criar novo teste (individual ou com subtestes)
+  Future<GerminationTest?> createTest({
+    required String culture,
+    required String variety,
+    required String seedLot,
+    required int totalSeeds,
+    required DateTime startDate,
+    DateTime? expectedEndDate,
+    required int pureSeeds,
+    required int brokenSeeds,
+    required int stainedSeeds,
+    String? observations,
+    String? canteiroId,
+    String? position,
+    List<String>? selectedPositions, // Para subtestes
+    bool useSubtests = false, // Se deve criar subtestes
+  }) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      print('🔄 Criando teste de germinação...');
+      print('📋 Dados: $culture, $variety, $seedLot, $totalSeeds');
+      print('📋 Usar subtestes: $useSubtests');
+      
+      GerminationTest test;
+      
+      if (useSubtests && selectedPositions != null && selectedPositions.length == 3) {
+        // Criar teste com subtestes
+        print('🔍 DEBUG - Criando teste com subtestes A, B, C');
+        test = await _subtestService!.createTestWithSubtests(
+          culture: culture,
+          variety: variety,
+          seedLot: seedLot,
+          totalSeeds: totalSeeds,
+          startDate: startDate,
+          selectedPositions: selectedPositions,
+          canteiroId: canteiroId,
+          observations: observations,
+        );
+      } else {
+        // Criar teste individual
+        print('🔍 DEBUG - Criando teste individual');
+        test = await _subtestService!.createIndividualTest(
+          culture: culture,
+          variety: variety,
+          seedLot: seedLot,
+          totalSeeds: totalSeeds,
+          startDate: startDate,
+          selectedPosition: position ?? 'A1',
+          canteiroId: canteiroId,
+          observations: observations,
+        );
+      }
+      
+      print('✅ Teste criado com sucesso: ID ${test.id}');
+      
+      // Sincronizar com o sistema de canteiros
+      if (test.id != null) {
+        await _modelIntegrationService.syncSpecificTest(test.id!);
+        print('✅ Teste sincronizado com sistema de canteiros');
+      }
+      
+      _tests.insert(0, test);
+      await _calculateStatistics();
+      notifyListeners();
+      return test;
+    } catch (e) {
+      print('❌ Erro ao criar teste: $e');
+      print('❌ Stack trace: ${StackTrace.current}');
+      _setError('Erro ao criar teste: $e');
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Adicionar registro diário
+  Future<GerminationDailyRecord?> addDailyRecord({
+    required int testId,
+    int? subtestId, // ID do subteste específico (A, B, C)
+    required int day,
+    required DateTime recordDate,
+    required int normalGerminated,
+    required int abnormalGerminated,
+    required int diseasedFungi,
+    required int notGerminated,
+    String? observations,
+    String? photos,
+    // Campos de qualidade sanitária
+    String? sanitarySymptoms,
+    String? sanitarySeverity,
+    String? sanitaryObservations,
+    String? sanitaryPhotos,
+  }) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      GerminationDailyRecord? record;
+      
+      // Se tem subtestId, salvar no subteste específico
+      if (subtestId != null) {
+        final recordId = await _subtestService!.addDailyRecordToSubtest(
+          subtestId: subtestId,
+          day: day,
+          recordDate: recordDate,
+          normalGerminated: normalGerminated,
+          abnormalGerminated: abnormalGerminated,
+          diseasedFungi: diseasedFungi,
+          diseasedBacteria: 0, // Valor padrão
+          notGerminated: notGerminated,
+          otherSeeds: 0, // Valor padrão
+          inertMatter: 0, // Valor padrão
+          observations: observations,
+          photos: photos,
+        );
+        
+        // Criar um registro diário para compatibilidade
+        record = GerminationDailyRecord(
+          id: recordId,
+          germinationTestId: testId,
+          subtestId: subtestId,
+          day: day,
+          recordDate: recordDate,
+          normalGerminated: normalGerminated,
+          abnormalGerminated: abnormalGerminated,
+          diseasedFungi: diseasedFungi,
+          diseasedBacteria: 0,
+          notGerminated: notGerminated,
+          otherSeeds: 0,
+          inertMatter: 0,
+          observations: observations,
+          photos: photos,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+      } else {
+        // Salvar no teste principal
+        record = await _service!.addDailyRecord(
+          testId: testId,
+          day: day,
+          recordDate: recordDate,
+          normalGerminated: normalGerminated,
+          abnormalGerminated: abnormalGerminated,
+          diseasedFungi: diseasedFungi,
+          notGerminated: notGerminated,
+          observations: observations,
+          photos: photos,
+          sanitarySymptoms: sanitarySymptoms,
+          sanitarySeverity: sanitarySeverity,
+          sanitaryObservations: sanitaryObservations,
+          sanitaryPhotos: sanitaryPhotos,
+        );
+      }
+      
+      // Atualizar o teste na lista
+      final testIndex = _tests.indexWhere((t) => t.id == testId);
+      if (testIndex != -1) {
+        final updatedTest = _tests[testIndex].copyWith(updatedAt: DateTime.now());
+        _tests[testIndex] = updatedTest;
+      }
+      
+      notifyListeners();
+      return record;
+    } catch (e) {
+      _setError('Erro ao adicionar registro: $e');
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Finalizar teste
+  Future<GerminationTest?> finalizeTest(int testId) async {
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      final test = await _service!.finalizeTest(testId);
+      
+      // Atualizar o teste na lista
+      final testIndex = _tests.indexWhere((t) => t.id == testId);
+      if (testIndex != -1) {
+        _tests[testIndex] = test;
+      }
+      
+      await _calculateStatistics();
+      notifyListeners();
+      return test;
+    } catch (e) {
+      _setError('Erro ao finalizar teste: $e');
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Cancelar teste
+  Future<bool> cancelTest(int testId) async {
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      await _service!.updateTestStatus(testId, 'cancelled', DateTime.now());
+      
+      // Atualizar o teste na lista
+      final testIndex = _tests.indexWhere((t) => t.id == testId);
+      if (testIndex != -1) {
+        final updatedTest = _tests[testIndex].copyWith(
+          status: 'cancelled',
+          updatedAt: DateTime.now(),
+        );
+        _tests[testIndex] = updatedTest;
+      }
+      
+      await _calculateStatistics();
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _setError('Erro ao cancelar teste: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Atualizar teste
+  Future<GerminationTest?> updateTest({
+    required int testId,
+    required String culture,
+    required String variety,
+    required String seedLot,
+    required int totalSeeds,
+    required DateTime startDate,
+    DateTime? expectedEndDate,
+    int? pureSeeds,
+    int? brokenSeeds,
+    int? stainedSeeds,
+    String? observations,
+  }) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      print('🔄 Atualizando teste de germinação...');
+      print('📋 Dados: $culture, $variety, $seedLot, $totalSeeds');
+      
+      // Buscar o teste original para manter a data de criação
+      final originalTest = await _service!.getTestById(testId);
+      
+      final updatedTestData = GerminationTest(
+        id: testId,
+        culture: culture,
+        variety: variety,
+        seedLot: seedLot,
+        totalSeeds: totalSeeds,
+        startDate: startDate,
+        expectedEndDate: expectedEndDate,
+        pureSeeds: pureSeeds ?? 0,
+        brokenSeeds: brokenSeeds ?? 0,
+        stainedSeeds: stainedSeeds ?? 0,
+        observations: observations,
+        status: originalTest?.status ?? 'active',
+        createdAt: originalTest?.createdAt ?? DateTime.now(), // Manter data original
+        updatedAt: DateTime.now(),
+      );
+      
+      await _service!.updateTest(updatedTestData);
+      
+      print('✅ Teste atualizado com sucesso: ID $testId');
+      
+      // Atualizar o teste na lista
+      final testIndex = _tests.indexWhere((t) => t.id == testId);
+      if (testIndex != -1) {
+        _tests[testIndex] = updatedTestData;
+      }
+      
+      await _calculateStatistics();
+      notifyListeners();
+      return updatedTestData;
+    } catch (e) {
+      print('❌ Erro ao atualizar teste: $e');
+      print('❌ Stack trace: ${StackTrace.current}');
+      _setError('Erro ao atualizar teste: $e');
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Deletar teste
+  Future<bool> deleteTest(int testId) async {
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      await _service!.deleteTestById(testId);
+      
+      // Remover o teste da lista
+      _tests.removeWhere((t) => t.id == testId);
+      
+      await _calculateStatistics();
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _setError('Erro ao deletar teste: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Obter teste por ID
+  Future<GerminationTest?> getTestById(int id) async {
+    await _initializeService();
+    try {
+      return await _service!.getTestById(id);
+    } catch (e) {
+      _setError('Erro ao obter teste: $e');
+      return null;
+    }
+  }
+
+  // Obter registros diários de um teste
+  Future<List<GerminationDailyRecord>> getDailyRecords(int testId) async {
+    await _initializeService();
+    try {
+      return await _service!.getRecordsByTestId(testId);
+    } catch (e) {
+      _setError('Erro ao obter registros: $e');
+      return [];
+    }
+  }
+
+  // Calcular resultados de um teste
+  Future<GerminationTestResults?> calculateTestResults(int testId) async {
+    await _initializeService();
+    try {
+      final results = await _service!.calculateTestResults(testId);
+      
+      // Processar integração com módulo de plantio
+      await _processIntegration(results);
+      
+      return results;
+    } catch (e) {
+      _setError('Erro ao calcular resultados: $e');
+      return null;
+    }
+  }
+
+  // Processar integração com módulo de plantio
+  Future<void> _processIntegration(GerminationTestResults? results) async {
+    if (results == null) return;
+    
+    final settings = _settings ?? GerminationSettings.defaultSettings();
+    
+    // Verificar se a automação está habilitada
+    if (!settings.autoAlerts && !settings.autoApproval) {
+      debugPrint('Automação desabilitada nas configurações');
+      return;
+    }
+    
+    try {
+      final integrationResult = await _integrationService.processGerminationResults(
+        results, 
+        settings: settings
+      );
+      
+      if (integrationResult.success) {
+        // Notificar sobre alertas criados
+        if (integrationResult.densityAlert != null) {
+          debugPrint('Alerta de densidade criado: ${integrationResult.densityAlert!.message}');
+        }
+        
+        // Notificar sobre aprovação de lote
+        if (integrationResult.seedLotApproval != null) {
+          debugPrint('Lote aprovado: ${integrationResult.seedLotApproval!.seedLot}');
+        }
+      } else {
+        debugPrint('Erro na integração: ${integrationResult.error}');
+      }
+    } catch (e) {
+      debugPrint('Erro ao processar integração: $e');
+    }
+  }
+
+  // Obter estatísticas por cultura
+  Future<Map<String, dynamic>> getCultureStatistics(String culture) async {
+    await _initializeService();
+    try {
+      return await _service!.getCultureStatistics(culture);
+    } catch (e) {
+      _setError('Erro ao obter estatísticas: $e');
+      return {};
+    }
+  }
+
+  // Calcular estatísticas gerais
+  Future<void> _calculateStatistics() async {
+    try {
+      final totalTests = _tests.length;
+      final activeTests = _tests.where((t) => t.status == 'active').length;
+      final completedTests = _tests.where((t) => t.status == 'completed').length;
+      final cancelledTests = _tests.where((t) => t.status == 'cancelled').length;
+
+      // Calcular média de germinação das culturas mais testadas
+      final cultureCounts = <String, int>{};
+      final cultureGerminations = <String, List<double>>{};
+
+      for (final test in _tests) {
+        if (test.status == 'completed' && test.finalGerminationPercentage != null) {
+          cultureCounts[test.culture] = (cultureCounts[test.culture] ?? 0) + 1;
+          cultureGerminations[test.culture] ??= [];
+          cultureGerminations[test.culture]!.add(test.finalGerminationPercentage!);
+        }
+      }
+
+      final topCultures = cultureCounts.entries
+          .toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
+
+      _statistics = {
+        'totalTests': totalTests,
+        'activeTests': activeTests,
+        'completedTests': completedTests,
+        'cancelledTests': cancelledTests,
+        'topCultures': topCultures.take(3).map((e) => {
+          'culture': e.key,
+          'count': e.value,
+          'averageGermination': cultureGerminations[e.key]!.reduce((a, b) => a + b) / cultureGerminations[e.key]!.length,
+        }).toList(),
+      };
+    } catch (e) {
+      _statistics = {
+        'totalTests': 0,
+        'activeTests': 0,
+        'completedTests': 0,
+        'cancelledTests': 0,
+        'topCultures': [],
+      };
+    }
+  }
+
+  // Métodos auxiliares
+  void _setLoading(bool loading) {
+    _isLoading = loading;
+    notifyListeners();
+  }
+
+  void _setError(String error) {
+    _error = error;
+    notifyListeners();
+  }
+
+  void _clearError() {
+    _error = null;
+  }
+
+  // Limpar dados
+  void clearData() {
+    _tests.clear();
+    _statistics.clear();
+    _clearError();
+    notifyListeners();
+  }
+
+  // ===== MÉTODOS DE CÁLCULO AGREGADO =====
+
+  /// % Germinação diária
+  double calcularPercentualDiario(GerminationDailyRecord record, int totalSementes) {
+    if (totalSementes <= 0) return 0.0;
+    return (record.normalGerminated / totalSementes) * 100;
+  }
+
+  /// % Germinação acumulada até o dia atual
+  /// CORRIGIDO: Metodologia ABNT NBR 9787 - germinação é acumulativa
+  double calcularPercentualAcumulado(List<GerminationDailyRecord> registros, int totalSementes) {
+    if (totalSementes <= 0 || registros.isEmpty) return 0.0;
+    
+    // ✅ METODOLOGIA ABNT NBR 9787: Germinação é o total acumulado de sementes germinadas
+    // Cada semente é contada apenas uma vez, no dia em que germina
+    // O registro diário mostra quantas germinaram NAQUELE dia específico
+    
+    // Ordenar registros por dia para garantir ordem cronológica
+    final registrosOrdenados = List<GerminationDailyRecord>.from(registros)
+      ..sort((a, b) => a.day.compareTo(b.day));
+    
+    // Calcular total acumulado de germinação
+    int totalGerminadas = 0;
+    for (final registro in registrosOrdenados) {
+      // Cada registro representa quantas sementes germinaram naquele dia
+      totalGerminadas += (registro.normalGerminated + registro.abnormalGerminated);
+    }
+    
+    print('🧮 Cálculo ABNT NBR 9787 de germinação:');
+    print('   📊 Total de sementes: $totalSementes');
+    print('   📊 Total germinadas (acumulado): $totalGerminadas');
+    print('   📊 Germinação final: ${(totalGerminadas / totalSementes) * 100}%');
+    
+    return (totalGerminadas / totalSementes) * 100;
+  }
+
+  /// Vigor (pode ser até o 5º ou 7º dia, configurável)
+  /// CORRIGIDO: Metodologia ABNT NBR 9787 - vigor é acumulativo até o limite de dias
+  double calcularVigor(List<GerminationDailyRecord> registros, int totalSementes, {int limiteDias = 5}) {
+    if (totalSementes <= 0 || registros.isEmpty) return 0.0;
+    
+    // ✅ METODOLOGIA ABNT NBR 9787: Vigor é o percentual de germinação até um limite de dias
+    // Normalmente 5 dias para a maioria das culturas, mas pode variar
+    
+    // Filtrar registros até o limite de dias
+    final registrosVigor = registros.where((r) => r.day <= limiteDias).toList();
+    if (registrosVigor.isEmpty) return 0.0;
+    
+    // Ordenar por dia para garantir ordem cronológica
+    registrosVigor.sort((a, b) => a.day.compareTo(b.day));
+    
+    // Calcular total acumulado de germinação até o limite de dias
+    int totalVigor = 0;
+    for (final registro in registrosVigor) {
+      totalVigor += (registro.normalGerminated + registro.abnormalGerminated);
+    }
+    
+    print('💪 Cálculo ABNT NBR 9787 de vigor (até dia $limiteDias):');
+    print('   📊 Total de sementes: $totalSementes');
+    print('   📊 Germinadas até dia $limiteDias (acumulado): $totalVigor');
+    print('   📊 Vigor: ${(totalVigor / totalSementes) * 100}%');
+    
+    return (totalVigor / totalSementes) * 100;
+  }
+
+  /// Doenças (acumulado)
+  /// CORRIGIDO: Metodologia ABNT NBR 9787 - doenças são acumulativas
+  double calcularDoencas(List<GerminationDailyRecord> registros, int totalSementes) {
+    if (totalSementes <= 0 || registros.isEmpty) return 0.0;
+    
+    // ✅ METODOLOGIA ABNT NBR 9787: Doenças são contabilizadas acumulativamente
+    // Cada semente doente é contada apenas uma vez, no dia em que é identificada
+    
+    // Ordenar registros por dia para garantir ordem cronológica
+    final registrosOrdenados = List<GerminationDailyRecord>.from(registros)
+      ..sort((a, b) => a.day.compareTo(b.day));
+    
+    // Calcular total acumulado de sementes doentes
+    int totalDoencas = 0;
+    for (final registro in registrosOrdenados) {
+      totalDoencas += (registro.diseasedFungi);
+    }
+    
+    print('🦠 Cálculo ABNT NBR 9787 de doenças:');
+    print('   📊 Total de sementes: $totalSementes');
+    print('   📊 Total doentes (acumulado): $totalDoencas');
+    print('   📊 % Doenças: ${(totalDoencas / totalSementes) * 100}%');
+    
+    return (totalDoencas / totalSementes) * 100;
+  }
+
+  /// Classificação automática baseada nas configurações do usuário
+  String classificarResultado(double germinacaoFinal, double vigor) {
+    // Usar thresholds padrão
+    const approvalThreshold = 80.0;
+    const alertThreshold = 70.0;
+    
+    // Usar os thresholds configurados pelo usuário
+    if (germinacaoFinal >= approvalThreshold && vigor >= 80) {
+      return "Excelente";
+    }
+    if (germinacaoFinal >= alertThreshold && vigor >= 70) {
+      return "Bom";
+    }
+    if (germinacaoFinal >= 70 && vigor >= 60) {
+      return "Regular";
+    }
+    return "Ruim";
+  }
+
+  /// Calcular resultados completos de um teste
+  Future<Map<String, dynamic>> calcularResultadosCompletos(int testId) async {
+    await _initializeService();
+    try {
+      final test = await _service!.getTestById(testId);
+      if (test == null) return {};
+
+      final registros = await _service!.getRecordsByTestId(testId);
+      if (registros.isEmpty) return {};
+
+      // Ordenar registros por dia
+      registros.sort((a, b) => a.day.compareTo(b.day));
+
+      final totalSementes = test.totalSeeds;
+      final germinacaoFinal = calcularPercentualAcumulado(registros, totalSementes);
+      final vigor = calcularVigor(registros, totalSementes);
+      final doencas = calcularDoencas(registros, totalSementes);
+      final classificacao = getClassificationBasedOnSettings(germinacaoFinal, vigor);
+
+      // Calcular duração do teste
+      final dataInicio = test.startDate;
+      final ultimoRegistro = registros.last.recordDate;
+      final duracao = ultimoRegistro.difference(dataInicio).inDays;
+
+      // Calcular evolução diária
+      final evolucaoDiaria = registros.map((record) => {
+        'dia': record.day,
+        'data': record.recordDate,
+        'germinacaoDiaria': calcularPercentualDiario(record, totalSementes),
+        'germinacaoAcumulada': (record.normalGerminated + record.abnormalGerminated) / totalSementes * 100,
+        'doencas': record.diseasedFungi,
+        'totalContado': record.normalGerminated + record.abnormalGerminated + record.diseasedFungi + record.notGerminated,
+        'normais': record.normalGerminated,
+        'anormais': record.abnormalGerminated,
+        'doentes': record.diseasedFungi,
+        'naoGerminadas': record.notGerminated,
+      }).toList();
+
+      return {
+        'teste': test,
+        'registros': registros,
+        'totalSementes': totalSementes,
+        'germinacaoFinal': germinacaoFinal,
+        'vigor': vigor,
+        'doencas': doencas,
+        'classificacao': classificacao,
+        'duracao': duracao,
+        'evolucaoDiaria': evolucaoDiaria,
+        'dataInicio': dataInicio,
+        'dataFim': ultimoRegistro,
+      };
+    } catch (e) {
+      _setError('Erro ao calcular resultados completos: $e');
+      return {};
+    }
+  }
+
+  /// Atualizar registro diário existente
+  Future<bool> updateDailyRecord(
+    int recordId, {
+    required int day,
+    required DateTime recordDate,
+    required int normalGerminated,
+    required int abnormalGerminated,
+    required int diseasedFungi,
+    required int notGerminated,
+    String? observations,
+    String? photos,
+    // Campos de qualidade sanitária
+    String? sanitarySymptoms,
+    String? sanitarySeverity,
+    String? sanitaryObservations,
+    String? sanitaryPhotos,
+  }) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      final success = await _service!.updateDailyRecord(
+        recordId,
+        day: day,
+        recordDate: recordDate,
+        normalGerminated: normalGerminated,
+        abnormalGerminated: abnormalGerminated,
+        diseasedFungi: diseasedFungi,
+        notGerminated: notGerminated,
+        observations: observations,
+        photos: photos,
+        sanitarySymptoms: sanitarySymptoms,
+        sanitarySeverity: sanitarySeverity,
+        sanitaryObservations: sanitaryObservations,
+        sanitaryPhotos: sanitaryPhotos,
+      );
+      
+      if (success) {
+        notifyListeners();
+      }
+      
+      return success;
+    } catch (e) {
+      _setError('Erro ao atualizar registro: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Excluir registro diário
+  Future<bool> deleteDailyRecord(int recordId) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      final success = await _service!.deleteDailyRecord(recordId);
+      
+      if (success) {
+        notifyListeners();
+      }
+      
+      return success;
+    } catch (e) {
+      _setError('Erro ao excluir registro: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // ===== MÉTODOS PARA SUBTESTES =====
+
+  /// Obtém todos os subtestes de um teste principal
+  Future<List<GerminationSubtest>> getSubtestsByTestId(int testId) async {
+    await _initializeService();
+    return await _subtestService!.getSubtestsByTestId(testId);
+  }
+
+  /// Obtém estatísticas consolidadas de um teste com subtestes
+  Future<Map<String, dynamic>?> getTestStatistics(int testId) async {
+    await _initializeService();
+    return await _subtestService!.getTestStatistics(testId);
+  }
+
+  /// Obtém estatísticas detalhadas de cada subteste
+  Future<List<Map<String, dynamic>>> getSubtestStatistics(int testId) async {
+    await _initializeService();
+    return await _subtestService!.getSubtestStatistics(testId);
+  }
+
+  /// Adiciona um registro diário para um subteste específico
+  Future<int?> addDailyRecordToSubtest({
+    required int subtestId,
+    required int day,
+    required DateTime recordDate,
+    required int normalGerminated,
+    required int abnormalGerminated,
+    required int diseasedFungi,
+    required int diseasedBacteria,
+    required int notGerminated,
+    required int otherSeeds,
+    required int inertMatter,
+    String? observations,
+    String? photos,
+  }) async {
+    await _initializeService();
+    _setLoading(true);
+    _clearError();
+    
+    try {
+      final recordId = await _subtestService!.addDailyRecordToSubtest(
+        subtestId: subtestId,
+        day: day,
+        recordDate: recordDate,
+        normalGerminated: normalGerminated,
+        abnormalGerminated: abnormalGerminated,
+        diseasedFungi: diseasedFungi,
+        diseasedBacteria: diseasedBacteria,
+        notGerminated: notGerminated,
+        otherSeeds: otherSeeds,
+        inertMatter: inertMatter,
+        observations: observations,
+        photos: photos,
+      );
+      
+      notifyListeners();
+      return recordId;
+    } catch (e) {
+      _setError('Erro ao adicionar registro diário: $e');
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Obtém registros diários de um subteste
+  Future<List<GerminationSubtestDailyRecord>> getDailyRecordsBySubtestId(int subtestId) async {
+    await _initializeService();
+    return await _subtestService!.getDailyRecordsBySubtestId(subtestId);
+  }
+
+  /// Verifica se uma posição está ocupada por um subteste
+  Future<bool> isPositionOccupied(String position) async {
+    await _initializeService();
+    return await _subtestService!.isPositionOccupied(position);
+  }
+
+  /// Obtém todas as posições ocupadas
+  Future<List<String>> getOccupiedPositions() async {
+    await _initializeService();
+    return await _subtestService!.getOccupiedPositions();
+  }
+
+  /// Obtém posições disponíveis (não ocupadas)
+  Future<List<String>> getAvailablePositions() async {
+    await _initializeService();
+    return await _subtestService!.getAvailablePositions();
+  }
+}

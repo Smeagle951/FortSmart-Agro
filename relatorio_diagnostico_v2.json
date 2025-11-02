@@ -1,0 +1,138 @@
+{
+  "Algodão": {
+    "arquivo": "data\\organismos_algodao.json",
+    "total_organismos": 28,
+    "pragas": 19,
+    "doencas": 8,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Gossypium hirsutum"
+  },
+  "Arroz": {
+    "arquivo": "data\\organismos_arroz.json",
+    "total_organismos": 12,
+    "pragas": 6,
+    "doencas": 6,
+    "daninhas": 0,
+    "versao": "2.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Oryza sativa"
+  },
+  "Aveia": {
+    "arquivo": "data\\organismos_aveia.json",
+    "total_organismos": 6,
+    "pragas": 3,
+    "doencas": 3,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Avena sativa"
+  },
+  "Batata": {
+    "arquivo": "data\\organismos_batata.json",
+    "total_organismos": 3,
+    "pragas": 1,
+    "doencas": 2,
+    "daninhas": 0,
+    "versao": "1.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Solanum tuberosum"
+  },
+  "Cana-de-açúcar": {
+    "arquivo": "data\\organismos_cana_acucar.json",
+    "total_organismos": 9,
+    "pragas": 3,
+    "doencas": 4,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Saccharum officinarum"
+  },
+  "Feijão": {
+    "arquivo": "data\\organismos_feijao.json",
+    "total_organismos": 33,
+    "pragas": 17,
+    "doencas": 15,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Phaseolus vulgaris"
+  },
+  "Gergelim": {
+    "arquivo": "data\\organismos_gergelim.json",
+    "total_organismos": 11,
+    "pragas": 5,
+    "doencas": 5,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Sesamum indicum"
+  },
+  "Girassol": {
+    "arquivo": "data\\organismos_girassol.json",
+    "total_organismos": 3,
+    "pragas": 2,
+    "doencas": 1,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Helianthus annuus"
+  },
+  "Milho": {
+    "arquivo": "data\\organismos_milho.json",
+    "total_organismos": 32,
+    "pragas": 17,
+    "doencas": 14,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Zea mays"
+  },
+  "Soja": {
+    "arquivo": "data\\organismos_soja.json",
+    "total_organismos": 50,
+    "pragas": 25,
+    "doencas": 24,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Glycine max"
+  },
+  "Sorgo": {
+    "arquivo": "data\\organismos_sorgo.json",
+    "total_organismos": 22,
+    "pragas": 11,
+    "doencas": 9,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Sorghum bicolor"
+  },
+  "Tomate": {
+    "arquivo": "data\\organismos_tomate.json",
+    "total_organismos": 25,
+    "pragas": 13,
+    "doencas": 4,
+    "daninhas": 6,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Solanum lycopersicum"
+  },
+  "Trigo": {
+    "arquivo": "data\\organismos_trigo.json",
+    "total_organismos": 7,
+    "pragas": 2,
+    "doencas": 3,
+    "daninhas": 0,
+    "versao": "4.0",
+    "data_atualizacao": "2024-12-19T00:00:00Z",
+    "nome_cientifico_cultura": "Triticum aestivum"
+  },
+  "_estatisticas_gerais": {
+    "total_culturas": 13,
+    "total_organismos": 241,
+    "arquivos_processados": 13,
+    "data_diagnostico": "2025-10-28T18:44:32.711615"
+  }
+}

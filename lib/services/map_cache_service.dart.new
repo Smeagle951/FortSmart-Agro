@@ -1,0 +1,286 @@
+import 'dart:io';
+import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/plugin_api.dart';
+import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+
+/// Classe para coordenadas de tiles
+class TileCoordinates {
+  final int x;
+  final int y;
+  final int z;
+  
+  TileCoordinates(this.x, this.y, this.z);
+  
+  @override
+  String toString() => 'TileCoordinates($z/$x/$y)';
+  
+  /// Converte para o formato Coords do flutter_map
+  Coords<num> toCoords() {
+    return Coords<num>(x.toDouble(), y.toDouble())..z = z.toDouble();
+  }
+  
+  /// Cria TileCoordinates a partir de Coords do flutter_map
+  static TileCoordinates fromCoords(Coords<num> coords) {
+    return TileCoordinates(coords.x.toInt(), coords.y.toInt(), coords.z!.toInt());
+  }
+  
+  String toKey() => '${z}_${x}_${y}';
+}
+
+/// Serviço para gerenciar cache de tiles de mapa
+class MapCacheService {
+  static final MapCacheService _instance = MapCacheService._internal();
+  
+  factory MapCacheService() => _instance;
+  
+  MapCacheService._internal();
+  
+  late String _cacheDirectory;
+  bool _initialized = false;
+  
+  /// Inicializa o serviço de cache
+  Future<void> initialize() async {
+    if (_initialized) return;
+    
+    final appDir = await getApplicationDocumentsDirectory();
+    _cacheDirectory = '${appDir.path}/map_cache';
+    
+    final cacheDir = Directory(_cacheDirectory);
+    if (!await cacheDir.exists()) {
+      await cacheDir.create(recursive: true);
+    }
+    
+    _initialized = true;
+    debugPrint('MapCacheService inicializado: $_cacheDirectory');
+  }
+  
+  /// Pré-carrega tiles para uma região específica
+  Future<void> preCacheTiles(
+    String urlTemplate,
+    LatLngBounds bounds,
+    int minZoom,
+    int maxZoom,
+  ) async {
+    await initialize();
+    
+    final tiles = _calculateTilesInBounds(bounds, minZoom, maxZoom);
+    int downloaded = 0;
+    int total = tiles.length;
+    
+    for (final tile in tiles) {
+      final url = _getUrl(urlTemplate, tile);
+      final success = await _downloadAndCacheTile(url, tile);
+      if (success) downloaded++;
+    }
+    
+    debugPrint('Cache concluído: $downloaded/$total tiles baixados');
+  }
+  
+  /// Calcula os tiles dentro de uma área delimitada
+  List<TileCoordinates> _calculateTilesInBounds(LatLngBounds bounds, int minZoom, int maxZoom) {
+    final List<TileCoordinates> result = [];
+    
+    for (int z = minZoom; z <= maxZoom; z++) {
+      final minX = _longitudeToTileX(bounds.southWest!.longitude, z);
+      final maxX = _longitudeToTileX(bounds.northEast!.longitude, z);
+      final minY = _latitudeToTileY(bounds.northEast!.latitude, z);
+      final maxY = _latitudeToTileY(bounds.southWest!.latitude, z);
+      
+      for (int x = minX; x <= maxX; x++) {
+        for (int y = minY; y <= maxY; y++) {
+          result.add(TileCoordinates(x, y, z));
+        }
+      }
+    }
+    
+    return result;
+  }
+  
+  /// Converte longitude para coordenada X do tile
+  int _longitudeToTileX(double longitude, int zoom) {
+    return ((longitude + 180.0) / 360.0 * math.pow(2, zoom)).floor();
+  }
+  
+  /// Converte latitude para coordenada Y do tile
+  int _latitudeToTileY(double latitude, int zoom) {
+    final latRad = latitude * math.pi / 180.0;
+    return ((1.0 - math.log(math.tan(latRad) + 1.0 / math.cos(latRad)) / math.pi) / 2.0 * math.pow(2, zoom)).floor();
+  }
+  
+  /// Gera a URL para um tile específico
+  String _getUrl(String urlTemplate, TileCoordinates tile) {
+    return urlTemplate
+      .replaceAll('{z}', '${tile.z}')
+      .replaceAll('{x}', '${tile.x}')
+      .replaceAll('{y}', '${tile.y}')
+      .replaceAll('{s}', _getRandomSubdomain());
+  }
+  
+  /// Retorna um subdomínio aleatório para balanceamento de carga
+  String _getRandomSubdomain() {
+    final subdomains = ['a', 'b', 'c'];
+    return subdomains[math.Random().nextInt(subdomains.length)];
+  }
+  
+  /// Baixa e armazena um tile específico
+  Future<bool> _downloadAndCacheTile(String url, TileCoordinates tile) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final tileFile = await _getTileFile(tile);
+        await tileFile.writeAsBytes(response.bodyBytes);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Erro ao baixar tile $tile: $e');
+      return false;
+    }
+  }
+  
+  /// Obtém o arquivo para um tile específico
+  Future<File> _getTileFile(TileCoordinates tile) async {
+    await initialize();
+    final tileDir = Directory('${_cacheDirectory}/${tile.z}/${tile.x}');
+    if (!await tileDir.exists()) {
+      await tileDir.create(recursive: true);
+    }
+    return File('${tileDir.path}/${tile.y}.png');
+  }
+  
+  /// Verifica se um tile está em cache
+  Future<bool> isTileCached(TileCoordinates tile) async {
+    final file = await _getTileFile(tile);
+    return file.exists();
+  }
+  
+  /// Obtém um tile do cache
+  Future<Uint8List?> getCachedTile(Coords<num> coords) async {
+    try {
+      final tile = TileCoordinates.fromCoords(coords);
+      final file = await _getTileFile(tile);
+      if (await file.exists()) {
+        return await file.readAsBytes();
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Erro ao ler tile do cache: $e');
+      return null;
+    }
+  }
+  
+  /// Baixa e armazena em cache os tiles de mapa para uma região específica
+  Future<void> cacheMapRegion({
+    required List<double> bounds, // [minLat, minLng, maxLat, maxLng]
+    required int minZoom,
+    required int maxZoom,
+    required String urlTemplate,
+  }) async {
+    final latLngBounds = LatLngBounds(
+      LatLng(bounds[0], bounds[1]),
+      LatLng(bounds[2], bounds[3]),
+    );
+    
+    await preCacheTiles(urlTemplate, latLngBounds, minZoom, maxZoom);
+  }
+}
+
+/// Provedor de tiles que usa o cache local
+class CachedTileProvider extends TileProvider {
+  final Future<Uint8List?> Function(Coords<num>) _getCachedTile;
+  
+  CachedTileProvider(this._getCachedTile);
+  
+  @override
+  ImageProvider getImage(Coords<num> coords, TileLayer options) {
+    return CachedNetworkTileProvider(
+      urlTemplate: options.urlTemplate ?? '',
+      coords: coords,
+      getCachedTile: _getCachedTile,
+      headers: options.additionalOptions,
+    );
+  }
+}
+
+/// Provedor de imagem para tiles em cache ou rede
+class CachedNetworkTileProvider extends ImageProvider<CachedNetworkTileProvider> {
+  final String urlTemplate;
+  final Coords<num> coords;
+  final Future<Uint8List?> Function(Coords<num>) getCachedTile;
+  final Map<String, String> headers;
+  
+  CachedNetworkTileProvider({
+    required this.urlTemplate,
+    required this.coords,
+    required this.getCachedTile,
+    this.headers = const {},
+  });
+  
+  @override
+  Future<CachedNetworkTileProvider> obtainKey(ImageConfiguration configuration) {
+    return SynchronousFuture<CachedNetworkTileProvider>(this);
+  }
+  
+  @override
+  ImageStreamCompleter loadImage(CachedNetworkTileProvider key, ImageDecoderCallback decode) {
+    return MultiFrameImageStreamCompleter(
+      codec: _loadAsync(key, decode),
+      scale: 1.0,
+      debugLabel: 'CachedNetworkTileProvider',
+    );
+  }
+  
+  Future<ui.Codec> _loadAsync(CachedNetworkTileProvider key, ImageDecoderCallback decode) async {
+    try {
+      // Primeiro tenta carregar do cache
+      final cachedData = await getCachedTile(coords);
+      if (cachedData != null) {
+        return decode(cachedData);
+      }
+      
+      // Se não estiver em cache, carrega da rede
+      final url = urlTemplate
+          .replaceAll('{x}', coords.x.toString())
+          .replaceAll('{y}', coords.y.toString())
+          .replaceAll('{z}', coords.z.toString())
+          .replaceAll('{s}', _getRandomSubdomain());
+      
+      final response = await http.get(Uri.parse(url), headers: headers);
+      if (response.statusCode != 200) {
+        throw Exception('HTTP error ${response.statusCode}');
+      }
+      
+      return decode(response.bodyBytes);
+    } catch (e) {
+      debugPrint('Erro ao carregar tile: $e');
+      rethrow;
+    }
+  }
+  
+  String _getRandomSubdomain() {
+    final subdomains = ['a', 'b', 'c'];
+    return subdomains[math.Random().nextInt(subdomains.length)];
+  }
+  
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != runtimeType) return false;
+    return other is CachedNetworkTileProvider &&
+        other.urlTemplate == urlTemplate &&
+        other.coords.x == coords.x &&
+        other.coords.y == coords.y &&
+        other.coords.z == coords.z;
+  }
+  
+  @override
+  int get hashCode => Object.hash(urlTemplate, coords.x, coords.y, coords.z);
+}

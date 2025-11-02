@@ -1,0 +1,339 @@
+{
+  "version": "4.0",
+  "last_updated": "2025-10-17",
+  "description": "Catálogo de organismos com thresholds fenológicos - Permite customização por fazenda",
+  "editable": true,
+  "cultures": {
+    "soja": {
+      "id": "1",
+      "name": "Soja",
+      "phenological_stages": ["V1", "V2", "V3", "V4", "V5", "V6", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8"],
+      "organisms": {
+        "pests": [
+          {
+            "id": "soja_pest_001",
+            "name": "Percevejo-marrom",
+            "scientific_name": "Euschistus heros",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "unidades/ponto",
+            "monitoring_method": "pano-de-batida 1m de linha ou 10 plantas",
+            "description": "Danos críticos em R5-R6; vetor de danos diretos em grãos",
+            
+            "base_thresholds": {
+              "low": 1,
+              "medium": 3,
+              "high": 4,
+              "critical": 6
+            },
+            
+            "phenological_thresholds": {
+              "V1-V3": {
+                "low": 3,
+                "medium": 6,
+                "high": 8,
+                "critical": 10,
+                "multiplier": 0.5,
+                "description": "Fase vegetativa inicial - menor impacto",
+                "damage_type": "Dano foliar leve"
+              },
+              "V4-V6": {
+                "low": 2,
+                "medium": 4,
+                "high": 6,
+                "critical": 8,
+                "multiplier": 0.8,
+                "description": "Crescimento vegetativo - dano moderado",
+                "damage_type": "Dano foliar e em ponteiros"
+              },
+              "R1-R2": {
+                "low": 1,
+                "medium": 3,
+                "high": 5,
+                "critical": 7,
+                "multiplier": 1.2,
+                "description": "Floração - início da fase crítica",
+                "damage_type": "Dano em flores e vagens iniciais"
+              },
+              "R3-R4": {
+                "low": 1,
+                "medium": 2,
+                "high": 4,
+                "critical": 6,
+                "multiplier": 1.8,
+                "description": "Formação de vagens - dano elevado",
+                "damage_type": "Aborto de vagens e dano em grãos"
+              },
+              "R5-R6": {
+                "low": 0,
+                "medium": 1,
+                "high": 2,
+                "critical": 3,
+                "multiplier": 3.0,
+                "description": "Enchimento de grãos - FASE CRÍTICA MÁXIMA",
+                "damage_type": "Suga grãos causando chochamento e redução de peso"
+              },
+              "R7-R8": {
+                "low": 2,
+                "medium": 4,
+                "high": 6,
+                "critical": 8,
+                "multiplier": 0.6,
+                "description": "Maturação - dano reduzido",
+                "damage_type": "Impacto mínimo na produtividade"
+              }
+            },
+            
+            "critical_stages": ["R5", "R6"],
+            "action_threshold_stage": "R5",
+            "economic_damage_level": "Muito alto em R5-R6"
+          },
+          {
+            "id": "soja_pest_006",
+            "name": "Spodoptera",
+            "scientific_name": "Spodoptera frugiperda / S. cosmioides",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "lagartas/m",
+            "monitoring_method": "contagem por metro ou % desfolha",
+            "description": "Pode exigir aplicações localizadas; resistência em áreas Bt",
+            
+            "base_thresholds": {
+              "low": 2,
+              "medium": 4,
+              "high": 5,
+              "critical": 8
+            },
+            
+            "phenological_thresholds": {
+              "V1-V3": {
+                "low": 1,
+                "medium": 3,
+                "high": 5,
+                "critical": 8,
+                "multiplier": 1.5,
+                "description": "Fase inicial - dano foliar crítico",
+                "damage_type": "Desfolha em plântulas pode matar a planta"
+              },
+              "V4-V6": {
+                "low": 2,
+                "medium": 5,
+                "high": 8,
+                "critical": 12,
+                "multiplier": 1.2,
+                "description": "Crescimento vegetativo - alta capacidade de recuperação",
+                "damage_type": "Desfolha, planta se recupera"
+              },
+              "R1-R2": {
+                "low": 2,
+                "medium": 4,
+                "high": 6,
+                "critical": 10,
+                "multiplier": 1.0,
+                "description": "Floração - dano moderado",
+                "damage_type": "Desfolha e consumo de flores"
+              },
+              "R3-R4": {
+                "low": 3,
+                "medium": 6,
+                "high": 10,
+                "critical": 15,
+                "multiplier": 0.8,
+                "description": "Formação de vagens - foco nas vagens",
+                "damage_type": "Pode atacar vagens jovens"
+              },
+              "R5-R6": {
+                "low": 4,
+                "medium": 8,
+                "high": 12,
+                "critical": 18,
+                "multiplier": 0.5,
+                "description": "Enchimento - dano foliar menos crítico",
+                "damage_type": "Desfolha tem menor impacto na produtividade"
+              },
+              "R7-R8": {
+                "low": 5,
+                "medium": 10,
+                "high": 15,
+                "critical": 20,
+                "multiplier": 0.3,
+                "description": "Maturação - impacto mínimo",
+                "damage_type": "Sem impacto significativo"
+              }
+            },
+            
+            "critical_stages": ["V1", "V2", "V3"],
+            "action_threshold_stage": "V1-V3",
+            "economic_damage_level": "Alto em plântulas, médio em V4+"
+          },
+          {
+            "id": "soja_pest_torraozinho",
+            "name": "Torrãozinho",
+            "scientific_name": "Conotrachelus sp.",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "insetos/ponto",
+            "monitoring_method": "contagem visual por ponto de amostragem",
+            "description": "Ataca vagens e grãos, causa abortamento e má formação",
+            
+            "base_thresholds": {
+              "low": 2,
+              "medium": 5,
+              "high": 8,
+              "critical": 12
+            },
+            
+            "phenological_thresholds": {
+              "V1-V3": {
+                "low": 5,
+                "medium": 10,
+                "high": 15,
+                "critical": 20,
+                "multiplier": 0.3,
+                "description": "Fase vegetativa - pouco impacto",
+                "damage_type": "Alimentação foliar sem impacto significativo"
+              },
+              "V4-V6": {
+                "low": 3,
+                "medium": 6,
+                "high": 10,
+                "critical": 15,
+                "multiplier": 0.6,
+                "description": "Crescimento - dano moderado",
+                "damage_type": "Alimentação foliar e em ponteiros"
+              },
+              "R1-R2": {
+                "low": 2,
+                "medium": 4,
+                "high": 7,
+                "critical": 10,
+                "multiplier": 1.0,
+                "description": "Floração - início do período crítico",
+                "damage_type": "Ataca flores e vagens iniciais"
+              },
+              "R3-R4": {
+                "low": 1,
+                "medium": 3,
+                "high": 5,
+                "critical": 8,
+                "multiplier": 2.0,
+                "description": "Formação de vagens - alta criticidade",
+                "damage_type": "Perfura vagens causando aborto"
+              },
+              "R5-R6": {
+                "low": 0,
+                "medium": 1,
+                "high": 3,
+                "critical": 5,
+                "multiplier": 3.0,
+                "description": "Enchimento de grãos - CRÍTICO MÁXIMO",
+                "damage_type": "Ataca grãos em formação, reduz peso e qualidade"
+              },
+              "R7-R8": {
+                "low": 2,
+                "medium": 5,
+                "high": 8,
+                "critical": 12,
+                "multiplier": 0.5,
+                "description": "Maturação - impacto reduzido",
+                "damage_type": "Grãos já formados, menor dano"
+              }
+            },
+            
+            "critical_stages": ["R5", "R6"],
+            "action_threshold_stage": "R3-R6",
+            "economic_damage_level": "Extremamente alto em R5-R6"
+          },
+          {
+            "id": "soja_pest_004",
+            "name": "Lagarta-da-soja",
+            "scientific_name": "Chrysodeixis includens",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "lagartas/m",
+            "monitoring_method": "contagem por metro de linha",
+            "description": "Desfolha significativa; controle precoce reduz necessidade de aplicações",
+            
+            "base_thresholds": {
+              "low": 2,
+              "medium": 5,
+              "high": 6,
+              "critical": 10
+            },
+            
+            "phenological_thresholds": {
+              "V1-V3": {
+                "low": 1,
+                "medium": 2,
+                "high": 4,
+                "critical": 6,
+                "multiplier": 2.0,
+                "description": "Plântulas - extremamente crítico",
+                "damage_type": "Pode eliminar plântulas completamente"
+              },
+              "V4-V6": {
+                "low": 2,
+                "medium": 5,
+                "high": 8,
+                "critical": 12,
+                "multiplier": 1.0,
+                "description": "Crescimento vegetativo - crítico",
+                "damage_type": "Desfolha intensa, planta se recupera parcialmente"
+              },
+              "R1-R2": {
+                "low": 3,
+                "medium": 6,
+                "high": 10,
+                "critical": 15,
+                "multiplier": 0.8,
+                "description": "Floração - moderadamente crítico",
+                "damage_type": "Desfolha e consumo de flores"
+              },
+              "R3-R4": {
+                "low": 4,
+                "medium": 8,
+                "high": 12,
+                "critical": 18,
+                "multiplier": 0.6,
+                "description": "Formação de vagens - menos crítico",
+                "damage_type": "Desfolha tem menor impacto"
+              },
+              "R5-R6": {
+                "low": 5,
+                "medium": 10,
+                "high": 15,
+                "critical": 20,
+                "multiplier": 0.4,
+                "description": "Enchimento - baixo impacto",
+                "damage_type": "Desfolha não afeta enchimento de grãos"
+              },
+              "R7-R8": {
+                "low": 6,
+                "medium": 12,
+                "high": 18,
+                "critical": 25,
+                "multiplier": 0.2,
+                "description": "Maturação - impacto mínimo",
+                "damage_type": "Sem impacto na produtividade"
+              }
+            },
+            
+            "critical_stages": ["V1", "V2", "V3", "V4"],
+            "action_threshold_stage": "V1-V4",
+            "economic_damage_level": "Alto em vegetativo, baixo após R3"
+          }
+        ]
+      }
+    }
+  },
+  "metadata": {
+    "can_edit": true,
+    "backup_on_edit": true,
+    "sync_with_cloud": false,
+    "version_control": true
+  }
+}

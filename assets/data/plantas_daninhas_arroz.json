@@ -1,0 +1,51 @@
+{
+  "cultura": "Arroz",
+  "plantas_daninhas": [
+    {
+      "id": "arroz_capim_arroz",
+      "nome": "Capim-arroz",
+      "nome_cientifico": "Echinochloa spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Poaceae",
+      "ciclo": "Anual",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição severa por recursos",
+        "Redução significativa na produtividade",
+        "Dificuldade na colheita"
+      ],
+      "periodo_critico": "V1 a R2",
+      "densidade_critica": "2-4 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Quinclorac", "Propanil"],
+        "pos_emergencia": ["Quinclorac", "Propanil", "Cyhalofop"],
+        "cultural": ["Drenagem", "Rotação", "Cobertura do solo"]
+      },
+      "observacoes": "Principal problema no arroz",
+      "icone": "🌾"
+    },
+    {
+      "id": "arroz_capim_coloniao",
+      "nome": "Capim-colonião",
+      "nome_cientifico": "Panicum maximum",
+      "categoria": "Planta Daninha",
+      "familia": "Poaceae",
+      "ciclo": "Perene",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por água e nutrientes",
+        "Formação de touceiras",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R6",
+      "densidade_critica": "1 touceira/10m²",
+      "manejo": {
+        "pre_emergencia": ["Glyphosate"],
+        "pos_emergencia": ["Glyphosate", "Clethodim"],
+        "cultural": ["Drenagem", "Gradagem", "Rotação com pastagem"]
+      },
+      "observacoes": "Muito comum em áreas de pastagem",
+      "icone": "🌱"
+    }
+  ]
+}

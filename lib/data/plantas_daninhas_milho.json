@@ -1,0 +1,74 @@
+{
+  "cultura": "Milho",
+  "plantas_daninhas": [
+    {
+      "id": "milho_caruru",
+      "nome": "Caruru",
+      "nome_cientifico": "Amaranthus spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Amaranthaceae",
+      "ciclo": "Anual",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por nutrientes",
+        "Redução da produtividade",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a V6",
+      "densidade_critica": "2-4 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Atrazina", "S-metolacloro", "Dimetenamida"],
+        "pos_emergencia": ["Atrazina + Nicosulfuron", "Tembotriona", "Mesotriona"],
+        "cultural": ["Rotação de culturas", "Plantio direto", "Cobertura do solo"]
+      },
+      "observacoes": "Principal problema no milho",
+      "icone": "🌿"
+    },
+    {
+      "id": "milho_buva",
+      "nome": "Buva",
+      "nome_cientifico": "Conyza spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Asteraceae",
+      "ciclo": "Bienal",
+      "tipo_germinacao": "Outono-Inverno",
+      "sintomas": [
+        "Competição severa por recursos",
+        "Redução significativa na produtividade",
+        "Dificuldade na colheita"
+      ],
+      "periodo_critico": "V2 a V8",
+      "densidade_critica": "1-2 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["Atrazina", "S-metolacloro"],
+        "pos_emergencia": ["Atrazina + Glyphosate", "Paraquat"],
+        "cultural": ["Plantio direto", "Cobertura do solo", "Rotação"]
+      },
+      "observacoes": "Resistente em várias regiões",
+      "icone": "🌾"
+    },
+    {
+      "id": "milho_capim_coloniao",
+      "nome": "Capim-colonião",
+      "nome_cientifico": "Panicum maximum",
+      "categoria": "Planta Daninha",
+      "familia": "Poaceae",
+      "ciclo": "Perene",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por água e nutrientes",
+        "Formação de touceiras",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R6",
+      "densidade_critica": "1 touceira/10m²",
+      "manejo": {
+        "pre_emergencia": ["S-metolacloro", "Dimetenamida"],
+        "pos_emergencia": ["Nicosulfuron", "Tembotriona", "Mesotriona"],
+        "cultural": ["Gradagem", "Rotação com pastagem"]
+      },
+      "observacoes": "Muito comum em áreas de pastagem",
+      "icone": "🌱"
+    }
+  ]
+}

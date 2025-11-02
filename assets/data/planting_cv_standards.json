@@ -1,0 +1,457 @@
+{
+  "cv_standards": {
+    "culturas": [
+      {
+        "id": 1,
+        "nome": "Soja",
+        "cv_ideal": 15.0,
+        "cv_aceitavel": 25.0,
+        "cv_ruim": 30.0,
+        "populacao_ideal": 300000,
+        "populacao_minima": 200000,
+        "populacao_maxima": 400000,
+        "espacamento_linhas_padrao": 0.45,
+        "observacoes": "Soja é sensível à irregularidade de plantio. CV% baixo é fundamental para uniformidade de maturação e colheita.",
+        "fatores_influencia": [
+          "Qualidade das sementes",
+          "Regulagem da plantadeira",
+          "Velocidade de plantio",
+          "Condições de solo",
+          "Umidade do solo"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 5-15%",
+          "uniformidade": "Maturação desuniforme",
+          "colheita": "Perdas na colheita",
+          "qualidade": "Redução da qualidade dos grãos"
+        }
+      },
+      {
+        "id": 2,
+        "nome": "Milho",
+        "cv_ideal": 12.0,
+        "cv_aceitavel": 20.0,
+        "cv_ruim": 25.0,
+        "populacao_ideal": 60000,
+        "populacao_minima": 50000,
+        "populacao_maxima": 70000,
+        "espacamento_linhas_padrao": 0.80,
+        "observacoes": "Milho requer alta precisão no espaçamento. CV% baixo é essencial para competição uniforme entre plantas.",
+        "fatores_influencia": [
+          "Precisão da plantadeira",
+          "Velocidade de plantio (máx 6 km/h)",
+          "Profundidade de plantio",
+          "Qualidade das sementes",
+          "Condições climáticas"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 10-20%",
+          "uniformidade": "Competição desigual",
+          "colheita": "Dificuldades na colheita",
+          "qualidade": "Espigas de tamanhos variados"
+        }
+      },
+      {
+        "id": 3,
+        "nome": "Sorgo",
+        "cv_ideal": 18.0,
+        "cv_aceitavel": 30.0,
+        "cv_ruim": 35.0,
+        "populacao_ideal": 180000,
+        "populacao_minima": 150000,
+        "populacao_maxima": 220000,
+        "espacamento_linhas_padrao": 0.70,
+        "observacoes": "Sorgo tem boa capacidade de compensação, mas CV% baixo melhora a uniformidade da cultura.",
+        "fatores_influencia": [
+          "Regulagem da plantadeira",
+          "Velocidade de plantio",
+          "Condições de solo",
+          "Qualidade das sementes",
+          "Umidade do solo"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 5-10%",
+          "uniformidade": "Desenvolvimento desigual",
+          "colheita": "Panículas de tamanhos variados",
+          "qualidade": "Redução da qualidade"
+        }
+      },
+      {
+        "id": 4,
+        "nome": "Algodão",
+        "cv_ideal": 18.0,
+        "cv_aceitavel": 30.0,
+        "cv_ruim": 35.0,
+        "populacao_ideal": 100000,
+        "populacao_minima": 80000,
+        "populacao_maxima": 120000,
+        "espacamento_linhas_padrao": 0.90,
+        "observacoes": "Algodão tem maior tolerância à irregularidade, mas CV% baixo melhora a qualidade da fibra.",
+        "fatores_influencia": [
+          "Regulagem da plantadeira",
+          "Velocidade de plantio",
+          "Profundidade de plantio",
+          "Condições de solo",
+          "Qualidade das sementes"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 5-12%",
+          "uniformidade": "Floração desuniforme",
+          "colheita": "Colheita escalonada",
+          "qualidade": "Fibra de qualidade variável"
+        }
+      },
+      {
+        "id": 5,
+        "nome": "Feijão",
+        "cv_ideal": 20.0,
+        "cv_aceitavel": 35.0,
+        "cv_ruim": 40.0,
+        "populacao_ideal": 250000,
+        "populacao_minima": 200000,
+        "populacao_maxima": 300000,
+        "espacamento_linhas_padrao": 0.50,
+        "observacoes": "Feijão pode compensar irregularidades, mas CV% baixo melhora a uniformidade e qualidade.",
+        "fatores_influencia": [
+          "Regulagem da plantadeira",
+          "Velocidade de plantio",
+          "Condições de solo",
+          "Qualidade das sementes",
+          "Umidade do solo"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 3-8%",
+          "uniformidade": "Maturação desuniforme",
+          "colheita": "Colheita escalonada",
+          "qualidade": "Grãos de tamanhos variados"
+        }
+      },
+      {
+        "id": 6,
+        "nome": "Girassol",
+        "cv_ideal": 22.0,
+        "cv_aceitavel": 35.0,
+        "cv_ruim": 40.0,
+        "populacao_ideal": 50000,
+        "populacao_minima": 40000,
+        "populacao_maxima": 60000,
+        "espacamento_linhas_padrao": 0.70,
+        "observacoes": "Girassol tem boa capacidade de compensação, mas CV% baixo melhora a uniformidade das capítulos.",
+        "fatores_influencia": [
+          "Regulagem da plantadeira",
+          "Velocidade de plantio",
+          "Condições de solo",
+          "Qualidade das sementes",
+          "Profundidade de plantio"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 5-10%",
+          "uniformidade": "Capítulos de tamanhos variados",
+          "colheita": "Colheita escalonada",
+          "qualidade": "Óleo de qualidade variável"
+        }
+      },
+      {
+        "id": 7,
+        "nome": "Aveia",
+        "cv_ideal": 25.0,
+        "cv_aceitavel": 40.0,
+        "cv_ruim": 45.0,
+        "populacao_ideal": 300000,
+        "populacao_minima": 250000,
+        "populacao_maxima": 350000,
+        "espacamento_linhas_padrao": 0.17,
+        "observacoes": "Aveia tem boa capacidade de compensação e perfilhamento, mas CV% baixo melhora a uniformidade.",
+        "fatores_influencia": [
+          "Regulagem da plantadeira",
+          "Velocidade de plantio",
+          "Condições de solo",
+          "Qualidade das sementes",
+          "Profundidade de plantio"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 3-7%",
+          "uniformidade": "Perfilhamento desigual",
+          "colheita": "Maturação desuniforme",
+          "qualidade": "Grãos de tamanhos variados"
+        }
+      },
+      {
+        "id": 8,
+        "nome": "Trigo",
+        "cv_ideal": 20.0,
+        "cv_aceitavel": 35.0,
+        "cv_ruim": 40.0,
+        "populacao_ideal": 350000,
+        "populacao_minima": 300000,
+        "populacao_maxima": 400000,
+        "espacamento_linhas_padrao": 0.17,
+        "observacoes": "Trigo tem boa capacidade de compensação e perfilhamento, mas CV% baixo melhora a uniformidade.",
+        "fatores_influencia": [
+          "Regulagem da plantadeira",
+          "Velocidade de plantio",
+          "Condições de solo",
+          "Qualidade das sementes",
+          "Profundidade de plantio"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 5-10%",
+          "uniformidade": "Perfilhamento desigual",
+          "colheita": "Maturação desuniforme",
+          "qualidade": "Grãos de tamanhos variados"
+        }
+      },
+      {
+        "id": 9,
+        "nome": "Gergelim",
+        "cv_ideal": 25.0,
+        "cv_aceitavel": 40.0,
+        "cv_ruim": 45.0,
+        "populacao_ideal": 200000,
+        "populacao_minima": 150000,
+        "populacao_maxima": 250000,
+        "espacamento_linhas_padrao": 0.45,
+        "observacoes": "Gergelim tem boa capacidade de compensação, mas CV% baixo melhora a uniformidade da cultura.",
+        "fatores_influencia": [
+          "Regulagem da plantadeira",
+          "Velocidade de plantio",
+          "Condições de solo",
+          "Qualidade das sementes",
+          "Profundidade de plantio"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 5-10%",
+          "uniformidade": "Desenvolvimento desigual",
+          "colheita": "Colheita escalonada",
+          "qualidade": "Sementes de tamanhos variados"
+        }
+      },
+      {
+        "id": 10,
+        "nome": "Cana-de-açúcar",
+        "cv_ideal": 20.0,
+        "cv_aceitavel": 35.0,
+        "cv_ruim": 40.0,
+        "populacao_ideal": 15000,
+        "populacao_minima": 12000,
+        "populacao_maxima": 18000,
+        "espacamento_linhas_padrao": 1.50,
+        "observacoes": "Cana-de-açúcar é plantada em sulcos com toletes. CV% baixo é importante para uniformidade de brotação e desenvolvimento.",
+        "fatores_influencia": [
+          "Qualidade dos toletes",
+          "Profundidade de plantio",
+          "Umidade do solo",
+          "Cobertura dos toletes",
+          "Condições climáticas"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 8-15%",
+          "uniformidade": "Brotação desuniforme",
+          "colheita": "Dificuldades na colheita mecanizada",
+          "qualidade": "Redução do teor de açúcar"
+        }
+      },
+      {
+        "id": 11,
+        "nome": "Tomate",
+        "cv_ideal": 15.0,
+        "cv_aceitavel": 25.0,
+        "cv_ruim": 30.0,
+        "populacao_ideal": 25000,
+        "populacao_minima": 20000,
+        "populacao_maxima": 30000,
+        "espacamento_linhas_padrao": 1.20,
+        "observacoes": "Tomate é sensível à irregularidade de plantio. CV% baixo é fundamental para uniformidade de maturação e colheita.",
+        "fatores_influencia": [
+          "Qualidade das mudas",
+          "Profundidade de plantio",
+          "Condições de solo",
+          "Irrigação",
+          "Tutoramento"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 10-20%",
+          "uniformidade": "Maturação desuniforme",
+          "colheita": "Colheita escalonada",
+          "qualidade": "Frutos de tamanhos variados"
+        }
+      },
+      {
+        "id": 12,
+        "nome": "Batata",
+        "cv_ideal": 18.0,
+        "cv_aceitavel": 30.0,
+        "cv_ruim": 35.0,
+        "populacao_ideal": 40000,
+        "populacao_minima": 35000,
+        "populacao_maxima": 45000,
+        "espacamento_linhas_padrao": 0.80,
+        "observacoes": "Batata é plantada com tubérculos-semente. CV% baixo é importante para uniformidade de brotação e desenvolvimento dos tubérculos.",
+        "fatores_influencia": [
+          "Qualidade dos tubérculos-semente",
+          "Profundidade de plantio",
+          "Umidade do solo",
+          "Cobertura dos tubérculos",
+          "Condições climáticas"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 8-15%",
+          "uniformidade": "Brotação desuniforme",
+          "colheita": "Tubérculos de tamanhos variados",
+          "qualidade": "Redução da qualidade comercial"
+        }
+      },
+      {
+        "id": 13,
+        "nome": "Cebola",
+        "cv_ideal": 22.0,
+        "cv_aceitavel": 35.0,
+        "cv_ruim": 40.0,
+        "populacao_ideal": 300000,
+        "populacao_minima": 250000,
+        "populacao_maxima": 350000,
+        "espacamento_linhas_padrao": 0.30,
+        "observacoes": "Cebola é plantada com sementes ou mudas. CV% baixo é importante para uniformidade de desenvolvimento e tamanho dos bulbos.",
+        "fatores_influencia": [
+          "Qualidade das sementes/mudas",
+          "Profundidade de plantio",
+          "Condições de solo",
+          "Irrigação",
+          "Controle de plantas daninhas"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 6-12%",
+          "uniformidade": "Desenvolvimento desigual",
+          "colheita": "Bulbos de tamanhos variados",
+          "qualidade": "Redução da qualidade comercial"
+        }
+      },
+      {
+        "id": 14,
+        "nome": "Cenoura",
+        "cv_ideal": 20.0,
+        "cv_aceitavel": 32.0,
+        "cv_ruim": 38.0,
+        "populacao_ideal": 800000,
+        "populacao_minima": 700000,
+        "populacao_maxima": 900000,
+        "espacamento_linhas_padrao": 0.20,
+        "observacoes": "Cenoura é plantada com sementes pequenas. CV% baixo é fundamental para uniformidade de emergência e desenvolvimento das raízes.",
+        "fatores_influencia": [
+          "Qualidade das sementes",
+          "Profundidade de plantio",
+          "Condições de solo",
+          "Irrigação",
+          "Controle de plantas daninhas"
+        ],
+        "impacto_cv_alto": {
+          "produtividade": "Redução de 8-15%",
+          "uniformidade": "Emergência desuniforme",
+          "colheita": "Raízes de tamanhos variados",
+          "qualidade": "Redução da qualidade comercial"
+        }
+      }
+    ],
+    "classificacoes": {
+      "excelente": {
+        "cv_maximo": 15.0,
+        "descricao": "Distribuição muito uniforme das sementes",
+        "cor": "#4CAF50",
+        "icone": "check_circle",
+        "recomendacoes": [
+          "Manter as práticas atuais de plantio",
+          "Documentar as condições que levaram ao sucesso",
+          "Continuar monitoramento do desenvolvimento das plantas",
+          "Considerar replicar as práticas em outros talhões"
+        ]
+      },
+      "bom": {
+        "cv_minimo": 15.0,
+        "cv_maximo": 30.0,
+        "descricao": "Distribuição aceitável das sementes",
+        "cor": "#FFC107",
+        "icone": "warning",
+        "recomendacoes": [
+          "Ajustar finamente a regulagem da plantadeira",
+          "Verificar uniformidade do terreno",
+          "Reduzir velocidade de plantio se necessário",
+          "Verificar profundidade de plantio"
+        ]
+      },
+      "ruim": {
+        "cv_minimo": 30.0,
+        "descricao": "Distribuição irregular das sementes - atenção necessária",
+        "cor": "#F44336",
+        "icone": "error",
+        "recomendacoes": [
+          "Verificar regulagem da plantadeira",
+          "Calibrar dosadores de sementes",
+          "Verificar velocidade de plantio (máximo 6 km/h)",
+          "Limpar e lubrificar mecanismos de distribuição",
+          "Verificar pressão dos pneus da plantadeira",
+          "Considerar troca de discos de plantio se necessário"
+        ]
+      }
+    },
+    "fatores_impacto": {
+      "velocidade_plantio": {
+        "otima": "4-6 km/h",
+        "aceitavel": "6-8 km/h",
+        "ruim": ">8 km/h",
+        "impacto": "Velocidade alta aumenta CV% significativamente"
+      },
+      "profundidade_plantio": {
+        "soja": "2-3 cm",
+        "milho": "3-5 cm",
+        "algodao": "2-4 cm",
+        "feijao": "2-3 cm",
+        "impacto": "Profundidade inadequada afeta germinação e CV%"
+      },
+      "umidade_solo": {
+        "ideal": "60-80%",
+        "aceitavel": "40-90%",
+        "ruim": "<40% ou >90%",
+        "impacto": "Umidade inadequada afeta distribuição e germinação"
+      },
+      "qualidade_sementes": {
+        "germinacao_minima": 85,
+        "vigor_minimo": 80,
+        "pureza_minima": 98,
+        "impacto": "Sementes de baixa qualidade aumentam irregularidades"
+      }
+    },
+    "equipamentos": {
+      "plantadeiras": {
+        "tipos": [
+          "Plantadeira de precisão",
+          "Plantadeira de fluxo contínuo",
+          "Plantadeira pneumática"
+        ],
+        "manutencao": [
+          "Limpeza dos dosadores",
+          "Calibração dos mecanismos",
+          "Verificação da pressão dos pneus",
+          "Lubrificação dos componentes",
+          "Verificação dos discos de plantio"
+        ],
+        "calibracao": [
+          "Verificar dosagem por metro",
+          "Ajustar espaçamento entre sementes",
+          "Verificar profundidade de plantio",
+          "Testar em condições reais"
+        ]
+      }
+    },
+    "monitoramento": {
+      "frequencia_avaliacao": "A cada 10 hectares plantados",
+      "comprimento_amostra": "3-5 metros por linha",
+      "numero_linhas": "3-5 linhas por amostra",
+      "parametros_avaliar": [
+        "Distância entre sementes",
+        "Profundidade de plantio",
+        "Cobertura de sementes",
+        "Emergência das plantas"
+      ]
+    }
+  }
+}

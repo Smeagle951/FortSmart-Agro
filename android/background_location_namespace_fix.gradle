@@ -1,0 +1,35 @@
+// Correção específica para o plugin background_location
+// Este arquivo resolve o problema de namespace não especificado
+
+allprojects {
+    afterEvaluate { project ->
+        if (project.name == 'background_location') {
+            project.android {
+                namespace = 'com.almoullim.background_location'
+                logger.lifecycle("✅ Namespace aplicado para background_location: com.almoullim.background_location")
+            }
+        }
+    }
+}
+
+// Configuração adicional para garantir compatibilidade
+subprojects {
+    afterEvaluate { project ->
+        if (project.name == 'background_location') {
+            project.android {
+                namespace = 'com.almoullim.background_location'
+                
+                // Configurações de compilação específicas
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+                
+                // Configurações de Kotlin se necessário
+                kotlinOptions {
+                    jvmTarget = '17'
+                }
+            }
+        }
+    }
+}

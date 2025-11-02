@@ -359,7 +359,7 @@ class DraggableVertex extends StatelessWidget {
           point: point,
           width: size * 2,
           height: size * 2,
-          builder: (context) => GestureDetector(
+          child: GestureDetector(
             onTap: onTap,
             onLongPress: onLongPress,
             onPanStart: (_) => onDragStart(),
@@ -428,7 +428,7 @@ class ClickableMidpoint extends StatelessWidget {
           point: point,
           width: size * 2,
           height: size * 2,
-          builder: (context) => GestureDetector(
+          child: GestureDetector(
             onTap: onTap,
             child: Container(
               width: size * 2,

@@ -1,0 +1,27 @@
+// Script específico para corrigir outros problemas do plugin qr_code_scanner
+// Nota: O namespace agora é gerenciado pelo fix_all_plugins_namespace.gradle
+
+// Fix para o plugin qr_code_scanner com Java 17 e Android Gradle Plugin 8.x
+// Evita definir namespace diretamente para evitar erro "It is too late to set namespace"
+
+// Desativa a verificação de namespace para todos os projetos
+System.setProperty("android.enableNamespaceCheck", "false")
+
+// Aplicar namespace diretamente para o plugin qr_code_scanner
+allprojects {
+    afterEvaluate { project ->
+        if (project.name == 'qr_code_scanner') {
+            try {
+                project.android {
+                    logger.lifecycle("Aplicando namespace net.touchcapture.qr.flutterqr ao plugin qr_code_scanner")
+                    project.android.namespace = 'net.touchcapture.qr.flutterqr'
+                }
+            } catch (Exception e) {
+                logger.warn("Erro ao aplicar namespace para qr_code_scanner: ${e.message}")
+            }
+        }
+    }
+}
+
+// Aqui podemos adicionar outras correções específicas para o qr_code_scanner se necessário
+// Por exemplo, configurações de compilação, dependências específicas, etc.

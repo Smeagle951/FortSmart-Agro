@@ -115,7 +115,7 @@ class GpsDrawingControlsWidget extends StatelessWidget {
           
           const SizedBox(height: 12),
           
-          // Terceira linha - Desfazer, Limpar, Importar, Finalizar
+          // Terceira linha - Desfazer, Limpar
           Row(
             children: [
               Expanded(
@@ -140,6 +140,7 @@ class GpsDrawingControlsWidget extends StatelessWidget {
           
           const SizedBox(height: 12),
           
+          // Quarta linha - Importar, Finalizar
           Row(
             children: [
               Expanded(

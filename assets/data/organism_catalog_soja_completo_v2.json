@@ -1,0 +1,318 @@
+{
+  "version": "2.0",
+  "last_updated": "2025-10-17",
+  "culture": "soja",
+  "culture_id": "custom_soja",
+  "scientific_name": "Glycine max",
+  "common_name": "Soja",
+  
+  "phenological_stages": {
+    "vegetative": ["VE", "V1", "V2", "V3", "V4", "V5", "V6"],
+    "reproductive": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8"],
+    "critical_stages": ["R5", "R6"]
+  },
+  
+  "susceptibility_curve": {
+    "VE": { "damage_potential": 80, "recovery_capacity": 20 },
+    "V3": { "damage_potential": 60, "recovery_capacity": 50 },
+    "V6": { "damage_potential": 40, "recovery_capacity": 70 },
+    "R1": { "damage_potential": 50, "recovery_capacity": 60 },
+    "R3": { "damage_potential": 70, "recovery_capacity": 40 },
+    "R5": { "damage_potential": 95, "recovery_capacity": 10 },
+    "R6": { "damage_potential": 90, "recovery_capacity": 5 },
+    "R8": { "damage_potential": 20, "recovery_capacity": 0 }
+  },
+  
+  "organisms": {
+    "pests": [
+      {
+        "id": "soja_pest_001",
+        "name": "Percevejo-marrom",
+        "scientific_name": "Euschistus heros",
+        "unit": "unidades/ponto",
+        "monitoring_method": "pano-de-batida 1m de linha ou 10 plantas",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 3, "medium": 6, "high": 9, "critical": 12, "damage_potential": 30, "damage_type": "Alimentação foliar - baixo impacto", "economic_loss": "< 2%" },
+          "V4-V6": { "low": 2, "medium": 4, "high": 7, "critical": 10, "damage_potential": 50, "damage_type": "Dano vegetativo", "economic_loss": "2-5%" },
+          "R1-R2": { "low": 1, "medium": 3, "high": 5, "critical": 8, "damage_potential": 70, "damage_type": "Aborto de flores/vagens", "economic_loss": "5-15%" },
+          "R3-R4": { "low": 1, "medium": 2, "high": 4, "critical": 6, "damage_potential": 85, "damage_type": "Perfuração de vagens", "economic_loss": "15-30%" },
+          "R5-R6": { "low": 0, "medium": 1, "high": 2, "critical": 3, "damage_potential": 95, "damage_type": "Suga grãos - chochamento", "economic_loss": "30-60%", "action_window_hours": 24 },
+          "R7-R8": { "low": 2, "medium": 5, "high": 8, "critical": 12, "damage_potential": 40, "damage_type": "Impacto reduzido", "economic_loss": "< 5%" }
+        },
+        "critical_stages": ["R5", "R6"]
+      },
+      {
+        "id": "soja_pest_002",
+        "name": "Percevejo-pequeno",
+        "scientific_name": "Piezodorus guildinii",
+        "unit": "unidades/ponto",
+        "monitoring_method": "pano-de-batida",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 3, "medium": 6, "high": 9, "critical": 12, "damage_potential": 30 },
+          "V4-V6": { "low": 2, "medium": 4, "high": 7, "critical": 10, "damage_potential": 50 },
+          "R1-R2": { "low": 1, "medium": 3, "high": 5, "critical": 8, "damage_potential": 70 },
+          "R3-R4": { "low": 1, "medium": 2, "high": 4, "critical": 6, "damage_potential": 85 },
+          "R5-R6": { "low": 0, "medium": 1, "high": 2, "critical": 3, "damage_potential": 95, "economic_loss": "30-60%" },
+          "R7-R8": { "low": 2, "medium": 5, "high": 8, "critical": 12, "damage_potential": 40 }
+        },
+        "critical_stages": ["R5", "R6"]
+      },
+      {
+        "id": "soja_pest_003",
+        "name": "Percevejo-verde",
+        "scientific_name": "Nezara viridula",
+        "unit": "unidades/ponto",
+        "monitoring_method": "pano-de-batida",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 4, "medium": 7, "high": 10, "critical": 13, "damage_potential": 30 },
+          "V4-V6": { "low": 3, "medium": 5, "high": 8, "critical": 11, "damage_potential": 50 },
+          "R1-R2": { "low": 2, "medium": 4, "high": 6, "critical": 9, "damage_potential": 70 },
+          "R3-R4": { "low": 1, "medium": 3, "high": 5, "critical": 7, "damage_potential": 85 },
+          "R5-R6": { "low": 1, "medium": 2, "high": 3, "critical": 4, "damage_potential": 95, "damage_type": "Manchas internas (bruising)", "economic_loss": "25-50%" },
+          "R7-R8": { "low": 3, "medium": 6, "high": 9, "critical": 13, "damage_potential": 40 }
+        },
+        "critical_stages": ["R5", "R6"]
+      },
+      {
+        "id": "soja_pest_004",
+        "name": "Lagarta-da-soja",
+        "scientific_name": "Chrysodeixis includens",
+        "unit": "lagartas/m",
+        "monitoring_method": "contagem por metro de linha",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 1, "medium": 2, "high": 4, "critical": 6, "damage_potential": 90, "damage_type": "Pode eliminar plântulas", "economic_loss": "20-40%" },
+          "V4-V6": { "low": 2, "medium": 5, "high": 8, "critical": 12, "damage_potential": 60, "damage_type": "Desfolha - recuperação possível", "economic_loss": "5-15%" },
+          "R1-R2": { "low": 3, "medium": 6, "high": 10, "critical": 15, "damage_potential": 50 },
+          "R3-R4": { "low": 4, "medium": 8, "high": 12, "critical": 18, "damage_potential": 40 },
+          "R5-R6": { "low": 5, "medium": 10, "high": 15, "critical": 20, "damage_potential": 30, "damage_type": "Desfolha tardia - baixo impacto", "economic_loss": "< 5%" },
+          "R7-R8": { "low": 6, "medium": 12, "high": 18, "critical": 25, "damage_potential": 20 }
+        },
+        "critical_stages": ["V1", "V2", "V3"]
+      },
+      {
+        "id": "soja_pest_005",
+        "name": "Helicoverpa",
+        "scientific_name": "Helicoverpa armigera",
+        "unit": "lagartas/m",
+        "monitoring_method": "contagem por metro ou % vagens danificadas",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 1, "medium": 2, "high": 3, "critical": 5, "damage_potential": 85 },
+          "V4-V6": { "low": 2, "medium": 4, "high": 6, "critical": 10, "damage_potential": 60 },
+          "R1-R2": { "low": 1, "medium": 3, "high": 5, "critical": 8, "damage_potential": 75, "damage_type": "Ataca flores e vagens iniciais" },
+          "R3-R4": { "low": 1, "medium": 2, "high": 4, "critical": 6, "damage_potential": 90, "damage_type": "Perfura vagens - alimenta de grãos", "economic_loss": "25-50%" },
+          "R5-R6": { "low": 1, "medium": 3, "high": 5, "critical": 8, "damage_potential": 85, "damage_type": "Dano direto em grãos", "economic_loss": "20-40%" },
+          "R7-R8": { "low": 3, "medium": 6, "high": 10, "critical": 15, "damage_potential": 40 }
+        },
+        "critical_stages": ["R3", "R4", "R5"]
+      },
+      {
+        "id": "soja_pest_006",
+        "name": "Spodoptera",
+        "scientific_name": "Spodoptera frugiperda / S. cosmioides",
+        "unit": "lagartas/m",
+        "monitoring_method": "contagem por metro ou % desfolha",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 1, "medium": 3, "high": 5, "critical": 8, "damage_potential": 90, "damage_type": "Desfolha em plântulas - crítico", "economic_loss": "20-40%" },
+          "V4-V6": { "low": 2, "medium": 5, "high": 8, "critical": 12, "damage_potential": 60, "damage_type": "Desfolha - recuperação possível" },
+          "R1-R2": { "low": 2, "medium": 4, "high": 6, "critical": 10, "damage_potential": 50 },
+          "R3-R4": { "low": 3, "medium": 6, "high": 10, "critical": 15, "damage_potential": 40 },
+          "R5-R6": { "low": 4, "medium": 8, "high": 12, "critical": 18, "damage_potential": 30, "damage_type": "Baixo impacto em R5" },
+          "R7-R8": { "low": 5, "medium": 10, "high": 15, "critical": 20, "damage_potential": 20 }
+        },
+        "critical_stages": ["V1", "V2", "V3"]
+      },
+      {
+        "id": "soja_pest_007",
+        "name": "Mosca-branca",
+        "scientific_name": "Bemisia tabaci",
+        "unit": "adultos/folha",
+        "monitoring_method": "contagem no terço médio da planta",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 5, "medium": 10, "high": 15, "critical": 20, "damage_potential": 70, "damage_type": "Transmissão de vírus - crítico", "economic_loss": "30-60%" },
+          "V4-V6": { "low": 9, "medium": 15, "high": 19, "critical": 25, "damage_potential": 60, "damage_type": "Sugamento e transmissão viral" },
+          "R1-R2": { "low": 9, "medium": 19, "high": 20, "critical": 30, "damage_potential": 50 },
+          "R3-R4": { "low": 10, "medium": 20, "high": 25, "critical": 35, "damage_potential": 40 },
+          "R5-R6": { "low": 15, "medium": 25, "high": 30, "critical": 40, "damage_potential": 30 },
+          "R7-R8": { "low": 20, "medium": 30, "high": 40, "critical": 50, "damage_potential": 20 }
+        },
+        "critical_stages": ["V1", "V2", "V3"],
+        "disease_vector": true
+      },
+      {
+        "id": "soja_pest_008",
+        "name": "Ácaro-rajado",
+        "scientific_name": "Tetranychus urticae",
+        "unit": "% folhas com colônias",
+        "monitoring_method": "visualização de colônias/teias",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 5, "medium": 15, "high": 20, "critical": 30, "damage_potential": 60 },
+          "V4-V6": { "low": 9, "medium": 20, "high": 24, "critical": 35, "damage_potential": 70, "damage_type": "Bronzeamento foliar - reduz fotossíntese", "economic_loss": "15-30%" },
+          "R1-R2": { "low": 9, "medium": 24, "high": 25, "critical": 40, "damage_potential": 60 },
+          "R3-R4": { "low": 10, "medium": 25, "high": 30, "critical": 45, "damage_potential": 50 },
+          "R5-R6": { "low": 15, "medium": 30, "high": 35, "critical": 50, "damage_potential": 40 },
+          "R7-R8": { "low": 20, "medium": 35, "high": 40, "critical": 55, "damage_potential": 20 }
+        },
+        "critical_stages": ["V4", "V5", "V6"],
+        "environmental_factor": "Prolifera em clima seco"
+      },
+      {
+        "id": "soja_pest_009",
+        "name": "Trips",
+        "scientific_name": "Caliothrips phaseoli / Thrips spp.",
+        "unit": "indivíduos/flor",
+        "monitoring_method": "contagem por flor/broto",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 3, "medium": 6, "high": 10, "critical": 15, "damage_potential": 60, "damage_type": "Dano em ponteiros" },
+          "V4-V6": { "low": 2, "medium": 5, "high": 6, "critical": 10, "damage_potential": 50 },
+          "R1-R2": { "low": 2, "medium": 5, "high": 6, "critical": 10, "damage_potential": 70, "damage_type": "Dano em flores - aborto", "economic_loss": "10-20%" },
+          "R3-R4": { "low": 3, "medium": 6, "high": 8, "critical": 12, "damage_potential": 50 },
+          "R5-R6": { "low": 4, "medium": 8, "high": 10, "critical": 15, "damage_potential": 30 },
+          "R7-R8": { "low": 5, "medium": 10, "high": 12, "critical": 18, "damage_potential": 20 }
+        },
+        "critical_stages": ["R1"],
+        "disease_vector": true
+      },
+      {
+        "id": "soja_pest_torraozinho",
+        "name": "Torrãozinho",
+        "scientific_name": "Conotrachelus sp.",
+        "unit": "insetos/ponto",
+        "monitoring_method": "contagem visual",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 5, "medium": 10, "high": 15, "critical": 20, "damage_potential": 30 },
+          "V4-V6": { "low": 3, "medium": 6, "high": 10, "critical": 15, "damage_potential": 60 },
+          "R1-R2": { "low": 2, "medium": 4, "high": 7, "critical": 10, "damage_potential": 70 },
+          "R3-R4": { "low": 1, "medium": 3, "high": 5, "critical": 8, "damage_potential": 85, "damage_type": "Perfura vagens - aborto" },
+          "R5-R6": { "low": 0, "medium": 1, "high": 3, "critical": 5, "damage_potential": 95, "damage_type": "Ataca grãos em formação", "economic_loss": "30-60%", "action_window_hours": 24 },
+          "R7-R8": { "low": 2, "medium": 5, "high": 8, "critical": 12, "damage_potential": 30 }
+        },
+        "critical_stages": ["R5", "R6"]
+      }
+    ],
+    "diseases": [
+      {
+        "id": "soja_disease_001",
+        "name": "Ferrugem-asiática",
+        "scientific_name": "Phakopsora pachyrhizi",
+        "unit": "% folhas com pústulas",
+        "monitoring_method": "visualização de pústulas",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 5, "medium": 15, "high": 20, "critical": 30, "damage_potential": 50 },
+          "V4-V6": { "low": 3, "medium": 10, "high": 10, "critical": 20, "damage_potential": 70, "damage_type": "Desfolha progressiva", "economic_loss": "20-40%" },
+          "R1-R2": { "low": 3, "medium": 10, "high": 10, "critical": 15, "damage_potential": 85, "damage_type": "Desfolha em floração", "economic_loss": "30-60%" },
+          "R3-R4": { "low": 2, "medium": 8, "high": 10, "critical": 15, "damage_potential": 90, "damage_type": "Desfolha crítica - reduz enchimento", "economic_loss": "40-70%" },
+          "R5-R6": { "low": 2, "medium": 5, "high": 8, "critical": 12, "damage_potential": 95, "damage_type": "Desfolha em enchimento - perdas severas", "economic_loss": "50-80%", "action_window_hours": 48 },
+          "R7-R8": { "low": 5, "medium": 10, "high": 15, "critical": 20, "damage_potential": 40 }
+        },
+        "critical_stages": ["R5", "R6"],
+        "management_critical": true
+      },
+      {
+        "id": "soja_disease_002",
+        "name": "Mancha-alvo",
+        "scientific_name": "Corynespora cassiicola",
+        "unit": "% folhas com lesões",
+        "monitoring_method": "visualização de lesões típicas",
+        
+        "phenological_thresholds": {
+          "V4-V6": { "low": 2, "medium": 6, "high": 6, "critical": 12, "damage_potential": 60 },
+          "R1-R2": { "low": 2, "medium": 6, "high": 6, "critical": 10, "damage_potential": 70 },
+          "R3-R4": { "low": 2, "medium": 5, "high": 8, "critical": 12, "damage_potential": 75, "economic_loss": "15-30%" },
+          "R5-R6": { "low": 3, "medium": 7, "high": 10, "critical": 15, "damage_potential": 65 },
+          "R7-R8": { "low": 5, "medium": 10, "high": 15, "critical": 20, "damage_potential": 30 }
+        }
+      },
+      {
+        "id": "soja_disease_003",
+        "name": "Antracnose",
+        "scientific_name": "Colletotrichum truncatum",
+        "unit": "% vagens/hastes com lesão",
+        "monitoring_method": "visualização de lesões",
+        
+        "phenological_thresholds": {
+          "V4-V6": { "low": 3, "medium": 6, "high": 10, "critical": 15, "damage_potential": 50 },
+          "R1-R2": { "low": 2, "medium": 5, "high": 5, "critical": 10, "damage_potential": 65 },
+          "R3-R4": { "low": 2, "medium": 5, "high": 5, "critical": 8, "damage_potential": 75, "damage_type": "Ataca vagens e caule", "economic_loss": "15-35%" },
+          "R5-R6": { "low": 3, "medium": 6, "high": 8, "critical": 12, "damage_potential": 70 },
+          "R7-R8": { "low": 5, "medium": 8, "high": 12, "critical": 18, "damage_potential": 40 }
+        }
+      },
+      {
+        "id": "soja_disease_004",
+        "name": "Mofo-branco",
+        "scientific_name": "Sclerotinia sclerotiorum",
+        "unit": "apotecios/ponto",
+        "monitoring_method": "contagem por ponto (10m)",
+        
+        "phenological_thresholds": {
+          "V4-V6": { "low": 2, "medium": 4, "high": 6, "critical": 10, "damage_potential": 50 },
+          "R1-R2": { "low": 1, "medium": 3, "high": 4, "critical": 6, "damage_potential": 80, "damage_type": "Infecção de flores - alta umidade", "economic_loss": "20-50%" },
+          "R3-R4": { "low": 1, "medium": 2, "high": 3, "critical": 5, "damage_potential": 85, "damage_type": "Murcha e morte de plantas", "economic_loss": "30-70%" },
+          "R5-R6": { "low": 2, "medium": 4, "high": 5, "critical": 8, "damage_potential": 75 },
+          "R7-R8": { "low": 3, "medium": 5, "high": 8, "critical": 12, "damage_potential": 30 }
+        },
+        "critical_stages": ["R1", "R2", "R3"],
+        "environmental_factor": "Alta umidade + temperatura amena"
+      },
+      {
+        "id": "soja_disease_005",
+        "name": "Oídio",
+        "scientific_name": "Erysiphe diffusa / Microsphaera diffusa",
+        "unit": "% folha coberta por micélio",
+        "monitoring_method": "visualização de micélio pulverulento",
+        
+        "phenological_thresholds": {
+          "V3-V6": { "low": 3, "medium": 10, "high": 10, "critical": 20, "damage_potential": 50 },
+          "R1-R2": { "low": 3, "medium": 10, "high": 10, "critical": 18, "damage_potential": 60 },
+          "R3-R4": { "low": 5, "medium": 12, "high": 15, "critical": 25, "damage_potential": 55 },
+          "R5-R6": { "low": 8, "medium": 15, "high": 20, "critical": 30, "damage_potential": 45 },
+          "R7-R8": { "low": 10, "medium": 20, "high": 30, "critical": 40, "damage_potential": 20 }
+        },
+        "environmental_factor": "Clima seco + noites frias"
+      },
+      {
+        "id": "soja_disease_006",
+        "name": "Septoriose",
+        "scientific_name": "Septoria glycines",
+        "unit": "% folhas com manchas",
+        "monitoring_method": "visualização de manchas coalescentes",
+        
+        "phenological_thresholds": {
+          "V4-V6": { "low": 4, "medium": 9, "high": 10, "critical": 18, "damage_potential": 55 },
+          "R1-R2": { "low": 4, "medium": 9, "high": 10, "critical": 15, "damage_potential": 65 },
+          "R3-R4": { "low": 5, "medium": 10, "high": 12, "critical": 20, "damage_potential": 70 },
+          "R5-R6": { "low": 6, "medium": 12, "high": 15, "critical": 25, "damage_potential": 60 },
+          "R7-R8": { "low": 10, "medium": 15, "high": 20, "critical": 30, "damage_potential": 30 }
+        }
+      },
+      {
+        "id": "soja_disease_007",
+        "name": "Podridão radicular por Phytophthora",
+        "scientific_name": "Phytophthora sojae",
+        "unit": "% plantas com sintoma",
+        "monitoring_method": "inspeção visual de murcha",
+        
+        "phenological_thresholds": {
+          "V1-V3": { "low": 2, "medium": 5, "high": 8, "critical": 15, "damage_potential": 90, "damage_type": "Morte de plântulas", "economic_loss": "20-50%" },
+          "V4-V6": { "low": 3, "medium": 8, "high": 12, "critical": 20, "damage_potential": 75, "damage_type": "Murcha e morte", "economic_loss": "15-35%" },
+          "R1-R4": { "low": 5, "medium": 10, "high": 15, "critical": 25, "damage_potential": 60 },
+          "R5-R8": { "low": 8, "medium": 15, "high": 20, "critical": 30, "damage_potential": 40 }
+        },
+        "critical_stages": ["V1", "V2"],
+        "environmental_factor": "Solos mal drenados + alta umidade"
+      }
+    ]
+  }
+}
+

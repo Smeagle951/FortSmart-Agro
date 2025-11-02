@@ -4,10 +4,19 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math' show cos, pi, sin, atan2, sqrt;
+import 'dart:async';
 import '../../../utils/cultura_colors.dart';
+import '../../../widgets/rain_collection_marker.dart';
+import '../../rain/rain_registration_screen.dart';
+import '../../rain/rain_history_screen.dart';
+import '../../rain/rain_station_management_screen.dart';
+import '../../../models/rain_station_model.dart';
+import '../../../repositories/rain_station_repository.dart';
 
 // Importações locais
 import '../../../models/talhoes/talhao_safra_model.dart' as talhao_safra;
+import '../../../models/talhoes/safra_talhao_model.dart';
+import '../../../models/talhoes/poligono_model.dart';
 import '../../../providers/cultura_provider.dart';
 import 'providers/talhao_provider.dart';
 
@@ -27,6 +36,8 @@ import '../../../utils/geodetic_utils.dart';
 import '../../../utils/geo_calculator.dart';
 import '../../../utils/talhao_calculator.dart';
 import '../../../repositories/talhoes/talhao_safra_repository.dart';
+import '../experimentos/experimentos_lista_screen.dart';
+import '../navigation/plot_navigation_screen.dart';
 
 // Novos serviços para talhões
 import '../../../services/talhao_duplication_service.dart';
@@ -131,6 +142,13 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
   MapController? _mapController;
   double _drawnArea = 0.0;
   dynamic _selectedTalhao;
+  
+  // Timer para atualização em tempo real das coordenadas
+  Timer? _gpsUpdateTimer;
+  
+  // Pontos de coleta de chuva
+  List<RainStationModel> _rainStations = [];
+  final RainStationRepository _rainStationRepository = RainStationRepository();
 
   @override
   void initState() {
@@ -160,6 +178,9 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
       // Carregar apenas culturas básicas
       await _carregarCulturasBasicas();
       
+      // Carregar estações de chuva
+      await _carregarEstacoesChuva();
+      
       print('✅ Dados básicos carregados');
     } catch (e) {
       print('❌ Erro ao carregar dados básicos: $e');
@@ -186,6 +207,24 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
     } catch (e) {
       setState(() => _isLoadingCulturas = false);
       print('❌ Erro ao carregar culturas básicas: $e');
+    }
+  }
+  
+  /// Carrega estações de coleta de chuva
+  Future<void> _carregarEstacoesChuva() async {
+    try {
+      print('🌧️ Carregando estações de chuva...');
+      _rainStations = await _rainStationRepository.getActiveRainStations();
+      
+      // Se não houver estações, criar pontos padrão
+      if (_rainStations.isEmpty) {
+        await _rainStationRepository.createDefaultRainStations();
+        _rainStations = await _rainStationRepository.getActiveRainStations();
+      }
+      
+      print('✅ ${_rainStations.length} estações de chuva carregadas');
+    } catch (e) {
+      print('❌ Erro ao carregar estações de chuva: $e');
     }
   }
   
@@ -382,6 +421,7 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
     _locationService.removeListener(_onLocationUpdate);
     _locationService.dispose();
     advancedGpsService.dispose();
+    _stopGpsRealTimeUpdate();
     
     // Descarta os controladores de texto
     _nomeController?.dispose();
@@ -454,6 +494,133 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
     }
   }
 
+  /// Inicia atualização em tempo real das coordenadas GPS
+  void _startGpsRealTimeUpdate() {
+    _gpsUpdateTimer?.cancel();
+    _gpsUpdateTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (mounted) {
+        _updateGpsCoordinates();
+      }
+    });
+  }
+  
+  /// Para a atualização em tempo real das coordenadas GPS
+  void _stopGpsRealTimeUpdate() {
+    _gpsUpdateTimer?.cancel();
+    _gpsUpdateTimer = null;
+  }
+  
+  /// Abre tela de registro de chuva
+  void _openRainRegistration(RainStationModel station) {
+    try {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => RainRegistrationScreen(
+            stationId: station.id,
+            stationName: station.name,
+            position: LatLng(
+              station.latitude,
+              station.longitude,
+            ),
+          ),
+        ),
+      );
+    } catch (e) {
+      print('❌ Erro ao abrir tela de registro de chuva: $e');
+    }
+  }
+  
+  /// Abre tela de histórico de chuva
+  void _openRainHistory(RainStationModel station) {
+    try {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => RainHistoryScreen(
+            stationId: station.id,
+            stationName: station.name,
+          ),
+        ),
+      );
+    } catch (e) {
+      print('❌ Erro ao abrir tela de histórico de chuva: $e');
+    }
+  }
+  
+  /// Mostra popup da estação de chuva
+  void _showRainStationPopup(RainStationModel station) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: RainStationPopup(
+          stationName: station.name,
+          lastRainfall: null, // Será carregado do repositório de dados
+          lastUpdate: station.updatedAt,
+          onRegisterRain: () {
+            Navigator.of(context).pop();
+            _openRainRegistration(station);
+          },
+          onViewHistory: () {
+            Navigator.of(context).pop();
+            _openRainHistory(station);
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Abre tela de gerenciamento de pontos de chuva
+  void _openRainStationManagement() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const RainStationManagementScreen(),
+      ),
+    ).then((_) {
+      // Recarregar pontos de chuva quando retornar da tela de gerenciamento
+      _carregarEstacoesChuva();
+    });
+  }
+
+  /// Atualiza as coordenadas GPS em tempo real
+  Future<void> _updateGpsCoordinates() async {
+    try {
+      if (!mounted) return;
+      
+      // Verificar permissões
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return;
+        }
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        return;
+      }
+      
+      // Verificar se o GPS está ativo
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return;
+      }
+      
+      // Obter localização atual
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+        timeLimit: const Duration(seconds: 3),
+      );
+      
+      if (mounted) {
+        setState(() {
+          _userLocation = LatLng(position.latitude, position.longitude);
+        });
+      }
+    } catch (e) {
+      // Erro silencioso para não interromper a interface
+      print('Erro ao atualizar coordenadas GPS: $e');
+    }
+  }
+
   /// Inicializa o GPS de forma forçada para sempre obter localização real
   Future<void> _inicializarGPSForcado() async {
     try {
@@ -509,6 +676,9 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
           }
         } else {
         }
+        
+        // Iniciar atualização em tempo real das coordenadas
+        _startGpsRealTimeUpdate();
         
         // Mostrar mensagem de sucesso
         talhaoNotificationService.showSuccessMessage('📍 Mapa centralizado na sua localização real');
@@ -2081,10 +2251,10 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
         context: context,
         talhao: talhaoModel,
         culturas: culturas,
-        onSaved: (updatedTalhao) {
+        onSaved: (updatedTalhao) async {
           print('✅ Talhão salvo: ${updatedTalhao.name}');
-          // Atualizar talhão na lista
-          _atualizarTalhaoNaLista(updatedTalhao);
+          // Atualizar talhão na lista e persistir no banco
+          await _atualizarTalhaoNaLista(updatedTalhao);
           _mostrarSucesso('Talhão "${updatedTalhao.name}" atualizado com sucesso!');
         },
         onDeleted: (deletedTalhao) {
@@ -2276,16 +2446,35 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // Segunda linha - Fechar
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.grey[200],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  // Segunda linha - Navegação e Fechar
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _navigateToPlot(talhao);
+                          },
+                          icon: const Icon(Icons.navigation, size: 18),
+                          label: const Text('Navegar'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.grey[200],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                       ),
                       child: const Text(
                         'Fechar',
@@ -2324,11 +2513,9 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
 
       final result = await Navigator.of(context).push<bool>(
         MaterialPageRoute(
-          builder: (context) => GerenciarSubareasScreen(
+          builder: (context) => ExperimentosListaScreen(
             talhaoId: talhao.id,
             talhaoNome: talhao.name,
-            talhaoPontos: pontos,
-            talhaoAreaHa: talhao.area,
           ),
         ),
       );
@@ -2351,6 +2538,73 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
         ),
       );
     }
+  }
+
+  /// Navega para a tela de navegação GPS até o talhão
+  void _navigateToPlot(TalhaoModel talhao) async {
+    try {
+      // Calcular centro do talhão
+      final pontos = talhao.pontos?.isNotEmpty == true 
+          ? talhao.pontos! 
+          : talhao.poligonos?.isNotEmpty == true 
+              ? talhao.poligonos!.first.pontos 
+              : <LatLng>[];
+      
+      if (pontos.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Talhão sem polígonos válidos para navegação'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Calcular centro do polígono
+      final centro = _calculatePolygonCenter(pontos);
+      
+      // Obter cor da cultura
+      final cultura = _culturas.firstWhere(
+        (c) => c.id == talhao.culturaId,
+        orElse: () => _culturas.first,
+      );
+
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => PlotNavigationScreen(
+            plotCenter: centro,
+            plotName: talhao.name,
+            plotColor: cultura.color,
+          ),
+        ),
+      );
+    } catch (e) {
+      print('❌ Erro ao iniciar navegação: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao iniciar navegação: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Calcula o centro de um polígono
+  LatLng _calculatePolygonCenter(List<LatLng> pontos) {
+    if (pontos.isEmpty) return const LatLng(0, 0);
+    
+    double latSum = 0;
+    double lngSum = 0;
+    
+    for (final ponto in pontos) {
+      latSum += ponto.latitude;
+      lngSum += ponto.longitude;
+    }
+    
+    return LatLng(
+      latSum / pontos.length,
+      lngSum / pontos.length,
+    );
   }
 
   /// Constrói métrica elegante para o card
@@ -2404,9 +2658,9 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
         talhao: talhao,
         culturas: _culturas,
         safras: ['2024/2025', '2023/2024', '2022/2023'],
-        onSave: (updatedTalhao) {
+        onSave: (updatedTalhao) async {
           Navigator.pop(context); // Fechar card
-          _atualizarTalhaoNaLista(updatedTalhao);
+          await _atualizarTalhaoNaLista(updatedTalhao);
           _mostrarSucesso('Talhão "${updatedTalhao.name}" atualizado com sucesso!');
         },
         onDelete: (deletedTalhao) {
@@ -2419,24 +2673,59 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
     );
   }
 
-  /// Atualiza talhão na lista local
-  void _atualizarTalhaoNaLista(TalhaoModel updatedTalhao) {
-    print('🔄 Atualizando talhão na lista: ${updatedTalhao.name}');
+  /// Atualiza talhão na lista local e persiste no banco de dados
+  Future<void> _atualizarTalhaoNaLista(TalhaoModel updatedTalhao) async {
+    print('🔄 Atualizando talhão na lista e banco: ${updatedTalhao.name}');
     
-    setState(() {
-      // Atualizar na lista de talhões se existir
-      final index = _talhoes.indexWhere((t) => t.id == updatedTalhao.id);
-      if (index >= 0) {
-        _talhoes[index] = updatedTalhao;
-        print('✅ Talhão atualizado na lista');
-      } else {
-        print('⚠️ Talhão não encontrado na lista, adicionando');
-        _talhoes.add(updatedTalhao);
+    try {
+      // CORREÇÃO: Primeiro persistir no banco de dados
+      print('💾 Persistindo alterações no banco de dados...');
+      
+      // Converter TalhaoModel para TalhaoSafraModel se necessário
+      final talhaoSafra = _converterParaTalhaoSafraModel(updatedTalhao);
+      
+      // Usar o repository para atualizar no banco
+      final talhaoProvider = Provider.of<TalhaoProvider>(context, listen: false);
+      final sucesso = await talhaoProvider.atualizarTalhao(talhaoSafra);
+      
+      if (!sucesso) {
+        throw Exception('Falha ao atualizar talhão no banco de dados');
       }
-    });
-    
-    // Recarregar dados se necessário
-    _carregarTalhoes();
+      
+      print('✅ Talhão persistido no banco com sucesso');
+      
+      // Depois atualizar na lista em memória
+      setState(() {
+        // Atualizar na lista de talhões se existir
+        final index = _talhoes.indexWhere((t) => t.id == updatedTalhao.id);
+        if (index >= 0) {
+          _talhoes[index] = updatedTalhao;
+          print('✅ Talhão atualizado na lista');
+        } else {
+          print('⚠️ Talhão não encontrado na lista, adicionando');
+          _talhoes.add(updatedTalhao);
+        }
+      });
+      
+      // Recarregar dados do banco para garantir sincronização
+      await _carregarTalhoes();
+      
+      print('✅ Atualização completa: banco + lista + recarregamento');
+      
+    } catch (e) {
+      print('❌ Erro ao atualizar talhão: $e');
+      _mostrarErro('Erro ao salvar alterações: $e');
+      
+      // Mesmo com erro, tentar atualizar a lista local
+      setState(() {
+        final index = _talhoes.indexWhere((t) => t.id == updatedTalhao.id);
+        if (index >= 0) {
+          _talhoes[index] = updatedTalhao;
+        } else {
+          _talhoes.add(updatedTalhao);
+        }
+      });
+    }
   }
 
   /// Carrega a lista de talhões
@@ -2525,8 +2814,9 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
       print('✅ Talhão removido da lista');
     });
     
-    // Recarregar dados se necessário
-    _carregarTalhoes();
+    // CORREÇÃO: Não recarregar dados após remoção para evitar que o talhão volte
+    // O talhão já foi removido do banco de dados pelo provider
+    print('✅ Talhão removido permanentemente - não recarregando dados');
   }
 
   /// Mostra mensagem de sucesso
@@ -2618,8 +2908,8 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
               _talhoes.removeWhere((t) => t.id == talhao.id);
             });
             
-            // CORREÇÃO AGRESSIVA: Removido recarregamento que causa loops
-            // await _carregarTalhoesExistentes();
+            // CORREÇÃO: Não recarregar dados após remoção para evitar que o talhão volte
+            print('✅ Talhão removido permanentemente - não recarregando dados');
           } else {
             print('❌ Erro ao remover talhão: ${talhaoProvider.errorMessage}');
             talhaoNotificationService.showErrorMessage('❌ Erro ao remover talhão: ${talhaoProvider.errorMessage}');
@@ -3185,6 +3475,16 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
         print('✅ Talhão integrado com sucesso');
         talhaoNotificationService.showSuccessMessage('✅ Talhão criado e salvo no mapa!');
         
+        // Notificar o dashboard para recarregar as culturas
+        try {
+          print('🔄 Notificando dashboard para recarregar culturas...');
+          final culturaProvider = Provider.of<CulturaProvider>(context, listen: false);
+          await culturaProvider.forceReloadCultures();
+          print('✅ Culturas recarregadas no dashboard');
+        } catch (e) {
+          print('⚠️ Erro ao recarregar culturas: $e');
+        }
+        
         // Verificar se o widget ainda está montado antes de fazer mudanças de estado
         if (mounted) {
           // Recarregar talhões para atualizar o mapa
@@ -3451,7 +3751,7 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
                             ),
                           ),
                           DropdownButtonFormField<CulturaModel>(
-                            value: selectedCultura,
+                            value: _getValidCulturaValue(selectedCultura),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -4699,6 +4999,33 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
                   )).toList(),
                 ),
               
+              // Marcadores de estações de chuva
+              if (_rainStations.isNotEmpty)
+                MarkerLayer(
+                  markers: _rainStations.map((station) {
+                    return Marker(
+                      point: LatLng(
+                        station.latitude,
+                        station.longitude,
+                      ),
+                      width: 40,
+                      height: 40,
+                      child: RainCollectionMarker(
+                        position: LatLng(
+                          station.latitude,
+                          station.longitude,
+                        ),
+                        rainStationId: station.id,
+                        stationName: station.name,
+                        lastRainfall: null, // Será carregado do repositório de dados
+                        lastUpdate: station.updatedAt,
+                        isActive: station.isActive,
+                        onTap: () => _showRainStationPopup(station),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              
               // Localização do usuário
               if (_userLocation != null)
                 MarkerLayer(
@@ -4792,6 +5119,66 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 8),
+                
+                // Legenda discreta com coordenadas GPS em tempo real
+                if (_userLocation != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.green, width: 1),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'GPS',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Lat: ${_userLocation!.latitude.toStringAsFixed(6)}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                          ),
+                        ),
+                        Text(
+                          'Lng: ${_userLocation!.longitude.toStringAsFixed(6)}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                
+                const SizedBox(height: 8),
+                
+                // Legenda pequena com precisão do GPS
+                if (_advancedGpsAccuracy > 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'Precisão: ${_advancedGpsAccuracy.toStringAsFixed(1)}m',
+                      style: TextStyle(
+                        color: Colors.yellow,
+                        fontSize: 8,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                
                 const SizedBox(height: 8),
                 // Botão de centralizar GPS
                 FloatingActionButton(
@@ -4897,7 +5284,6 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
               child: RealtimeMetricsCard(
                 areaHa: _controller.currentArea,
                 perimeterM: _controller.currentPerimeter,
-                speedKmh: _controller.currentSpeed,
                 elapsedTime: _controller.elapsedTime,
                 gpsAccuracy: _controller.gpsAccuracy,
                 isGpsMode: _controller.isAdvancedGpsTracking,
@@ -5001,6 +5387,15 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
                   backgroundColor: Colors.orange,
                   child: const Icon(Icons.file_upload, color: Colors.white),
                   tooltip: 'Exportar',
+                ),
+                const SizedBox(height: 12),
+                FloatingActionButton(
+                  heroTag: 'rain_stations',
+                  mini: true,
+                  onPressed: _openRainStationManagement,
+                  backgroundColor: Colors.blue,
+                  child: const Icon(Icons.water_drop, color: Colors.white),
+                  tooltip: 'Gerenciar Pontos de Chuva',
                 ),
                 // Botão para mostrar controles quando escondidos
                 if (!_controller.showActionButtons && (_isDrawing || _isAdvancedGpsTracking || _currentPoints.length >= 3))
@@ -5679,4 +6074,100 @@ class _NovoTalhaoScreenState extends State<NovoTalhaoScreen> {
   double get _currentArea => _controller.currentArea;
   double get _currentPerimeter => _controller.currentPerimeter;
   double get _currentDistance => _controller.currentDistance;
+  
+  /// Valida se a cultura selecionada existe na lista de culturas disponíveis
+  CulturaModel? _getValidCulturaValue(CulturaModel? selectedCultura) {
+    if (selectedCultura == null) return null;
+    
+    // Verificar se a cultura existe na lista atual
+    final culturaExists = _culturas.any((c) => c.id == selectedCultura.id);
+    
+    if (culturaExists) {
+      return selectedCultura;
+    } else {
+      print('⚠️ Cultura selecionada não encontrada na lista: ${selectedCultura.name} (ID: ${selectedCultura.id})');
+      print('🔄 Tentando encontrar cultura por nome...');
+      
+      // Tentar encontrar por nome
+      final culturaPorNome = _culturas.where((c) => c.name.toLowerCase() == selectedCultura.name.toLowerCase()).firstOrNull;
+      
+      if (culturaPorNome != null) {
+        print('✅ Cultura encontrada por nome: ${culturaPorNome.name}');
+        return culturaPorNome;
+      } else {
+        print('⚠️ Cultura não encontrada, usando primeira disponível');
+        return _culturas.isNotEmpty ? _culturas.first : null;
+      }
+    }
+  }
+  
+  /// Converte TalhaoModel para TalhaoSafraModel para persistência
+  TalhaoSafraModel _converterParaTalhaoSafraModel(TalhaoModel talhaoModel) {
+    print('🔄 Convertendo TalhaoModel para TalhaoSafraModel: ${talhaoModel.name}');
+    
+    // Converter polígonos
+    final poligonos = talhaoModel.poligonos.map((p) => PoligonoModel(
+      id: p.id,
+      talhaoId: p.talhaoId,
+      pontos: p.pontos,
+    )).toList();
+    
+    // Converter safras se existirem
+    final safras = talhaoModel.safras?.map((s) {
+      if (s is SafraTalhaoModel) {
+        return s;
+      } else {
+        // Converter para SafraTalhaoModel se necessário
+        return SafraTalhaoModel(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          talhaoId: talhaoModel.id,
+          safraId: talhaoModel.safraId ?? '2024/2025',
+          culturaId: talhaoModel.culturaId ?? '',
+          culturaNome: talhaoModel.cultura ?? 'Cultura não definida',
+          culturaCor: Colors.grey,
+          area: talhaoModel.area,
+          dataCadastro: DateTime.now(),
+          dataAtualizacao: DateTime.now(),
+          ativo: true,
+          sincronizado: false,
+        );
+      }
+    }).toList() ?? [];
+    
+    // Se não tem safras, criar uma padrão
+    if (safras.isEmpty) {
+      safras.add(SafraTalhaoModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        talhaoId: talhaoModel.id,
+        safraId: talhaoModel.safraId ?? '2024/2025',
+        culturaId: talhaoModel.culturaId ?? '',
+        culturaNome: talhaoModel.cultura ?? 'Cultura não definida',
+        culturaCor: Colors.grey,
+        area: talhaoModel.area,
+        dataCadastro: DateTime.now(),
+        dataAtualizacao: DateTime.now(),
+        ativo: true,
+        sincronizado: false,
+      ));
+    }
+    
+    final talhaoSafra = TalhaoSafraModel(
+      id: talhaoModel.id,
+      name: talhaoModel.name,
+      idFazenda: talhaoModel.fazendaId ?? '',
+      poligonos: poligonos,
+      safras: safras,
+      dataCriacao: talhaoModel.dataCriacao ?? DateTime.now(),
+      dataAtualizacao: DateTime.now(),
+      area: talhaoModel.area,
+      sincronizado: false,
+    );
+    
+    print('✅ Conversão concluída: ${talhaoSafra.name}');
+    print('  - Polígonos: ${talhaoSafra.poligonos.length}');
+    print('  - Safras: ${talhaoSafra.safras.length}');
+    print('  - Área: ${talhaoSafra.area} ha');
+    
+    return talhaoSafra;
+  }
 }

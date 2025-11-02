@@ -1,0 +1,118 @@
+{
+  "version": "2.0",
+  "last_updated": "2025-10-17",
+  "culture": "arroz",
+  "culture_id": "custom_arroz",
+  "scientific_name": "Oryza sativa",
+  "common_name": "Arroz",
+  
+  "phenological_stages": {
+    "vegetative": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9"],
+    "reproductive": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9"],
+    "critical_stages": ["R2", "R3", "R4"]
+  },
+  
+  "susceptibility_curve": {
+    "V3": { "damage_potential": 70, "recovery_capacity": 40 },
+    "V7": { "damage_potential": 50, "recovery_capacity": 60 },
+    "R2": { "damage_potential": 85, "recovery_capacity": 20 },
+    "R4": { "damage_potential": 95, "recovery_capacity": 10 },
+    "R9": { "damage_potential": 20, "recovery_capacity": 0 }
+  },
+  
+  "organisms": {
+    "pests": [
+      {
+        "id": "arroz_bicheira",
+        "name": "Bicheira-da-raiz",
+        "scientific_name": "Oryzophagus oryzae",
+        "unit": "adultos/planta",
+        "monitoring_method": "Inspeção visual",
+        
+        "phenological_thresholds": {
+          "V1-V4": {
+            "low": 2,
+            "medium": 5,
+            "high": 10,
+            "critical": 15,
+            "damage_potential": 85,
+            "damage_type": "Dano em raízes - tombamento",
+            "economic_loss": "20-40%",
+            "action_window_hours": 48
+          },
+          "V5-V9": {
+            "low": 3,
+            "medium": 8,
+            "high": 15,
+            "critical": 25,
+            "damage_potential": 60,
+            "damage_type": "Dano foliar - recuperação possível",
+            "economic_loss": "10-20%"
+          }
+        }
+      },
+      {
+        "id": "arroz_percevejo",
+        "name": "Percevejo-do-grão",
+        "scientific_name": "Oebalus poecilus",
+        "unit": "adultos/panícula",
+        "monitoring_method": "Inspeção de panículas",
+        
+        "phenological_thresholds": {
+          "R2-R4": {
+            "low": 1,
+            "medium": 2,
+            "high": 4,
+            "critical": 6,
+            "damage_potential": 90,
+            "damage_type": "Sugamento de grãos - chochamento e gessamento",
+            "economic_loss": "30-60%",
+            "action_window_hours": 24
+          },
+          "R5-R7": {
+            "low": 2,
+            "medium": 4,
+            "high": 6,
+            "critical": 10,
+            "damage_potential": 70,
+            "damage_type": "Redução de qualidade - grãos gessados",
+            "economic_loss": "15-30%"
+          }
+        }
+      }
+    ],
+    "diseases": [
+      {
+        "id": "arroz_brusone",
+        "name": "Brusone",
+        "pathogen": "Pyricularia oryzae",
+        "monitoring": "% área foliar/panícula com lesões",
+        
+        "critical_stages": ["V8", "R2", "R3"],
+        
+        "thresholds": {
+          "V5-V9": {
+            "low": 3,
+            "medium": 10,
+            "high": 20,
+            "critical": 30,
+            "damage_potential": 80,
+            "damage_type": "Brusone foliar",
+            "economic_loss": "20-40%"
+          },
+          "R2-R4": {
+            "low": 2,
+            "medium": 5,
+            "high": 10,
+            "critical": 15,
+            "damage_potential": 95,
+            "damage_type": "Brusone de panícula - perda severa",
+            "economic_loss": "40-80%",
+            "action_window_hours": 24
+          }
+        }
+      }
+    ]
+  }
+}
+

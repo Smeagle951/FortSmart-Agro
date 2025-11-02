@@ -1,0 +1,18 @@
+// Este arquivo contém correções para plugins com problemas de namespace
+// Ele será aplicado automaticamente durante o processo de build
+
+// Força o namespace para o plugin mapbox_gl
+def applyMapboxNamespaceFix() {
+    def mapboxProject = rootProject.findProject(":mapbox_gl")
+    if (mapboxProject != null) {
+        mapboxProject.android.namespace = "com.mapbox.mapboxgl"
+        println "✅ Namespace aplicado ao plugin mapbox_gl: com.mapbox.mapboxgl"
+    } else {
+        println "⚠️ Projeto mapbox_gl não encontrado"
+    }
+}
+
+// Aplicar as correções após a avaliação do projeto
+gradle.projectsEvaluated {
+    applyMapboxNamespaceFix()
+}

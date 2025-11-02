@@ -1,0 +1,254 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Organismo Agronômico FortSmart IA v3.0",
+  "description": "Schema validável para dados inteligentes de organismos agrícolas",
+  "type": "object",
+  "required": [
+    "id",
+    "nome",
+    "nome_cientifico",
+    "categoria",
+    "culturas_afetadas"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]+_[a-z_]+$",
+      "description": "ID único no formato cultura_organismo"
+    },
+    "nome": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Nome comum do organismo"
+    },
+    "nome_cientifico": {
+      "type": "string",
+      "description": "Nome científico (binomial)"
+    },
+    "categoria": {
+      "type": "string",
+      "enum": ["Praga", "Doença", "Planta Daninha"],
+      "description": "Categoria do organismo"
+    },
+    "culturas_afetadas": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "description": "Lista de culturas afetadas"
+    },
+    "versao": {
+      "type": "string",
+      "pattern": "^3\\.0$",
+      "description": "Versão do schema (deve ser 3.0)"
+    },
+    "data_criacao": {
+      "type": "string",
+      "format": "date",
+      "description": "Data de criação do registro"
+    },
+    "data_atualizacao": {
+      "type": "string",
+      "format": "date",
+      "description": "Data da última atualização"
+    },
+    "caracteristicas_visuais": {
+      "type": "object",
+      "description": "Características visuais para IA de imagem",
+      "properties": {
+        "cores_predominantes": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Cores predominantes do organismo"
+        },
+        "padroes": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Padrões visuais característicos"
+        },
+        "tamanho_medio_mm": {
+          "type": "object",
+          "properties": {
+            "larva": {"type": "number"},
+            "adulto": {"type": "number"}
+          }
+        },
+        "formato_corpo": {"type": "string"},
+        "textura": {"type": "string"},
+        "marcadores_visualizacao": {
+          "type": "object",
+          "description": "Marcadores para diferentes fases"
+        }
+      }
+    },
+    "condicoes_climaticas": {
+      "type": "object",
+      "description": "Condições climáticas para alertas automáticos",
+      "properties": {
+        "temperatura_min": {"type": "number"},
+        "temperatura_max": {"type": "number"},
+        "umidade_min": {"type": "number"},
+        "umidade_max": {"type": "number"},
+        "previsao_risco": {
+          "type": "object",
+          "properties": {
+            "alta_probabilidade": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "ciclo_vida": {
+      "type": "object",
+      "description": "Ciclo de vida para modelagem fenológica",
+      "properties": {
+        "ovos_dias": {"type": "number"},
+        "larva_dias": {"type": "number"},
+        "pupa_dias": {"type": "number"},
+        "adulto_dias": {"type": "number"},
+        "geracoes_por_ano": {"type": "number"},
+        "diapausa": {"type": "boolean"},
+        "duracao_total_dias": {"type": "number"}
+      }
+    },
+    "rotacao_resistencia": {
+      "type": "object",
+      "description": "Informações sobre resistência e rotação",
+      "properties": {
+        "grupos_irac": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Grupos IRAC de resistência conhecidos"
+        },
+        "estrategias": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Estratégias de manejo anti-resistência"
+        },
+        "intervalo_minimo_dias": {"type": "number"}
+      }
+    },
+    "distribuicao_geografica": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Regiões geográficas de ocorrência"
+    },
+    "economia_agronomica": {
+      "type": "object",
+      "description": "Dados econômicos para recomendações",
+      "properties": {
+        "custo_nao_controle_por_ha": {"type": "number"},
+        "custo_controle_por_ha": {"type": "number"},
+        "roi_medio": {"type": "number"},
+        "momento_otimo_aplicacao": {"type": "string"}
+      }
+    },
+    "controle_biologico": {
+      "type": "object",
+      "description": "Informações detalhadas de controle biológico",
+      "properties": {
+        "predadores": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "parasitoides": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "entomopatogenos": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "doses_biocontrole": {
+          "type": "object"
+        }
+      }
+    },
+    "diagnostico_diferencial": {
+      "type": "object",
+      "description": "Informações para diagnóstico diferencial",
+      "properties": {
+        "confundidores": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Organismos com sintomas similares"
+        },
+        "sintomas_chave": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Sintomas característicos únicos"
+        }
+      }
+    },
+    "tendencias_sazonais": {
+      "type": "object",
+      "description": "Tendências sazonais e climáticas",
+      "properties": {
+        "pico_meses": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "correlacao_elnino": {"type": "string"},
+        "graus_dia_media": {"type": "number"},
+        "previsao_sazonal": {
+          "type": "object"
+        }
+      }
+    },
+    "features_ia": {
+      "type": "object",
+      "description": "Features específicas para IA local",
+      "properties": {
+        "keywords_comportamentais": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "marcadores_visuais": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "sintomas": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "dano_economico": {
+      "type": "string"
+    },
+    "partes_afetadas": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "fenologia": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "nivel_acao": {
+      "type": "string"
+    },
+    "manejo_quimico": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "manejo_biologico": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "manejo_cultural": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "observacoes": {
+      "type": "string"
+    },
+    "icone": {
+      "type": "string"
+    },
+    "ativo": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,682 @@
+{
+  "version": "3.0",
+  "last_updated": "2024-12-19",
+  "cultures": {
+    "soja": {
+      "id": "1",
+      "name": "Soja",
+      "organisms": {
+        "pests": [
+          {
+            "id": "soja_pest_001",
+            "name": "Percevejo-marrom",
+            "scientific_name": "Euschistus heros",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "unidades/ponto",
+            "low_limit": 1,
+            "medium_limit": 3,
+            "high_limit": 4,
+            "description": "Danos críticos em R5-R6; vetor de danos diretos em grãos",
+            "monitoring_method": "pano-de-batida 1m de linha ou 10 plantas"
+          },
+          {
+            "id": "soja_pest_002",
+            "name": "Percevejo-pequeno",
+            "scientific_name": "Piezodorus guildinii",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "unidades/ponto",
+            "low_limit": 1,
+            "medium_limit": 3,
+            "high_limit": 4,
+            "description": "Costuma ocorrer em períodos mais quentes; manejo regional recomendado",
+            "monitoring_method": "pano-de-batida"
+          },
+          {
+            "id": "soja_pest_003",
+            "name": "Percevejo-verde",
+            "scientific_name": "Nezara viridula",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "unidades/ponto",
+            "low_limit": 2,
+            "medium_limit": 4,
+            "high_limit": 5,
+            "description": "Suga nos grãos e causa manchas internas (bruising)",
+            "monitoring_method": "pano-de-batida"
+          },
+          {
+            "id": "soja_pest_004",
+            "name": "Lagarta-da-soja",
+            "scientific_name": "Chrysodeixis includens",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "lagartas/m",
+            "low_limit": 2,
+            "medium_limit": 5,
+            "high_limit": 6,
+            "description": "Desfolha significativa; controle precoce reduz necessidade de aplicações",
+            "monitoring_method": "contagem por metro de linha"
+          },
+          {
+            "id": "soja_pest_005",
+            "name": "Helicoverpa",
+            "scientific_name": "Helicoverpa armigera",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "lagartas/m",
+            "low_limit": 1,
+            "medium_limit": 3,
+            "high_limit": 4,
+            "description": "Praga interna; uso de feromônio para monitoramento recomendado",
+            "monitoring_method": "contagem por metro ou % vagens danificadas"
+          },
+          {
+            "id": "soja_pest_006",
+            "name": "Spodoptera",
+            "scientific_name": "Spodoptera frugiperda / S. cosmioides",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "lagartas/m",
+            "low_limit": 2,
+            "medium_limit": 4,
+            "high_limit": 5,
+            "description": "Pode exigir aplicações localizadas; resistência em áreas Bt",
+            "monitoring_method": "contagem por metro ou % desfolha"
+          },
+          {
+            "id": "soja_pest_007",
+            "name": "Mosca-branca",
+            "scientific_name": "Bemisia tabaci",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "adultos/folha",
+            "low_limit": 9,
+            "medium_limit": 19,
+            "high_limit": 20,
+            "description": "Vetor de vírus; armadilhas adesivas ajudam no monitoramento",
+            "monitoring_method": "contagem no terço médio da planta"
+          },
+          {
+            "id": "soja_pest_008",
+            "name": "Ácaro-rajado",
+            "scientific_name": "Tetranychus urticae",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "% folhas com colônias",
+            "low_limit": 9,
+            "medium_limit": 24,
+            "high_limit": 25,
+            "description": "Prolifera em clima seco; predadores são muito eficazes",
+            "monitoring_method": "visualização de colônias/teias"
+          },
+          {
+            "id": "soja_pest_009",
+            "name": "Trips",
+            "scientific_name": "Caliothrips phaseoli / Thrips spp.",
+            "type": "pest",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "indivíduos/flor",
+            "low_limit": 2,
+            "medium_limit": 5,
+            "high_limit": 6,
+            "description": "Dano em flores e ponteiros, vetor secundário de vírus",
+            "monitoring_method": "contagem por flor/broto"
+          }
+        ],
+        "diseases": [
+          {
+            "id": "soja_disease_001",
+            "name": "Ferrugem-asiática",
+            "scientific_name": "Phakopsora pachyrhizi",
+            "type": "disease",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "% folhas com pústulas",
+            "low_limit": 3,
+            "medium_limit": 10,
+            "high_limit": 10,
+            "description": "Controle por fungicidas sistêmicos e cultivares resistentes; alto potencial de perda",
+            "monitoring_method": "visualização de pústulas"
+          },
+          {
+            "id": "soja_disease_002",
+            "name": "Mancha-alvo",
+            "scientific_name": "Corynespora cassiicola",
+            "type": "disease",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "% folhas com lesões",
+            "low_limit": 2,
+            "medium_limit": 6,
+            "high_limit": 6,
+            "description": "Favorecida por umidade; manejo cultural e fungicidas quando necessário",
+            "monitoring_method": "visualização de lesões típicas (alvo)"
+          },
+          {
+            "id": "soja_disease_003",
+            "name": "Antracnose",
+            "scientific_name": "Colletotrichum truncatum",
+            "type": "disease",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "% vagens/hastes com lesão",
+            "low_limit": 2,
+            "medium_limit": 5,
+            "high_limit": 5,
+            "description": "Ataca vagens e caule; tratar sementes e rotacionar culturas",
+            "monitoring_method": "visualização de lesões"
+          },
+          {
+            "id": "soja_disease_004",
+            "name": "Mofo-branco",
+            "scientific_name": "Sclerotinia sclerotiorum",
+            "type": "disease",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "apotecios/ponto",
+            "low_limit": 1,
+            "medium_limit": 3,
+            "high_limit": 4,
+            "description": "Associado a alta umidade; controle integrado",
+            "monitoring_method": "contagem por ponto (10m)"
+          },
+          {
+            "id": "soja_disease_005",
+            "name": "Oídio",
+            "scientific_name": "Erysiphe diffusa / Microsphaera diffusa",
+            "type": "disease",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "% folha coberta por micélio",
+            "low_limit": 3,
+            "medium_limit": 10,
+            "high_limit": 10,
+            "description": "Visual em clima seco e noites frias; tratar com triazóis se necessário",
+            "monitoring_method": "visualização de micélio pulverulento"
+          },
+          {
+            "id": "soja_disease_006",
+            "name": "Septoriose",
+            "scientific_name": "Septoria glycines",
+            "type": "disease",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "% folhas com manchas",
+            "low_limit": 4,
+            "medium_limit": 9,
+            "high_limit": 10,
+            "description": "Manejo por fungicidas e retirada de restos culturais",
+            "monitoring_method": "visualização de manchas coalescentes"
+          },
+          {
+            "id": "soja_disease_007",
+            "name": "Podridão radicular por Phytophthora",
+            "scientific_name": "Phytophthora sojae",
+            "type": "disease",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "% plantas com sintoma",
+            "low_limit": 2,
+            "medium_limit": 5,
+            "high_limit": 5,
+            "description": "Solo encharcado favorece; use sementes com resistência quando possível",
+            "monitoring_method": "visualização de podridão/colapso"
+          },
+          {
+            "id": "soja_disease_008",
+            "name": "Podridão por Rhizoctonia",
+            "scientific_name": "Rhizoctonia solani",
+            "type": "disease",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "% falhas de estande",
+            "low_limit": 4,
+            "medium_limit": 9,
+            "high_limit": 10,
+            "description": "Evitar plantio em solos mal drenados",
+            "monitoring_method": "contagem de falhas e lesões no colo"
+          },
+          {
+            "id": "soja_disease_009",
+            "name": "Míldio",
+            "scientific_name": "Peronospora manshurica",
+            "type": "disease",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "% folhas com esporulação",
+            "low_limit": 2,
+            "medium_limit": 5,
+            "high_limit": 5,
+            "description": "Mais comum em clima ameno e úmido",
+            "monitoring_method": "visualização de esporulação"
+          }
+        ],
+        "weeds": [
+          {
+            "id": "soja_weed_001",
+            "name": "Buva",
+            "scientific_name": "Conyza spp.",
+            "type": "weed",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "plantas/m²",
+            "low_limit": 1,
+            "medium_limit": 4,
+            "high_limit": 5,
+            "description": "Resistência a glifosato comum; manejo mecânico e químico combinado",
+            "monitoring_method": "contagem por ponto (1m²)"
+          },
+          {
+            "id": "soja_weed_002",
+            "name": "Capim-amargoso",
+            "scientific_name": "Digitaria insularis",
+            "type": "weed",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "touceiras/m²",
+            "low_limit": 1,
+            "medium_limit": 2,
+            "high_limit": 3,
+            "description": "Controle difícil em estágios avançados; rotação e herbicidas residuais",
+            "monitoring_method": "contagem de touceiras"
+          },
+          {
+            "id": "soja_weed_003",
+            "name": "Caruru",
+            "scientific_name": "Amaranthus spp.",
+            "type": "weed",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "plantas/m²",
+            "low_limit": 2,
+            "medium_limit": 5,
+            "high_limit": 6,
+            "description": "Espécies com resistência a vários herbicidas; manejo integrado",
+            "monitoring_method": "contagem de plântulas/plantas"
+          },
+          {
+            "id": "soja_weed_004",
+            "name": "Tiririca",
+            "scientific_name": "Cyperus rotundus",
+            "type": "weed",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "tufos/m²",
+            "low_limit": 1,
+            "medium_limit": 2,
+            "high_limit": 3,
+            "description": "Controle cultural e concorrência por redes de raízes",
+            "monitoring_method": "contagem de tufos"
+          },
+          {
+            "id": "soja_weed_005",
+            "name": "Picão-preto",
+            "scientific_name": "Bidens pilosa",
+            "type": "weed",
+            "crop_id": "1",
+            "crop_name": "Soja",
+            "unit": "plantas/m²",
+            "low_limit": 2,
+            "medium_limit": 4,
+            "high_limit": 5,
+            "description": "Comum em linhas de cultivo; emergir cedo reduz competição",
+            "monitoring_method": "contagem de plantas"
+          }
+        ]
+      }
+    },
+    "tomate": {
+      "id": "9",
+      "name": "Tomate",
+      "organisms": {
+        "pests": [
+          {
+            "id": "tomate_pest_001",
+            "name": "Traça-do-tomate",
+            "scientific_name": "Tuta absoluta",
+            "type": "pest",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "unit": "lagartas/planta",
+            "low_limit": 1,
+            "medium_limit": 3,
+            "high_limit": 5,
+            "description": "Praga-chave do tomate, com alta capacidade de reprodução e resistência a inseticidas",
+            "monitoring_method": "inspeção visual das folhas e frutos"
+          },
+          {
+            "id": "tomate_pest_002",
+            "name": "Mosca-branca",
+            "scientific_name": "Bemisia tabaci",
+            "type": "pest",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "unit": "adultos/folha",
+            "low_limit": 1,
+            "medium_limit": 5,
+            "high_limit": 10,
+            "description": "Vetor importante de vírus como o mosaico dourado",
+            "monitoring_method": "inspeção visual da face inferior das folhas"
+          },
+          {
+            "id": "tomate_pest_003",
+            "name": "Pulgão",
+            "scientific_name": "Aphis gossypii",
+            "type": "pest",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "unit": "pulgões/folha",
+            "low_limit": 1,
+            "medium_limit": 5,
+            "high_limit": 10,
+            "description": "Vetor importante de vírus. Controle preventivo é essencial",
+            "monitoring_method": "inspeção visual das folhas"
+          },
+          {
+            "id": "tomate_pest_004",
+            "name": "Trips",
+            "scientific_name": "Thrips tabaci",
+            "type": "pest",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "unit": "trips/folha",
+            "low_limit": 1,
+            "medium_limit": 3,
+            "high_limit": 5,
+            "description": "Praga-chave do tomate, com alta capacidade de transmissão de vírus",
+            "monitoring_method": "inspeção visual das folhas e flores"
+          }
+        ],
+        "diseases": [
+          {
+            "id": "tomate_disease_001",
+            "name": "Requeima",
+            "scientific_name": "Phytophthora infestans",
+            "type": "disease",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "high",
+            "description": "Doença mais destrutiva do tomate, causando perdas de até 100%",
+            "monitoring_method": "inspeção visual das folhas e frutos"
+          },
+          {
+            "id": "tomate_disease_002",
+            "name": "Mosaico Dourado",
+            "scientific_name": "Begomovirus",
+            "type": "disease",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "high",
+            "description": "Vírus transmitido por mosca-branca, causa mosaico e deformação",
+            "monitoring_method": "inspeção visual das folhas"
+          },
+          {
+            "id": "tomate_disease_003",
+            "name": "Pinta-preta",
+            "scientific_name": "Alternaria solani",
+            "type": "disease",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "medium",
+            "description": "Doença importante em regiões tropicais e subtropicais",
+            "monitoring_method": "inspeção visual das folhas"
+          },
+          {
+            "id": "tomate_disease_004",
+            "name": "Mosaico Comum",
+            "scientific_name": "Tomato mosaic virus",
+            "type": "disease",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "medium",
+            "description": "Vírus transmitido por contato e vetores. Controle preventivo é fundamental",
+            "monitoring_method": "inspeção visual das folhas"
+          }
+        ],
+        "weeds": [
+          {
+            "id": "tomate_weed_001",
+            "name": "Capim-amargoso",
+            "scientific_name": "Digitaria insularis",
+            "type": "weed",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "high",
+            "description": "Planta daninha de difícil controle, resistente a herbicidas",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "tomate_weed_002",
+            "name": "Capim-branco",
+            "scientific_name": "Chloris polydactyla",
+            "type": "weed",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "medium",
+            "description": "Competição por água e nutrientes",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "tomate_weed_003",
+            "name": "Caruru",
+            "scientific_name": "Amaranthus spp.",
+            "type": "weed",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "medium",
+            "description": "Alta capacidade de produção de sementes",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "tomate_weed_004",
+            "name": "Picão-preto",
+            "scientific_name": "Bidens pilosa",
+            "type": "weed",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "medium",
+            "description": "Planta daninha comum em cultivos",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "tomate_weed_005",
+            "name": "Trapoeraba",
+            "scientific_name": "Commelina benghalensis",
+            "type": "weed",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "medium",
+            "description": "Planta daninha de crescimento rápido",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "tomate_weed_006",
+            "name": "Nabiça",
+            "scientific_name": "Raphanus raphanistrum",
+            "type": "weed",
+            "crop_id": "9",
+            "crop_name": "Tomate",
+            "severity": "low",
+            "description": "Planta daninha de inverno",
+            "monitoring_method": "inspeção visual do solo"
+          }
+        ]
+      }
+    },
+    "cana_acucar": {
+      "id": "10",
+      "name": "Cana-de-açúcar",
+      "organisms": {
+        "pests": [
+          {
+            "id": "cana_pest_001",
+            "name": "Broca-da-cana",
+            "scientific_name": "Diatraea saccharalis",
+            "type": "pest",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "unit": "brocas/colmo",
+            "low_limit": 1,
+            "medium_limit": 3,
+            "high_limit": 5,
+            "description": "Praga mais importante da cana-de-açúcar no Brasil",
+            "monitoring_method": "inspeção visual dos colmos"
+          },
+          {
+            "id": "cana_pest_002",
+            "name": "Cigarrinha-marrom",
+            "scientific_name": "Mahanarva fimbriolata",
+            "type": "pest",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "unit": "ninfas/folha",
+            "low_limit": 1,
+            "medium_limit": 3,
+            "high_limit": 5,
+            "description": "Praga importante em regiões tropicais e subtropicais",
+            "monitoring_method": "inspeção visual das folhas"
+          },
+          {
+            "id": "cana_pest_003",
+            "name": "Cigarrinha-verde",
+            "scientific_name": "Mahanarva posticata",
+            "type": "pest",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "unit": "ninfas/folha",
+            "low_limit": 1,
+            "medium_limit": 3,
+            "high_limit": 5,
+            "description": "Praga importante em regiões tropicais e subtropicais",
+            "monitoring_method": "inspeção visual das folhas"
+          }
+        ],
+        "diseases": [
+          {
+            "id": "cana_disease_001",
+            "name": "Ferrugem-alaranjada",
+            "scientific_name": "Puccinia kuehnii",
+            "type": "disease",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "high",
+            "description": "Doença importante em regiões tropicais e subtropicais",
+            "monitoring_method": "inspeção visual das folhas"
+          },
+          {
+            "id": "cana_disease_002",
+            "name": "Carvão",
+            "scientific_name": "Sporisorium scitamineum",
+            "type": "disease",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "high",
+            "description": "Doença importante em regiões tropicais e subtropicais",
+            "monitoring_method": "inspeção visual das folhas"
+          },
+          {
+            "id": "cana_disease_003",
+            "name": "Ferrugem-marrom",
+            "scientific_name": "Puccinia melanocephala",
+            "type": "disease",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "medium",
+            "description": "Doença importante em regiões tropicais e subtropicais",
+            "monitoring_method": "inspeção visual das folhas"
+          },
+          {
+            "id": "cana_disease_004",
+            "name": "Mosaico da cana",
+            "scientific_name": "Sugarcane mosaic virus",
+            "type": "disease",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "medium",
+            "description": "Vírus transmitido por afídeos. Controle preventivo é fundamental",
+            "monitoring_method": "inspeção visual das folhas"
+          }
+        ],
+        "weeds": [
+          {
+            "id": "cana_weed_001",
+            "name": "Capim-amargoso",
+            "scientific_name": "Digitaria insularis",
+            "type": "weed",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "high",
+            "description": "Planta daninha de difícil controle, resistente a herbicidas",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "cana_weed_002",
+            "name": "Capim-branco",
+            "scientific_name": "Chloris polydactyla",
+            "type": "weed",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "medium",
+            "description": "Competição por água e nutrientes",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "cana_weed_003",
+            "name": "Capim-colchão",
+            "scientific_name": "Digitaria horizontalis",
+            "type": "weed",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "medium",
+            "description": "Planta daninha comum em cultivos",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "cana_weed_004",
+            "name": "Caruru",
+            "scientific_name": "Amaranthus spp.",
+            "type": "weed",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "medium",
+            "description": "Alta capacidade de produção de sementes",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "cana_weed_005",
+            "name": "Picão-preto",
+            "scientific_name": "Bidens pilosa",
+            "type": "weed",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "medium",
+            "description": "Planta daninha comum em cultivos",
+            "monitoring_method": "inspeção visual do solo"
+          },
+          {
+            "id": "cana_weed_006",
+            "name": "Trapoeraba",
+            "scientific_name": "Commelina benghalensis",
+            "type": "weed",
+            "crop_id": "10",
+            "crop_name": "Cana-de-açúcar",
+            "severity": "medium",
+            "description": "Planta daninha de crescimento rápido",
+            "monitoring_method": "inspeção visual do solo"
+          }
+        ]
+      }
+    }
+  }
+}

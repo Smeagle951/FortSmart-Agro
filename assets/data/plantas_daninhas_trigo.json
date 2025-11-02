@@ -1,0 +1,248 @@
+{
+  "cultura": "Trigo",
+  "versao": "1.0",
+  "data_criacao": "2024-01-15",
+  "descricao": "Plantas daninhas comuns na cultura do trigo no Brasil",
+  "plantas_daninhas": [
+    {
+      "id": "weed_trigo_azevem_001",
+      "nome": "Azevém (Lolium multiflorum)",
+      "nome_cientifico": "Lolium multiflorum",
+      "familia": "Poaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌾",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 120,
+        "periodo_germinacao": "Outono-Inverno",
+        "resistencia_herbicidas": "Alta",
+        "competicao_nutrientes": "Muito Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-5 plantas/m²",
+        "medio": "5-15 plantas/m²",
+        "alto": "15-30 plantas/m²",
+        "critico": ">30 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Rotação com leguminosas",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "Iodosulfuron",
+          "Metsulfuron",
+          "Pyroxsulam",
+          "Mesosulfuron"
+        ],
+        "biologico": [
+          "Controle com fungos patogênicos"
+        ]
+      },
+      "observacoes": "Principal gramínea daninha no trigo. Resistente a vários herbicidas."
+    },
+    {
+      "id": "weed_trigo_buva_001",
+      "nome": "Buva (Conyza bonariensis)",
+      "nome_cientifico": "Conyza bonariensis",
+      "familia": "Asteraceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 150,
+        "periodo_germinacao": "Outono-Inverno",
+        "resistencia_herbicidas": "Alta",
+        "competicao_nutrientes": "Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-8 plantas/m²",
+        "medio": "8-20 plantas/m²",
+        "alto": "20-40 plantas/m²",
+        "critico": ">40 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Rotação de culturas",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "2,4-D",
+          "Dicamba",
+          "Metsulfuron",
+          "Picloram"
+        ],
+        "biologico": [
+          "Controle biológico com insetos"
+        ]
+      },
+      "observacoes": "Principal problema no trigo. Resistente a vários herbicidas."
+    },
+    {
+      "id": "weed_trigo_nabica_001",
+      "nome": "Nabiça (Raphanus raphanistrum)",
+      "nome_cientifico": "Raphanus raphanistrum",
+      "familia": "Brassicaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 80,
+        "periodo_germinacao": "Outono-Inverno",
+        "resistencia_herbicidas": "Baixa",
+        "competicao_nutrientes": "Média"
+      },
+      "nivel_dano": {
+        "baixo": "0-15 plantas/m²",
+        "medio": "15-35 plantas/m²",
+        "alto": "35-70 plantas/m²",
+        "critico": ">70 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Capina manual",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "2,4-D",
+          "Dicamba",
+          "Metsulfuron",
+          "MCPA"
+        ],
+        "biologico": [
+          "Controle natural"
+        ]
+      },
+      "observacoes": "Fácil controle no trigo. Germina principalmente no outono."
+    },
+    {
+      "id": "weed_trigo_caruru_001",
+      "nome": "Caruru (Amaranthus spp.)",
+      "nome_cientifico": "Amaranthus hybridus",
+      "familia": "Amaranthaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 200,
+        "periodo_germinacao": "Primavera-Verão",
+        "resistencia_herbicidas": "Média",
+        "competicao_nutrientes": "Muito Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-3 plantas/m²",
+        "medio": "3-10 plantas/m²",
+        "alto": "10-20 plantas/m²",
+        "critico": ">20 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Rotação com gramíneas",
+          "Cobertura morta",
+          "Plantio adensado"
+        ],
+        "quimico": [
+          "2,4-D",
+          "Dicamba",
+          "Metsulfuron",
+          "MCPA"
+        ],
+        "biologico": [
+          "Controle com predadores naturais"
+        ]
+      },
+      "observacoes": "Alto potencial competitivo no trigo."
+    },
+    {
+      "id": "weed_trigo_capim_001",
+      "nome": "Capim-arroz (Echinochloa spp.)",
+      "nome_cientifico": "Echinochloa crus-galli",
+      "familia": "Poaceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌾",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 150,
+        "periodo_germinacao": "Primavera-Verão",
+        "resistencia_herbicidas": "Alta",
+        "competicao_nutrientes": "Muito Alta"
+      },
+      "nivel_dano": {
+        "baixo": "0-5 plantas/m²",
+        "medio": "5-15 plantas/m²",
+        "alto": "15-30 plantas/m²",
+        "critico": ">30 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Rotação com leguminosas",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "Iodosulfuron",
+          "Metsulfuron",
+          "Pyroxsulam",
+          "Mesosulfuron"
+        ],
+        "biologico": [
+          "Controle com fungos patogênicos"
+        ]
+      },
+      "observacoes": "Gramínea muito competitiva no trigo."
+    },
+    {
+      "id": "weed_trigo_picao_001",
+      "nome": "Picão-preto (Bidens pilosa)",
+      "nome_cientifico": "Bidens pilosa",
+      "familia": "Asteraceae",
+      "tipo": "planta_daninha",
+      "categoria": "Daninha",
+      "icone": "🌿",
+      "ativo": true,
+      "caracteristicas": {
+        "habito": "Anual",
+        "altura_maxima": 120,
+        "periodo_germinacao": "Primavera-Verão",
+        "resistencia_herbicidas": "Baixa",
+        "competicao_nutrientes": "Média"
+      },
+      "nivel_dano": {
+        "baixo": "0-10 plantas/m²",
+        "medio": "10-25 plantas/m²",
+        "alto": "25-50 plantas/m²",
+        "critico": ">50 plantas/m²"
+      },
+      "controle": {
+        "cultural": [
+          "Capina manual",
+          "Cobertura do solo",
+          "Plantio direto"
+        ],
+        "quimico": [
+          "2,4-D",
+          "Dicamba",
+          "Metsulfuron",
+          "MCPA"
+        ],
+        "biologico": [
+          "Controle natural com insetos"
+        ]
+      },
+      "observacoes": "Fácil controle químico no trigo."
+    }
+  ]
+}

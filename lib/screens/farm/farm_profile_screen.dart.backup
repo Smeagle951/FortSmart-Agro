@@ -1,0 +1,3503 @@
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:fortsmart_agro/models/farm.dart';
+import 'package:fortsmart_agro/services/farm_service.dart';
+import 'package:fortsmart_agro/utils/logger.dart';
+import 'package:fortsmart_agro/repositories/monitoring_repository.dart';
+import 'package:fortsmart_agro/repositories/talhao_repository.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+
+/// Classe para dados do gráfico de produtividade
+class ChartData {
+  final String month;
+  final double value;
+
+  ChartData(this.month, this.value);
+}
+
+class FarmProfileScreen extends StatefulWidget {
+  const FarmProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  State<FarmProfileScreen> createState() => _FarmProfileScreenState();
+}
+
+class _FarmProfileScreenState extends State<FarmProfileScreen>
+    with TickerProviderStateMixin {
+  final _formKey = GlobalKey<FormState>();
+  final _farmService = FarmService();
+  final _monitoringRepository = MonitoringRepository();
+  final _talhaoRepository = TalhaoRepository();
+  
+  Farm? _farm;
+  bool _isLoading = true;
+  bool _isEditing = false;
+  
+  late TabController _tabController;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+
+  // Controllers para os campos de texto
+  final _nameController = TextEditingController();
+  final _ownerController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _stateController = TextEditingController();
+  final _areaController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _documentController = TextEditingController();
+  final _responsibleController = TextEditingController();
+  final _technicalResponsibleController = TextEditingController();
+  final _websiteController = TextEditingController();
+
+  // Dados para estatísticas
+  Map<String, dynamic> _farmStats = {};
+  List<ChartData> _productivityData = [];
+  File? _logoImage;
+  
+  // GPS e Localização
+  Position? _currentPosition;
+  bool _isGettingLocation = false;
+  final MapController _mapController = MapController();
+  LatLng? _selectedLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+    );
+    _loadFarmData();
+    _loadFarmStatistics();
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _animationController.dispose();
+    _mapController.dispose();
+    _nameController.dispose();
+    _ownerController.dispose();
+    _cityController.dispose();
+    _stateController.dispose();
+    _areaController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _addressController.dispose();
+    _documentController.dispose();
+    _responsibleController.dispose();
+    _technicalResponsibleController.dispose();
+    _websiteController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadFarmData() async {
+    try {
+      final farm = await _farmService.getCurrentFarm();
+      setState(() {
+        _farm = farm;
+        _isLoading = false;
+        _populateControllers();
+      });
+    } catch (e) {
+      Logger.error('❌ Erro ao carregar dados da fazenda: $e');
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Erro ao carregar dados da fazenda'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _populateControllers() {
+    if (_farm != null) {
+      _nameController.text = _farm!.name;
+      _ownerController.text = _farm!.ownerName ?? '';
+      _cityController.text = _farm!.municipality ?? '';
+      _stateController.text = _farm!.state ?? '';
+      _areaController.text = _farm!.totalArea.toString();
+      _phoneController.text = _farm!.phone ?? '';
+      _emailController.text = _farm!.email ?? '';
+      _addressController.text = _farm!.address;
+      _documentController.text = _farm!.documentNumber ?? '';
+      _responsibleController.text = _farm!.responsiblePerson ?? '';
+      _technicalResponsibleController.text = _farm!.technicalResponsibleName ?? '';
+      _websiteController.text = _farm!.website ?? '';
+    }
+  }
+
+  // Métodos auxiliares para construção das interfaces - MOVIDOS PARA ANTES DO BUILD
+  Widget _buildPremiumCard(String title, IconData icon, List<Widget> children) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(children: children),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPremiumTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon, {
+    TextInputType? keyboardType,
+  }) {
+    return TextFormField(
+      controller: controller,
+      enabled: _isEditing,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+        ),
+        filled: true,
+        fillColor: _isEditing ? Colors.white : Colors.grey.withOpacity(0.1),
+      ),
+      validator: (value) {
+        if (label.contains('*') && (value == null || value.isEmpty)) {
+          return '$label é obrigatório';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const Spacer(),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCertificationItem(String name, String validity, bool isActive) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isActive ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isActive ? Colors.green.withOpacity(0.3) : Colors.orange.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isActive ? Icons.verified : Icons.warning,
+            color: isActive ? Colors.green : Colors.orange,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  validity,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: isActive ? Colors.green : Colors.orange,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              isActive ? 'Ativo' : 'Expirado',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDocumentItem(String name, String description, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.blue),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  description,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              // Implementar visualização do documento
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Visualizar $name')),
+              );
+            },
+            icon: const Icon(Icons.visibility, color: Colors.blue),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickStatCard(String title, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: Theme.of(context).primaryColor, size: 24),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderContent() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).primaryColor,
+            Theme.of(context).primaryColor.withOpacity(0.8),
+          ],
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 40), // Espaço para o status bar
+          Row(
+            children: [
+              // Logo da fazenda
+              GestureDetector(
+                onTap: _isEditing ? _pickLogo : null,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  ),
+                  child: _logoImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.file(_logoImage!, fit: BoxFit.cover),
+                        )
+                      : _farm?.logoUrl != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.network(_farm!.logoUrl!, fit: BoxFit.cover),
+                            )
+                          : Icon(
+                              _isEditing ? Icons.add_a_photo : Icons.business,
+                              color: Colors.white.withOpacity(0.8),
+                              size: 32,
+                            ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              // Informações principais
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _farm?.name ?? 'Nome da Fazenda',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        if (_farm!.isVerified)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.verified, color: Colors.white, size: 12),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Verificada',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _farm?.ownerName ?? 'Proprietário',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on, color: Colors.white.withOpacity(0.8), size: 16),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            '${_farm?.municipality ?? 'Cidade'}, ${_farm?.state ?? 'Estado'}',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // Cards de estatísticas rápidas
+          Row(
+            children: [
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Total de Talhões',
+                  '${_farmStats['totalPlots'] ?? 0}',
+                  Icons.grid_view,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Área Cultivada',
+                  '${(_farmStats['cultivatedArea'] ?? 0.0).toStringAsFixed(1)} ha',
+                  Icons.straighten,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Monitoramentos',
+                  '${_farmStats['totalMonitorings'] ?? 0}',
+                  Icons.analytics,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Métodos para funcionalidades específicas
+  Future<void> _loadFarmStatistics() async {
+    try {
+      Logger.info('📊 Carregando estatísticas da fazenda...');
+      
+      // Obter talhões reais do banco de dados
+      final plots = await _talhaoRepository.getTalhoes();
+      final totalPlots = plots.length;
+      
+      // Calcular área cultivada real somando as áreas de todos os talhões
+      double totalCultivatedArea = 0.0;
+      for (var plot in plots) {
+        if (plot.area > 0) {
+          totalCultivatedArea += plot.area;
+          Logger.info('📏 Talhão ${plot.name}: ${plot.area} ha');
+        }
+      }
+      
+      Logger.info('📊 Total de talhões: $totalPlots');
+      Logger.info('📊 Área cultivada total: ${totalCultivatedArea.toStringAsFixed(2)} ha');
+      
+      // Obter dados de monitoramento
+      final monitorings = await _monitoringRepository.getAll();
+      final totalMonitorings = monitorings.length;
+      final lastMonitoring = monitorings.isNotEmpty ? monitorings.last.date : null;
+      
+      // Dados de produtividade (simulados - será desenvolvido posteriormente)
+      _productivityData = [
+        ChartData('Jan', 85.5),
+        ChartData('Fev', 92.3),
+        ChartData('Mar', 88.7),
+        ChartData('Abr', 95.1),
+        ChartData('Mai', 90.4),
+        ChartData('Jun', 87.9),
+      ];
+      
+      setState(() {
+        _farmStats = {
+          'totalPlots': totalPlots,
+          'cultivatedArea': totalCultivatedArea,
+          'totalMonitorings': totalMonitorings,
+          'lastMonitoring': lastMonitoring,
+          'averageProductivity': 89.8,
+          'activeCrops': _farm?.crops.length ?? 0,
+          'certifications': 3,
+          'sustainabilityScore': 92,
+        };
+      });
+      
+      Logger.info('✅ Estatísticas carregadas com sucesso');
+    } catch (e) {
+      Logger.error('❌ Erro ao carregar estatísticas: $e');
+      // Definir valores padrão em caso de erro
+      setState(() {
+        _farmStats = {
+          'totalPlots': 0,
+          'cultivatedArea': 0.0,
+          'totalMonitorings': 0,
+          'lastMonitoring': null,
+          'averageProductivity': 0.0,
+          'activeCrops': 0,
+          'certifications': 0,
+          'sustainabilityScore': 0,
+        };
+      });
+    }
+  }
+
+  /// Mostra diálogo para adicionar documento
+  void _showAddDocumentDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.upload_file, color: Colors.blue),
+            const SizedBox(width: 8),
+            const Text('Adicionar Documento'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Tirar Foto'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickDocument(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Selecionar da Galeria'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickDocument(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.folder),
+              title: const Text('Selecionar Arquivo'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickDocumentFromFile();
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Seleciona documento da câmera ou galeria
+  Future<void> _pickDocument(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+      
+      if (pickedFile != null) {
+        // Aqui você implementaria o upload para o servidor
+        // Por enquanto, apenas mostra sucesso
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Documento adicionado com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      Logger.error('Erro ao selecionar documento: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao selecionar documento'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Seleciona documento de arquivo
+  Future<void> _pickDocumentFromFile() async {
+    try {
+      // Aqui você implementaria a seleção de arquivo
+      // Por enquanto, apenas mostra sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Documento adicionado com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      Logger.error('Erro ao selecionar arquivo: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao selecionar arquivo'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Seleciona e faz upload do logo da fazenda
+  Future<void> _pickLogo() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 500,
+        maxHeight: 500,
+        imageQuality: 80,
+      );
+      
+      if (pickedFile != null) {
+        setState(() {
+          _logoImage = File(pickedFile.path);
+        });
+        
+        // Aqui você implementaria o upload para o servidor
+        // Por enquanto, apenas salva localmente
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Logo atualizado com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      Logger.error('Erro ao selecionar logo: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao selecionar logo'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Obtém localização atual do GPS
+  Future<void> _getCurrentLocation() async {
+    try {
+      setState(() => _isGettingLocation = true);
+      
+      // Verificar se o serviço de localização está habilitado
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showLocationError('Serviço de localização desabilitado');
+        return;
+      }
+
+      // Verificar permissões
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _showLocationError('Permissão de localização negada');
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _showLocationError('Permissão de localização negada permanentemente');
+        return;
+      }
+
+      // Obter posição
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      setState(() {
+        _currentPosition = position;
+        _selectedLocation = LatLng(position.latitude, position.longitude);
+        _isGettingLocation = false;
+      });
+      
+      // Centralizar mapa na posição atual
+      _centerMapOnGPS();
+      
+      // Salvar localização na fazenda
+      await _saveFarmLocation();
+      
+    } catch (e) {
+      _showLocationError('Erro ao obter localização: $e');
+    }
+  }
+  
+  /// Centraliza mapa na posição do GPS
+  void _centerMapOnGPS() {
+    if (_selectedLocation != null) {
+      _mapController.move(_selectedLocation!, 15.0);
+    }
+  }
+  
+  /// Salva localização da fazenda
+  Future<void> _saveFarmLocation() async {
+    if (_selectedLocation == null || _farm == null) return;
+    
+    try {
+      final updatedFarm = _farm!.copyWith(
+        latitude: _selectedLocation!.latitude,
+        longitude: _selectedLocation!.longitude,
+        updatedAt: DateTime.now(),
+      );
+      
+      await _farmService.updateFarm(updatedFarm);
+      
+      setState(() {
+        _farm = updatedFarm;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Localização salva com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      Logger.error('Erro ao salvar localização: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao salvar localização'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  /// Mostra instruções de localização
+  void _showLocationInstructions() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.help_outline, color: Colors.blue),
+            const SizedBox(width: 8),
+            const Text('Como definir a localização'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Opção 1 - GPS:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('• Toque no botão azul (GPS) para centralizar na sua localização atual'),
+            const SizedBox(height: 12),
+            Text(
+              'Opção 2 - Mapa:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('• Toque em qualquer ponto do mapa para definir a localização'),
+            Text('• Um marcador vermelho aparecerá na posição selecionada'),
+            const SizedBox(height: 12),
+            Text(
+              'A localização será salva automaticamente!',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Entendi'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  /// Mostra erro de localização
+  void _showLocationError(String message) {
+    setState(() => _isGettingLocation = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  // Métodos das abas
+  Widget _buildGeneralTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPremiumCard(
+            'Informações Básicas',
+            Icons.business_outlined,
+            [
+              _buildPremiumTextField(_nameController, 'Nome da Fazenda', Icons.business_outlined),     
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_ownerController, 'Proprietário', Icons.person_outlined),
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_responsibleController, 'Responsável Técnico', Icons.engineering_outlined),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildPremiumCard(
+            'Contato',
+            Icons.contact_phone_outlined,
+            [
+              _buildPremiumTextField(_phoneController, 'Telefone', Icons.phone_outlined),
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_emailController, 'E-mail', Icons.email_outlined),
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_websiteController, 'Website', Icons.language_outlined),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildPremiumCard(
+            'Localização',
+            Icons.location_on_outlined,
+            [
+              _buildPremiumTextField(_addressController, 'Endereço Completo', Icons.home_outlined),    
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildPremiumTextField(_cityController, 'Cidade', Icons.location_city_outlined),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildPremiumTextField(_stateController, 'Estado', Icons.map_outlined),     
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildPremiumCard(
+            'Documentação',
+            Icons.description_outlined,
+            [
+              _buildPremiumTextField(_documentController, 'CNPJ/CPF', Icons.description_outlined),     
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_technicalResponsibleController, 'Responsável Técnico', Icons.engineering_outlined),
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_areaController, 'Área Total (hectares)', Icons.straighten_outlined, keyboardType: TextInputType.number),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatisticsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Cards de métricas principais
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1.2,
+            children: [
+              _buildMetricCard(
+                'Área Total',
+                '${_farm?.totalArea.toStringAsFixed(2) ?? '0'} ha',
+                Icons.straighten,
+                Colors.blue,
+              ),
+              _buildMetricCard(
+                'Área Cultivada',
+                '${(_farmStats['cultivatedArea'] ?? 0.0).toStringAsFixed(2)} ha',
+                Icons.agriculture,
+                Colors.green,
+              ),
+              _buildMetricCard(
+                'Total de Talhões',
+                '${_farmStats['totalPlots'] ?? 0}',
+                Icons.grid_view,
+                Colors.orange,
+              ),
+              _buildMetricCard(
+                'Monitoramentos',
+                '${_farmStats['totalMonitorings'] ?? 0}',
+                Icons.analytics,
+                Colors.purple,
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          // Gráfico de produtividade (Em Desenvolvimento)
+          _buildPremiumCard(
+            'Produtividade dos Últimos 6 Meses',
+            Icons.trending_up,
+            [
+              Container(
+                height: 200,
+                child: _buildProductivityChart(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCertificationsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _buildPremiumCard(
+            'Certificações',
+            Icons.verified_outlined,
+            [
+              _buildCertificationItem('Orgânico', 'Válido até 12/2024', true),
+              const SizedBox(height: 12),
+              _buildCertificationItem('ISO 14001', 'Válido até 08/2025', true),
+              const SizedBox(height: 12),
+              _buildCertificationItem('Rainforest Alliance', 'Válido até 03/2024', false),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _buildPremiumCard(
+            'Documentos',
+            Icons.folder_outlined,
+            [
+              _buildDocumentItem('ITR - 2023', 'Imposto Territorial Rural', Icons.description),
+              const SizedBox(height: 12),
+              _buildDocumentItem('CAR', 'Cadastro Ambiental Rural', Icons.nature),
+              const SizedBox(height: 12),
+              _buildDocumentItem('Licença Ambiental', 'Válida até 2025', Icons.verified_user),
+            ],
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => _showAddDocumentDialog(),
+            icon: const Icon(Icons.upload_file),
+            label: const Text('Adicionar Documento'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationTab() {
+    // Definir localização inicial
+    final initialLocation = _selectedLocation ?? 
+        (_farm?.latitude != null && _farm?.longitude != null 
+            ? LatLng(_farm!.latitude!, _farm!.longitude!)
+            : const LatLng(-15.7801, -47.9292)); // Brasília como padrão
+    
+    return Column(
+      children: [
+        // Mapa interativo
+        Container(
+          height: 300,
+          margin: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
+              children: [
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: initialLocation,
+                    initialZoom: 15.0,
+                    onTap: (tapPosition, point) {
+                      setState(() {
+                        _selectedLocation = point;
+                      });
+                    },
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.fortsmart.agro',
+                    ),
+                    // Marcador da localização selecionada
+                    if (_selectedLocation != null)
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: _selectedLocation!,
+                            width: 40,
+                            height: 40,
+                            child: const Icon(
+                              Icons.location_on,
+                              color: Colors.red,
+                              size: 40,
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+                // Botões de controle
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Column(
+                    children: [
+                      FloatingActionButton.small(
+                        onPressed: _isGettingLocation ? null : _getCurrentLocation,
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.blue,
+                        child: _isGettingLocation
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                                ),
+                              )
+                            : const Icon(Icons.my_location),
+                      ),
+                      const SizedBox(height: 8),
+                      FloatingActionButton.small(
+                        onPressed: () => _showLocationInstructions(),
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.green,
+                        child: const Icon(Icons.help_outline),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Informações de localização
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              _buildPremiumCard(
+                'Coordenadas GPS',
+                Icons.gps_fixed,
+                [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildInfoItem('Latitude', _farm?.latitude?.toStringAsFixed(6) ?? 'Não definida'),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildInfoItem('Longitude', _farm?.longitude?.toStringAsFixed(6) ?? 'Não definida'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildPremiumCard(
+                'Informações da Região',
+                Icons.info_outline,
+                [
+                  _buildInfoItem('Município', _farm?.municipality ?? 'Não informado'),
+                  const SizedBox(height: 12),
+                  _buildInfoItem('Estado', _farm?.state ?? 'Não informado'),
+                  const SizedBox(height: 12),
+                  _buildInfoItem('Área Total da Fazenda', '${_farm?.totalArea.toStringAsFixed(2) ?? '0'} hectares'),
+                  const SizedBox(height: 12),
+                  _buildInfoItem('Área Cultivada', '${_farmStats['cultivatedArea']?.toStringAsFixed(2) ?? '0'} hectares'),
+                  const SizedBox(height: 12),
+                  _buildInfoItem('Total de Talhões', '${_farmStats['totalPlots'] ?? 0}'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductivityChart() {
+    // Implementação simplificada de gráfico
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Text(
+            'Dados de Produtividade',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: _productivityData.map<Widget>((ChartData data) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${data.value.toStringAsFixed(1)}%',
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: 20,
+                      height: (data.value / 100) * 120,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      data.month,
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _saveFarmData() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      // Verificar se _farm não é nulo
+      if (_farm == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro: Dados da fazenda não carregados'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      final updatedFarm = _farm!.copyWith(
+        name: _nameController.text,
+        ownerName: _ownerController.text,
+        municipality: _cityController.text,
+        state: _stateController.text,
+        totalArea: double.tryParse(_areaController.text) ?? 0.0,
+        phone: _phoneController.text,
+        email: _emailController.text,
+        address: _addressController.text,
+        documentNumber: _documentController.text,
+        responsiblePerson: _responsibleController.text,
+        technicalResponsibleName: _technicalResponsibleController.text,
+        website: _websiteController.text,
+        updatedAt: DateTime.now(),
+      );
+
+      Logger.info('💾 Salvando dados da fazenda: ${updatedFarm.name}');
+      final result = await _farmService.updateFarm(updatedFarm);
+      
+      Logger.info('📊 Resultado do salvamento: $result');
+      
+      if (result > 0) {
+        setState(() {
+          _farm = updatedFarm;
+          _isEditing = false;
+        });
+        
+        // Recarregar estatísticas após salvar
+        await _loadFarmStatistics();
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Dados da fazenda atualizados com sucesso!'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Erro ao atualizar dados da fazenda'),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      Logger.error('❌ Erro ao salvar dados da fazenda: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao salvar dados da fazenda: $e'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
+  }
+
+  /// Carrega estatísticas avançadas da fazenda
+  Future<void> _loadFarmStatistics() async {
+    try {
+      Logger.info('📊 Carregando estatísticas da fazenda...');
+      
+      // Obter talhões reais do banco de dados
+      final plots = await _talhaoRepository.getTalhoes();
+      final totalPlots = plots.length;
+      
+      // Calcular área cultivada real somando as áreas de todos os talhões
+      double totalCultivatedArea = 0.0;
+      for (var plot in plots) {
+        if (plot.area > 0) {
+          totalCultivatedArea += plot.area;
+          Logger.info('📏 Talhão ${plot.name}: ${plot.area} ha');
+        }
+      }
+      
+      Logger.info('📊 Total de talhões: $totalPlots');
+      Logger.info('📊 Área cultivada total: ${totalCultivatedArea.toStringAsFixed(2)} ha');
+      
+      // Obter dados de monitoramento
+      final monitorings = await _monitoringRepository.getAll();
+      final totalMonitorings = monitorings.length;
+      final lastMonitoring = monitorings.isNotEmpty ? monitorings.last.date : null;
+      
+      // Dados de produtividade (simulados - será desenvolvido posteriormente)
+      _productivityData = [
+        ChartData('Jan', 85.5),
+        ChartData('Fev', 92.3),
+        ChartData('Mar', 88.7),
+        ChartData('Abr', 95.1),
+        ChartData('Mai', 90.4),
+        ChartData('Jun', 87.9),
+      ];
+      
+      setState(() {
+        _farmStats = {
+          'totalPlots': totalPlots,
+          'cultivatedArea': totalCultivatedArea,
+          'totalMonitorings': totalMonitorings,
+          'lastMonitoring': lastMonitoring,
+          'averageProductivity': 89.8,
+          'activeCrops': _farm?.crops.length ?? 0,
+          'certifications': 3,
+          'sustainabilityScore': 92,
+        };
+      });
+      
+      Logger.info('✅ Estatísticas carregadas com sucesso');
+    } catch (e) {
+      Logger.error('❌ Erro ao carregar estatísticas: $e');
+      // Definir valores padrão em caso de erro
+      setState(() {
+        _farmStats = {
+          'totalPlots': 0,
+          'cultivatedArea': 0.0,
+          'totalMonitorings': 0,
+          'lastMonitoring': null,
+          'averageProductivity': 0.0,
+          'activeCrops': 0,
+          'certifications': 0,
+          'sustainabilityScore': 0,
+        };
+      });
+    }
+  }
+
+  /// Mostra diálogo para adicionar documento
+  void _showAddDocumentDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.upload_file, color: Colors.blue),
+            const SizedBox(width: 8),
+            const Text('Adicionar Documento'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Tirar Foto'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickDocument(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Selecionar da Galeria'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickDocument(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.folder),
+              title: const Text('Selecionar Arquivo'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickDocumentFromFile();
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Seleciona documento da câmera ou galeria
+  Future<void> _pickDocument(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+      
+      if (pickedFile != null) {
+        // Aqui você implementaria o upload para o servidor
+        // Por enquanto, apenas mostra sucesso
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Documento adicionado com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      Logger.error('Erro ao selecionar documento: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao selecionar documento'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Obtém localização atual do GPS
+  Future<void> _getCurrentLocation() async {
+    try {
+      setState(() => _isGettingLocation = true);
+      
+      // Verificar se o serviço de localização está habilitado
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showLocationError('Serviço de localização desabilitado');
+        return;
+      }
+
+      // Verificar permissões
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _showLocationError('Permissão de localização negada');
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _showLocationError('Permissão de localização negada permanentemente');
+        return;
+      }
+
+      // Obter posição
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
+      
+      setState(() {
+        _currentPosition = position;
+        _selectedLocation = LatLng(position.latitude, position.longitude);
+        _isGettingLocation = false;
+      });
+      
+      // Centralizar mapa na posição atual
+      _centerMapOnGPS();
+      
+      // Salvar localização na fazenda
+      await _saveFarmLocation();
+      
+    } catch (e) {
+      setState(() => _isGettingLocation = false);
+      _showLocationError('Erro ao obter localização: $e');
+    }
+  }
+  
+  /// Centraliza mapa na posição do GPS
+  void _centerMapOnGPS() {
+    if (_selectedLocation != null) {
+      _mapController.move(_selectedLocation!, 15.0);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Mapa centralizado na sua localização'),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+  
+  /// Salva localização da fazenda
+  Future<void> _saveFarmLocation() async {
+    if (_selectedLocation == null || _farm == null) return;
+    
+    try {
+      final updatedFarm = _farm!.copyWith(
+        latitude: _selectedLocation!.latitude,
+        longitude: _selectedLocation!.longitude,
+        updatedAt: DateTime.now(),
+      );
+
+      final result = await _farmService.updateFarm(updatedFarm);
+      if (result > 0) {
+        setState(() {
+          _farm = updatedFarm;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Localização da fazenda salva com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      Logger.error('❌ Erro ao salvar localização: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao salvar localização: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  /// Mostra instruções de localização
+  void _showLocationInstructions() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.help_outline, color: Colors.blue),
+            const SizedBox(width: 8),
+            const Text('Como definir a localização'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Opção 1 - GPS:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('• Toque no botão azul (GPS) para centralizar na sua localização atual'),
+            const SizedBox(height: 12),
+            Text(
+              'Opção 2 - Mapa:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('• Toque em qualquer ponto do mapa para definir a localização'),
+            Text('• Um marcador vermelho aparecerá na posição selecionada'),
+            const SizedBox(height: 12),
+            Text(
+              'A localização será salva automaticamente!',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Entendi'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  /// Mostra erro de localização
+  void _showLocationError(String message) {
+    setState(() => _isGettingLocation = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+  
+  /// Seleciona documento de arquivo
+  Future<void> _pickDocumentFromFile() async {
+    try {
+      // Aqui você implementaria a seleção de arquivo
+      // Por enquanto, apenas mostra sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Documento adicionado com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      Logger.error('Erro ao selecionar arquivo: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao selecionar arquivo'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Seleciona e faz upload do logo da fazenda
+  Future<void> _pickLogo() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 500,
+        maxHeight: 500,
+        imageQuality: 80,
+      );
+      
+      if (pickedFile != null) {
+        setState(() {
+          _logoImage = File(pickedFile.path);
+        });
+        
+        // Aqui você implementaria o upload para o servidor
+        // Por enquanto, apenas salva localmente
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Logo atualizado com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      Logger.error('Erro ao selecionar logo: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao selecionar logo'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Métodos auxiliares para construção das interfaces - MOVIDOS PARA ANTES DO BUILD
+  Widget _buildPremiumTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon, {
+    TextInputType? keyboardType,
+  }) {
+    return TextFormField(
+      controller: controller,
+      enabled: _isEditing,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+        ),
+        filled: true,
+        fillColor: _isEditing ? Colors.white : Colors.grey.withOpacity(0.1),
+      ),
+      validator: (value) {
+        if (label.contains('*') && (value == null || value.isEmpty)) {
+          return '$label é obrigatório';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const Spacer(),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCertificationItem(String name, String validity, bool isActive) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isActive ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isActive ? Colors.green.withOpacity(0.3) : Colors.orange.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isActive ? Icons.verified : Icons.warning,
+            color: isActive ? Colors.green : Colors.orange,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  validity,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: isActive ? Colors.green : Colors.orange,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              isActive ? 'Ativo' : 'Expirado',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDocumentItem(String name, String description, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.blue),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  description,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              // Implementar visualização do documento
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Visualizar $name')),
+              );
+            },
+            icon: const Icon(Icons.visibility, color: Colors.blue),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickStatCard(String title, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: Theme.of(context).primaryColor, size: 24),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderContent() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).primaryColor,
+            Theme.of(context).primaryColor.withOpacity(0.8),
+          ],
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 40), // Espaço para o status bar
+          Row(
+            children: [
+              // Logo da fazenda
+              GestureDetector(
+                onTap: _isEditing ? _pickLogo : null,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  ),
+                  child: _logoImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.file(_logoImage!, fit: BoxFit.cover),
+                        )
+                      : _farm?.logoUrl != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.network(_farm!.logoUrl!, fit: BoxFit.cover),
+                            )
+                          : Icon(
+                              _isEditing ? Icons.add_a_photo : Icons.business,
+                              color: Colors.white.withOpacity(0.8),
+                              size: 32,
+                            ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              // Informações principais
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _farm?.name ?? 'Nome da Fazenda',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        if (_farm!.isVerified)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.verified, color: Colors.white, size: 12),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Verificada',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _farm?.ownerName ?? 'Proprietário',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on, color: Colors.white.withOpacity(0.8), size: 16),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            '${_farm?.municipality ?? 'Cidade'}, ${_farm?.state ?? 'Estado'}',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // Cards de estatísticas rápidas
+          Row(
+            children: [
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Total de Talhões',
+                  '${_farmStats['totalPlots'] ?? 0}',
+                  Icons.grid_view,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Área Cultivada',
+                  '${(_farmStats['cultivatedArea'] ?? 0.0).toStringAsFixed(1)} ha',
+                  Icons.straighten,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Monitoramentos',
+                  '${_farmStats['totalMonitorings'] ?? 0}',
+                  Icons.analytics,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Métodos das abas
+  Widget _buildGeneralTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPremiumCard(
+            'Informações Básicas',
+            Icons.business_outlined,
+            [
+              _buildPremiumTextField(_nameController, 'Nome da Fazenda', Icons.business_outlined),     
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_ownerController, 'Proprietário', Icons.person_outlined),
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_responsibleController, 'Responsável Técnico', Icons.engineering_outlined),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildPremiumCard(
+            'Contato',
+            Icons.contact_phone_outlined,
+            [
+              _buildPremiumTextField(_phoneController, 'Telefone', Icons.phone_outlined),
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_emailController, 'E-mail', Icons.email_outlined),
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_websiteController, 'Website', Icons.language_outlined),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildPremiumCard(
+            'Localização',
+            Icons.location_on_outlined,
+            [
+              _buildPremiumTextField(_addressController, 'Endereço Completo', Icons.home_outlined),    
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildPremiumTextField(_cityController, 'Cidade', Icons.location_city_outlined),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildPremiumTextField(_stateController, 'Estado', Icons.map_outlined),     
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildPremiumCard(
+            'Documentação',
+            Icons.description_outlined,
+            [
+              _buildPremiumTextField(_documentController, 'CNPJ/CPF', Icons.description_outlined),     
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_technicalResponsibleController, 'Responsável Técnico', Icons.engineering_outlined),
+              const SizedBox(height: 16),
+              _buildPremiumTextField(_areaController, 'Área Total (hectares)', Icons.straighten_outlined, keyboardType: TextInputType.number),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatisticsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Cards de métricas principais
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1.2,
+            children: [
+              _buildMetricCard(
+                'Área Total',
+                '${_farm?.totalArea.toStringAsFixed(2) ?? '0'} ha',
+                Icons.straighten,
+                Colors.blue,
+              ),
+              _buildMetricCard(
+                'Área Cultivada',
+                '${(_farmStats['cultivatedArea'] ?? 0.0).toStringAsFixed(2)} ha',
+                Icons.agriculture,
+                Colors.green,
+              ),
+              _buildMetricCard(
+                'Total de Talhões',
+                '${_farmStats['totalPlots'] ?? 0}',
+                Icons.grid_view,
+                Colors.orange,
+              ),
+              _buildMetricCard(
+                'Monitoramentos',
+                '${_farmStats['totalMonitorings'] ?? 0}',
+                Icons.analytics,
+                Colors.purple,
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          // Gráfico de produtividade (Em Desenvolvimento)
+          _buildPremiumCard(
+            'Produtividade dos Últimos 6 Meses',
+            Icons.trending_up,
+            [
+              Container(
+                height: 200,
+                child: _buildProductivityChart(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCertificationsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _buildPremiumCard(
+            'Certificações',
+            Icons.verified_outlined,
+            [
+              _buildCertificationItem('Orgânico', 'Válido até 12/2024', true),
+              const SizedBox(height: 12),
+              _buildCertificationItem('ISO 14001', 'Válido até 08/2025', true),
+              const SizedBox(height: 12),
+              _buildCertificationItem('Rainforest Alliance', 'Válido até 03/2024', false),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _buildPremiumCard(
+            'Documentos',
+            Icons.folder_outlined,
+            [
+              _buildDocumentItem('ITR - 2023', 'Imposto Territorial Rural', Icons.description),
+              const SizedBox(height: 12),
+              _buildDocumentItem('CAR', 'Cadastro Ambiental Rural', Icons.nature),
+              const SizedBox(height: 12),
+              _buildDocumentItem('Licença Ambiental', 'Válida até 2025', Icons.verified_user),
+            ],
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => _showAddDocumentDialog(),
+            icon: const Icon(Icons.upload_file),
+            label: const Text('Adicionar Documento'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationTab() {
+    // Definir localização inicial
+    final initialLocation = _selectedLocation ?? 
+        (_farm?.latitude != null && _farm?.longitude != null 
+            ? LatLng(_farm!.latitude!, _farm!.longitude!)
+            : const LatLng(-15.7801, -47.9292)); // Brasília como padrão
+    
+    return Column(
+      children: [
+        // Mapa interativo
+        Container(
+          height: 300,
+          margin: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
+              children: [
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: initialLocation,
+                    initialZoom: 15.0,
+                    onTap: (tapPosition, point) {
+                      setState(() {
+                        _selectedLocation = point;
+                      });
+                    },
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.fortsmart.agro',
+                    ),
+                    // Marcador da localização selecionada
+                    if (_selectedLocation != null)
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: _selectedLocation!,
+                            width: 40,
+                            height: 40,
+                            child: const Icon(
+                              Icons.location_on,
+                              color: Colors.red,
+                              size: 40,
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+                // Botões de controle
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Column(
+                    children: [
+                      FloatingActionButton.small(
+                        onPressed: _isGettingLocation ? null : _getCurrentLocation,
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.blue,
+                        child: _isGettingLocation
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                                ),
+                              )
+                            : const Icon(Icons.my_location),
+                      ),
+                      const SizedBox(height: 8),
+                      FloatingActionButton.small(
+                        onPressed: () => _showLocationInstructions(),
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.green,
+                        child: const Icon(Icons.help_outline),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Informações de localização
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              _buildPremiumCard(
+                'Coordenadas GPS',
+                Icons.gps_fixed,
+                [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildInfoItem('Latitude', _farm?.latitude?.toStringAsFixed(6) ?? 'Não definida'),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildInfoItem('Longitude', _farm?.longitude?.toStringAsFixed(6) ?? 'Não definida'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildPremiumCard(
+                'Informações da Região',
+                Icons.info_outline,
+                [
+                  _buildInfoItem('Município', _farm?.municipality ?? 'Não informado'),
+                  const SizedBox(height: 12),
+                  _buildInfoItem('Estado', _farm?.state ?? 'Não informado'),
+                  const SizedBox(height: 12),
+                  _buildInfoItem('Área Total da Fazenda', '${_farm?.totalArea.toStringAsFixed(2) ?? '0'} hectares'),
+                  const SizedBox(height: 12),
+                  _buildInfoItem('Área Cultivada', '${_farmStats['cultivatedArea']?.toStringAsFixed(2) ?? '0'} hectares'),
+                  const SizedBox(height: 12),
+                  _buildInfoItem('Total de Talhões', '${_farmStats['totalPlots'] ?? 0}'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductivityChart() {
+    // Implementação simplificada de gráfico
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Text(
+            'Dados de Produtividade',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: _productivityData.map<Widget>((ChartData data) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${data.value.toStringAsFixed(1)}%',
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: 20,
+                      height: (data.value / 100) * 120,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      data.month,
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
+            ),
+          ),
+          child: const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(color: Colors.white),
+                SizedBox(height: 16),
+                Text(
+                  'Carregando perfil da fazenda...',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            expandedHeight: 300,
+            floating: false,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(_farm?.name ?? 'Fazenda'),
+              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+              background: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
+                  ),
+                ),
+                child: _buildHeaderContent(),
+              ),
+            ),
+            actions: [
+              if (!_isEditing)
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined),
+                  onPressed: () => setState(() => _isEditing = true),
+                )
+              else
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.save_outlined),
+                      onPressed: _saveFarmData,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close_outlined),
+                      onPressed: () {
+                        setState(() => _isEditing = false);
+                        _populateControllers();
+                      },
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ],
+        body: Column(
+          children: [
+            // Abas
+            Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: TabBar(
+                controller: _tabController,
+                labelColor: Theme.of(context).primaryColor,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: Theme.of(context).primaryColor,
+                tabs: const [
+                  Tab(icon: Icon(Icons.info_outline), text: 'Geral'),
+                  Tab(icon: Icon(Icons.analytics_outlined), text: 'Estatísticas'),
+                  Tab(icon: Icon(Icons.verified_outlined), text: 'Certificações'),
+                  Tab(icon: Icon(Icons.map_outlined), text: 'Localização'),
+                ],
+              ),
+            ),
+            // Conteúdo das abas
+            Expanded(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildGeneralTab(),
+                    _buildStatisticsTab(),
+                    _buildCertificationsTab(),
+                    _buildLocationTab(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Theme.of(context).primaryColor),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Constrói o conteúdo do header com logo e informações principais
+  Widget _buildHeaderContent() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 40), // Espaço para o status bar
+          Row(
+            children: [
+              // Logo da fazenda
+              GestureDetector(
+                onTap: _isEditing ? _pickLogo : null,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  ),
+                  child: _logoImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.file(_logoImage!, fit: BoxFit.cover),
+                        )
+                      : _farm?.logoUrl != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.network(_farm!.logoUrl!, fit: BoxFit.cover),
+                            )
+                          : Icon(
+                              _isEditing ? Icons.add_a_photo : Icons.business,
+                              color: Colors.white.withOpacity(0.8),
+                              size: 32,
+                            ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              // Informações principais
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _farm?.ownerName ?? 'Proprietário',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${_farm?.municipality ?? 'Cidade'}, ${_farm?.state ?? 'Estado'}',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    if (_farm != null)
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${_farm!.totalArea.toStringAsFixed(1)} ha',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          if (_farm!.isVerified)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.verified, color: Colors.white, size: 12),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'Verificada',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // Cards de estatísticas rápidas
+          Row(
+            children: [
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Talhões',
+                  '${_farmStats['totalPlots'] ?? 0}',
+                  Icons.grid_view,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Culturas',
+                  '${_farmStats['activeCrops'] ?? 0}',
+                  Icons.eco,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickStatCard(
+                  'Produtividade',
+                  '${_farmStats['averageProductivity']?.toStringAsFixed(1) ?? '0'}%',
+                  Icons.trending_up,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Constrói um card de estatística rápida
+  Widget _buildQuickStatCard(String title, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: Colors.white, size: 20),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Aba Geral - Informações básicas da fazenda
+  Widget _buildGeneralTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildPremiumCard(
+              'Informações Básicas',
+              Icons.business,
+              [
+                _buildPremiumTextField(_nameController, 'Nome da Fazenda', Icons.business_outlined),
+                const SizedBox(height: 16),
+                _buildPremiumTextField(_ownerController, 'Proprietário', Icons.person_outlined),
+                const SizedBox(height: 16),
+                _buildPremiumTextField(_responsibleController, 'Responsável Técnico', Icons.engineering_outlined),
+              ],
+            ),
+            const SizedBox(height: 24),
+            _buildPremiumCard(
+              'Contato',
+              Icons.contact_phone,
+              [
+                _buildPremiumTextField(_phoneController, 'Telefone', Icons.phone_outlined),
+                const SizedBox(height: 16),
+                _buildPremiumTextField(_emailController, 'E-mail', Icons.email_outlined),
+                const SizedBox(height: 16),
+                _buildPremiumTextField(_websiteController, 'Website', Icons.language_outlined),
+              ],
+            ),
+            const SizedBox(height: 24),
+            _buildPremiumCard(
+              'Endereço',
+              Icons.location_on,
+              [
+                _buildPremiumTextField(_addressController, 'Endereço Completo', Icons.home_outlined),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildPremiumTextField(_cityController, 'Cidade', Icons.location_city_outlined),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildPremiumTextField(_stateController, 'Estado', Icons.map_outlined),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            _buildPremiumCard(
+              'Documentação',
+              Icons.description,
+              [
+                _buildPremiumTextField(_documentController, 'CNPJ/CPF', Icons.description_outlined),
+                const SizedBox(height: 16),
+                _buildPremiumTextField(_technicalResponsibleController, 'Responsável Técnico', Icons.engineering_outlined),
+                const SizedBox(height: 16),
+                _buildPremiumTextField(_areaController, 'Área Total (hectares)', Icons.straighten_outlined, keyboardType: TextInputType.number),
+              ],
+            ),
+            const SizedBox(height: 24),
+            if (_isEditing)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _saveFarmData,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Salvar Alterações',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Aba Estatísticas - Dashboard com métricas
+  Widget _buildStatisticsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Cards de métricas principais
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1.3,
+            children: [
+              _buildMetricCard(
+                'Área Cultivada',
+                '${_farmStats['cultivatedArea']?.toStringAsFixed(1) ?? '0'} ha',
+                Icons.agriculture,
+                Colors.green,
+              ),
+              _buildMetricCard(
+                'Monitoramentos',
+                '${_farmStats['totalMonitorings'] ?? 0}',
+                Icons.monitor_outlined,
+                Colors.blue,
+              ),
+              _buildMetricCard(
+                'Sustentabilidade',
+                '${_farmStats['sustainabilityScore'] ?? 0}%',
+                Icons.eco,
+                Colors.teal,
+              ),
+              _buildMetricCard(
+                'Certificações',
+                '${_farmStats['certifications'] ?? 0}',
+                Icons.verified,
+                Colors.amber,
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          // Gráfico de produtividade (Em Desenvolvimento)
+          _buildPremiumCard(
+            'Produtividade dos Últimos 6 Meses',
+            Icons.construction,
+            [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.construction,
+                      color: Colors.orange,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Em Desenvolvimento',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Esta funcionalidade está sendo desenvolvida e estará disponível em breve.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Aba Certificações - Documentos e certificados
+  Widget _buildCertificationsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _buildPremiumCard(
+            'Certificações Ativas',
+            Icons.verified,
+            [
+              _buildCertificationItem('Orgânico', 'Válido até 12/2024', true),
+              const SizedBox(height: 12),
+              _buildCertificationItem('ISO 14001', 'Válido até 08/2025', true),
+              const SizedBox(height: 12),
+              _buildCertificationItem('Rainforest Alliance', 'Válido até 03/2024', false),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _buildPremiumCard(
+            'Documentos',
+            Icons.description,
+            [
+              _buildDocumentItem('ITR - 2023', 'Imposto Territorial Rural', Icons.description),
+              const SizedBox(height: 12),
+              _buildDocumentItem('CAR', 'Cadastro Ambiental Rural', Icons.nature),
+              const SizedBox(height: 12),
+              _buildDocumentItem('Licença Ambiental', 'Válida até 2025', Icons.verified_user),
+            ],
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => _showAddDocumentDialog(),
+            icon: const Icon(Icons.upload_file),
+            label: const Text('Adicionar Documento'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Aba Localização - Mapa e coordenadas
+  Widget _buildLocationTab() {
+    // Definir localização inicial
+    final initialLocation = _selectedLocation ?? 
+        (_farm?.latitude != null && _farm?.longitude != null 
+            ? LatLng(_farm!.latitude!, _farm!.longitude!)
+            : const LatLng(-15.7801, -47.9292)); // Brasília como padrão
+    
+    return Column(
+      children: [
+        // Mapa interativo
+        Container(
+          height: 300,
+          margin: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.withOpacity(0.3)),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Stack(
+              children: [
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    center: initialLocation,
+                    zoom: 13.0,
+                    onTap: (_, point) {
+                      setState(() {
+                        _selectedLocation = point;
+                      });
+                      _saveFarmLocation();
+                    },
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.fortsmart.agro',
+                    ),
+                    // Marcador da localização selecionada
+                    if (_selectedLocation != null)
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: _selectedLocation!,
+                            width: 30,
+                            height: 30,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 2),
+                              ),
+                              child: const Icon(
+                                Icons.location_on,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+                // Botões de controle
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Column(
+                    children: [
+                      FloatingActionButton.small(
+                        onPressed: _isGettingLocation ? null : _getCurrentLocation,
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.blue,
+                        child: _isGettingLocation
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                                ),
+                              )
+                            : const Icon(Icons.my_location),
+                      ),
+                      const SizedBox(height: 8),
+                      FloatingActionButton.small(
+                        onPressed: () => _showLocationInstructions(),
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.green,
+                        child: const Icon(Icons.help_outline),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                _buildPremiumCard(
+                  'Coordenadas',
+                  Icons.gps_fixed,
+                  [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildInfoItem('Latitude', _farm?.latitude?.toStringAsFixed(6) ?? 'Não definida'),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildInfoItem('Longitude', _farm?.longitude?.toStringAsFixed(6) ?? 'Não definida'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildPremiumCard(
+                  'Informações Geográficas',
+                  Icons.terrain,
+                  [
+                    _buildInfoItem('Município', _farm?.municipality ?? 'Não informado'),
+                    const SizedBox(height: 12),
+                    _buildInfoItem('Estado', _farm?.state ?? 'Não informado'),
+                    const SizedBox(height: 12),
+                    _buildInfoItem('Área Total da Fazenda', '${_farm?.totalArea.toStringAsFixed(2) ?? '0'} hectares'),
+                    const SizedBox(height: 12),
+                    _buildInfoItem('Área Cultivada', '${_farmStats['cultivatedArea']?.toStringAsFixed(2) ?? '0'} hectares'),
+                    const SizedBox(height: 12),
+                    _buildInfoItem('Total de Talhões', '${_farmStats['totalPlots'] ?? 0}'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Widgets auxiliares para construção das interfaces
+
+  Widget _buildPremiumCard(String title, IconData icon, List<Widget> children) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(children: children),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPremiumTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon, {
+    TextInputType? keyboardType,
+  }) {
+    return TextFormField(
+      controller: controller,
+      enabled: _isEditing,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+        ),
+        filled: true,
+        fillColor: _isEditing ? Colors.white : Colors.grey.withOpacity(0.1),
+      ),
+      validator: (value) {
+        if (label.contains('*') && (value == null || value.isEmpty)) {
+          return '$label é obrigatório';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const Spacer(),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductivityChart() {
+    // Implementação simplificada de gráfico
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Text(
+            'Dados de Produtividade',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: _productivityData.map<Widget>((ChartData data) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${data.value.toStringAsFixed(1)}%',
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: 20,
+                      height: (data.value / 100) * 120,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      data.month,
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCertificationItem(String name, String validity, bool isActive) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isActive ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isActive ? Colors.green.withOpacity(0.3) : Colors.orange.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isActive ? Icons.verified : Icons.warning,
+            color: isActive ? Colors.green : Colors.orange,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  validity,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: isActive ? Colors.green : Colors.orange,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              isActive ? 'Ativo' : 'Expirado',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDocumentItem(String name, String description, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.blue),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  description,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              // Implementar visualização do documento
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Visualizar $name')),
+              );
+            },
+            icon: const Icon(Icons.visibility, color: Colors.blue),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+}
+

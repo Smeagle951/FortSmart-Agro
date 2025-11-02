@@ -1,0 +1,538 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart' as latlong2;
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+
+// Este arquivo serve como um adaptador para substituir o pacote mapbox_gl
+// Ele fornece classes e métodos compatíveis com a API do Mapbox GL
+// mas implementados usando flutter_map com MapTiler
+
+// Enum para estilos do MapTiler
+enum MapTilerStyle {
+  basic,
+  bright,
+  darkmatter,
+  hybrid,
+  landscape,
+  outdoor,
+  satellite,
+  streets,
+  toner,
+  topographique,
+  voyager,
+}
+
+// Classe para coordenadas geográficas
+class LatLng {
+  final double latitude;
+  final double longitude;
+
+  const LatLng(this.latitude, this.longitude);
+
+  // Converter para o formato LatLng do flutter_map (latlong2)
+  latlong2.LatLng toLatLong2() {
+    return latlong2.LatLng(latitude, longitude);
+  }
+
+  // Criar a partir do formato LatLng do flutter_map
+  static LatLng fromLatLong2(latlong2.LatLng latLng) {
+    return LatLng(latLng.latitude, latLng.longitude);
+  }
+
+  @override
+  String toString() => 'LatLng($latitude, $longitude)';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LatLng &&
+          runtimeType == other.runtimeType &&
+          latitude == other.latitude &&
+          longitude == other.longitude;
+
+  @override
+  int get hashCode => latitude.hashCode ^ longitude.hashCode;
+}
+
+// Classe para limites geográficos
+class LatLngBounds {
+  final LatLng southwest;
+  final LatLng northeast;
+
+  LatLngBounds({required this.southwest, required this.northeast});
+
+  // Converter para o formato LatLngBounds do flutter_map
+  latlong2.LatLngBounds toLatLong2Bounds() {
+    return latlong2.LatLngBounds(
+      latlong2.LatLng(southwest.latitude, southwest.longitude),
+      latlong2.LatLng(northeast.latitude, northeast.longitude),
+    );
+  }
+
+  // Criar a partir do formato LatLngBounds do flutter_map
+  static LatLngBounds fromLatLong2Bounds(latlong2.LatLngBounds bounds) {
+    return LatLngBounds(
+      southwest: LatLng(bounds.southWest.latitude, bounds.southWest.longitude),
+      northeast: LatLng(bounds.northEast.latitude, bounds.northEast.longitude),
+    );
+  }
+  
+  // Método para estender os limites para incluir um ponto
+  LatLngBounds extend(LatLng point) {
+    final double swLat = point.latitude < southwest.latitude ? point.latitude : southwest.latitude;
+    final double swLng = point.longitude < southwest.longitude ? point.longitude : southwest.longitude;
+    final double neLat = point.latitude > northeast.latitude ? point.latitude : northeast.latitude;
+    final double neLng = point.longitude > northeast.longitude ? point.longitude : northeast.longitude;
+    
+    return LatLngBounds(
+      southwest: LatLng(swLat, swLng),
+      northeast: LatLng(neLat, neLng),
+    );
+  }
+  
+  // Obter o centro dos limites
+  LatLng get center {
+    return LatLng(
+      (southwest.latitude + northeast.latitude) / 2,
+      (southwest.longitude + northeast.longitude) / 2,
+    );
+  }
+
+  @override
+  String toString() => 'LatLngBounds($southwest, $northeast)';
+}
+
+// Classe para posição da câmera
+class CameraPosition {
+  final LatLng target;
+  final double zoom;
+  final double? bearing;
+  final double? tilt;
+
+  CameraPosition({
+    required this.target,
+    this.zoom = 15.0,
+    this.bearing,
+    this.tilt,
+  });
+}
+
+// Classe para atualização da câmera
+class CameraUpdate {
+  final latlong2.LatLng? center;
+  final double? zoom;
+  final latlong2.LatLngBounds? bounds;
+  final EdgeInsets? padding;
+
+  CameraUpdate._({this.center, this.zoom, this.bounds, this.padding});
+
+  static CameraUpdate newLatLng(LatLng latLng) {
+    return CameraUpdate._(
+      center: latlong2.LatLng(latLng.latitude, latLng.longitude),
+    );
+  }
+
+  static CameraUpdate newLatLngZoom(LatLng latLng, double zoom) {
+    return CameraUpdate._(
+      center: latlong2.LatLng(latLng.latitude, latLng.longitude),
+      zoom: zoom,
+    );
+  }
+
+  static CameraUpdate newLatLngBounds(LatLngBounds bounds, [double padding = 50.0]) {
+    return CameraUpdate._(
+      bounds: bounds.toLatLong2Bounds(),
+      padding: EdgeInsets.all(padding),
+    );
+  }
+
+  static CameraUpdate zoomIn() {
+    return CameraUpdate._(
+      zoom: 1.0, // Incremento relativo
+    );
+  }
+
+  static CameraUpdate zoomOut() {
+    return CameraUpdate._(
+      zoom: -1.0, // Decremento relativo
+    );
+  }
+
+  static CameraUpdate zoomTo(double zoom) {
+    return CameraUpdate._(
+      zoom: zoom,
+    );
+  }
+
+  static CameraUpdate bearingTo(double bearing) {
+    // Não implementado completamente no flutter_map
+    return CameraUpdate._();
+  }
+}
+
+// Opções para símbolos no mapa
+class SymbolOptions {
+  final LatLng? geometry;
+  final String? iconImage;
+  final double? iconSize;
+  final String? textField;
+  final String? textSize;
+  final Color? textColor;
+  final Color? iconColor;
+  final double? zIndex;
+
+  SymbolOptions({
+    this.geometry,
+    this.iconImage,
+    this.iconSize,
+    this.textField,
+    this.textSize,
+    this.textColor,
+    this.iconColor,
+    this.zIndex,
+  });
+}
+
+// Classe para símbolos no mapa
+class Symbol {
+  final String id;
+  final SymbolOptions options;
+  final Map<String, dynamic>? data;
+
+  Symbol({
+    required this.id,
+    required this.options,
+    this.data,
+  });
+}
+
+// Opções para círculos no mapa
+class CircleOptions {
+  final LatLng? geometry;
+  final double? circleRadius;
+  final Color? circleColor;
+  final Color? circleStrokeColor;
+  final double? circleStrokeWidth;
+  final double? circleOpacity;
+  final double? zIndex;
+
+  CircleOptions({
+    this.geometry,
+    this.circleRadius,
+    this.circleColor,
+    this.circleStrokeColor,
+    this.circleStrokeWidth,
+    this.circleOpacity,
+    this.zIndex,
+  });
+}
+
+// Classe para círculos no mapa
+class Circle {
+  final String id;
+  final CircleOptions options;
+
+  Circle({
+    required this.id,
+    required this.options,
+  });
+}
+
+// Opções para polígonos no mapa
+class FillOptions {
+  final List<LatLng>? geometry;
+  final Color? fillColor;
+  final Color? fillOutlineColor;
+  final double? fillOpacity;
+  final double? zIndex;
+
+  FillOptions({
+    this.geometry,
+    this.fillColor,
+    this.fillOutlineColor,
+    this.fillOpacity,
+    this.zIndex,
+  });
+}
+
+// Classe para polígonos no mapa
+class Fill {
+  final String id;
+  final FillOptions options;
+
+  Fill({
+    required this.id,
+    required this.options,
+  });
+}
+
+// Controller para controle do mapa
+class MapTilerMapController {
+  final MapController _flutterMapController;
+  final List<Symbol> _symbols = [];
+  final List<Circle> _circles = [];
+  final List<Fill> _fills = [];
+  int _nextId = 0;
+
+  MapTilerMapController(this._flutterMapController);
+
+  // Métodos para controle da câmera
+  Future<void> animateCamera(CameraUpdate cameraUpdate) async {
+    final newCenter = cameraUpdate.center;
+    final newZoom = cameraUpdate.zoom;
+    final bounds = cameraUpdate.bounds;
+    final padding = cameraUpdate.padding;
+    
+    if (newCenter != null && newZoom != null) {
+      _flutterMapController.move(newCenter, newZoom);
+    } else if (newCenter != null) {
+      _flutterMapController.move(newCenter, _flutterMapController.zoom);
+    } else if (newZoom != null) {
+      // Se for um incremento/decremento relativo (zoomIn/zoomOut)
+      if (newZoom == 1.0 || newZoom == -1.0) {
+        _flutterMapController.move(_flutterMapController.center, _flutterMapController.zoom + newZoom);
+      } else {
+        // Se for um valor absoluto (zoomTo)
+        _flutterMapController.move(_flutterMapController.center, newZoom);
+      }
+    } else if (bounds != null) {
+      // Implementar fitBounds do flutter_map
+      try {
+        // Tenta usar o método fitBounds do flutter_map se disponível
+        _flutterMapController.fitBounds(
+          bounds,
+          options: padding != null ? FitBoundsOptions(padding: padding) : null,
+        );
+      } catch (e) {
+        // Fallback: calcula o centro e zoom manualmente
+        final center = latlong2.LatLng(
+          (bounds.southWest.latitude + bounds.northEast.latitude) / 2,
+          (bounds.southWest.longitude + bounds.northEast.longitude) / 2
+        );
+        
+        final latDiff = (bounds.northEast.latitude - bounds.southWest.latitude).abs();
+        final lngDiff = (bounds.northEast.longitude - bounds.southWest.longitude).abs();
+        final maxDiff = latDiff > lngDiff ? latDiff : lngDiff;
+        final zoom = 14 - (maxDiff * 10).clamp(0, 10); // Ajuste empírico
+        
+        _flutterMapController.move(center, zoom);
+      }
+    }
+  }
+
+  void moveCamera(CameraUpdate cameraUpdate) {
+    animateCamera(cameraUpdate);
+  }
+
+  Symbol addSymbol(SymbolOptions options, [Map<String, dynamic>? data]) {
+    final id = 'symbol_${_nextId++}';
+    final symbol = Symbol(id: id, options: options, data: data);
+    _symbols.add(symbol);
+    return symbol;
+  }
+
+  Circle addCircle(CircleOptions options) {
+    final id = 'circle_${_nextId++}';
+    final circle = Circle(id: id, options: options);
+    _circles.add(circle);
+    
+    // Aqui você pode adicionar o círculo ao mapa usando flutter_map
+    // Por exemplo, usando uma camada de CircleMarkers
+    
+    return circle;
+  }
+
+  Fill addFill(FillOptions options) {
+    final id = 'fill_${_nextId++}';
+    final fill = Fill(id: id, options: options);
+    _fills.add(fill);
+    
+    // Aqui você pode adicionar o polígono ao mapa usando flutter_map
+    // Por exemplo, usando uma camada de Polygons
+    
+    return fill;
+  }
+
+  void updateCircle(Circle circle, CircleOptions options) {
+    // Implementação para atualizar um círculo
+  }
+
+  void updateSymbol(Symbol symbol, SymbolOptions options) {
+    // Implementação para atualizar um símbolo
+  }
+
+  void updateFill(Fill fill, FillOptions options) {
+    // Implementação para atualizar um polígono
+  }
+
+  void removeCircle(Circle circle) {
+    _circles.removeWhere((c) => c.id == circle.id);
+  }
+
+  void removeSymbol(Symbol symbol) {
+    _symbols.removeWhere((s) => s.id == symbol.id);
+  }
+
+  void removeFill(Fill fill) {
+    _fills.removeWhere((f) => f.id == fill.id);
+  }
+
+  Future<LatLng> getSymbolLatLng(Symbol symbol) async {
+    if (symbol.options.geometry != null) {
+      return symbol.options.geometry!;
+    }
+    return LatLng(0, 0); // Valor padrão se não houver geometria
+  }
+}
+
+// Widget principal do mapa usando MapTiler
+class MapTilerMap extends StatelessWidget {
+  final CameraPosition? initialCameraPosition;
+  final bool myLocationEnabled;
+  final bool compassEnabled;
+  final bool zoomGesturesEnabled;
+  final bool rotateGesturesEnabled;
+  final bool tiltGesturesEnabled;
+  final bool scrollGesturesEnabled;
+  final bool doubleClickZoomEnabled;
+  final MapTilerStyle mapStyle;
+  final String? customStyleUrl;
+  final String apiKey;
+  final MapController? mapController;
+  final Function(MapTilerMapController)? onMapCreated;
+  final Function()? onStyleLoadedCallback;
+  final Function(LatLng)? onMapClick;
+  final Function(Symbol)? onSymbolTapped;
+  final Function(Circle)? onCircleTapped;
+  final Function(Fill)? onFillTapped;
+  final Widget? attributionButtonPosition;
+  final List<Widget>? children;
+
+  const MapTilerMap({
+    Key? key,
+    this.initialCameraPosition,
+    this.myLocationEnabled = false,
+    this.compassEnabled = true,
+    this.zoomGesturesEnabled = true,
+    this.rotateGesturesEnabled = true,
+    this.tiltGesturesEnabled = true,
+    this.scrollGesturesEnabled = true,
+    this.doubleClickZoomEnabled = true,
+    this.mapStyle = MapTilerStyle.basic,
+    this.customStyleUrl,
+    this.apiKey = 'KQAa9lY3N0TR17zxhk9u',
+    this.onMapCreated,
+    this.onStyleLoadedCallback,
+    this.onMapClick,
+    this.onSymbolTapped,
+    this.onCircleTapped,
+    this.onFillTapped,
+    this.attributionButtonPosition,
+    this.mapController,
+    this.children,
+  }) : super(key: key);
+
+  String _getMapTilerUrl() {
+    if (customStyleUrl != null) {
+      return customStyleUrl!;
+    }
+
+    String styleString;
+    String format = 'png';
+    
+    switch (mapStyle) {
+      case MapTilerStyle.basic:
+        styleString = 'basic-v2';
+        break;
+      case MapTilerStyle.bright:
+        styleString = 'bright-v2';
+        break;
+      case MapTilerStyle.darkmatter:
+        styleString = 'darkmatter-v2';
+        break;
+      case MapTilerStyle.hybrid:
+        styleString = 'hybrid';
+        format = 'jpg';
+        break;
+      case MapTilerStyle.landscape:
+        styleString = 'landscape-v2';
+        break;
+      case MapTilerStyle.outdoor:
+        styleString = 'outdoor-v2';
+        break;
+      case MapTilerStyle.satellite:
+        styleString = 'satellite';
+        format = 'jpg';
+        break;
+      case MapTilerStyle.streets:
+        styleString = 'streets-v2';
+        break;
+      case MapTilerStyle.toner:
+        styleString = 'toner-v2';
+        break;
+      case MapTilerStyle.topographique:
+        styleString = 'topographique-v2';
+        break;
+      case MapTilerStyle.voyager:
+        styleString = 'voyager-v2';
+        break;
+    }
+
+    return 'https://api.maptiler.com/maps/$styleString/256/{z}/{x}/{y}.$format?key=$apiKey';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = mapController ?? MapController();
+    
+    // Criar o controller do MapTiler
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (onMapCreated != null) {
+        onMapCreated!(MapTilerMapController(controller));
+      }
+    });
+
+    return FlutterMap(
+      mapController: controller,
+      options: MapOptions(
+        center: initialCameraPosition?.target != null ? 
+          latlong2.LatLng(initialCameraPosition!.target.latitude, initialCameraPosition!.target.longitude) : 
+          latlong2.LatLng(0, 0),
+        zoom: initialCameraPosition?.zoom ?? 15.0,
+        interactiveFlags: _getInteractiveFlags(),
+        onTap: onMapClick != null
+            ? (tapPosition, latLng) => onMapClick!(LatLng(latLng.latitude, latLng.longitude))
+            : null,
+        onMapReady: onStyleLoadedCallback,
+      ),
+      children: [
+        TileLayer(
+          urlTemplate: _getMapTilerUrl(),
+          subdomains: const ['a', 'b', 'c'],
+          userAgentPackageName: 'com.fortsmart.agro',
+          additionalOptions: {
+            'apiKey': apiKey,
+          },
+        ),
+        // Adicionar camadas personalizadas se fornecidas
+        if (children != null) ...children!,
+      ],
+    );
+  }
+
+  int _getInteractiveFlags() {
+    int flags = InteractiveFlag.none;
+    
+    if (zoomGesturesEnabled) flags |= InteractiveFlag.pinchZoom;
+    if (rotateGesturesEnabled) flags |= InteractiveFlag.rotate;
+    if (scrollGesturesEnabled) flags |= InteractiveFlag.drag;
+    if (doubleClickZoomEnabled) flags |= InteractiveFlag.doubleTapZoom;
+    
+    return flags;
+  }
+}
+
+// Alias para compatibilidade com código existente
+typedef MapboxMap = MapTilerMap;
+typedef MapboxMapController = MapTilerMapController;

@@ -1,0 +1,447 @@
+{
+  "Algodão": {
+    "campos_presentes": {
+      "id": 28,
+      "nome": 28,
+      "nome_cientifico": 28,
+      "categoria": 28,
+      "sintomas": 28,
+      "dano_economico": 28,
+      "partes_afetadas": 28,
+      "fenologia": 28,
+      "nivel_acao": 28,
+      "manejo_quimico": 28,
+      "manejo_biologico": 28,
+      "manejo_cultural": 28
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 28,
+      "rotacao_resistencia": 9
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 1,
+      "fases": 17,
+      "severidade": 25,
+      "condicoes_favoraveis": 25,
+      "limiares_especificos": 25,
+      "observacoes": 28,
+      "icone": 28,
+      "ativo": 28,
+      "niveis_infestacao": 3
+    },
+    "total_organismos": 28
+  },
+  "Arroz": {
+    "campos_presentes": {
+      "id": 12,
+      "nome": 12,
+      "nome_cientifico": 12,
+      "categoria": 12,
+      "sintomas": 12,
+      "dano_economico": 12,
+      "partes_afetadas": 12,
+      "fenologia": 12,
+      "nivel_acao": 12,
+      "manejo_quimico": 12,
+      "manejo_biologico": 12,
+      "manejo_cultural": 12
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 12,
+      "rotacao_resistencia": 6
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 3,
+      "fases": 5,
+      "severidade": 12,
+      "condicoes_favoraveis": 12,
+      "limiares_especificos": 12,
+      "observacoes": 12,
+      "icone": 12,
+      "ativo": 12
+    },
+    "total_organismos": 12
+  },
+  "Aveia": {
+    "campos_presentes": {
+      "id": 6,
+      "nome": 6,
+      "nome_cientifico": 6,
+      "categoria": 6,
+      "sintomas": 6,
+      "dano_economico": 6,
+      "partes_afetadas": 6,
+      "fenologia": 6,
+      "nivel_acao": 6,
+      "manejo_quimico": 6,
+      "manejo_biologico": 6,
+      "manejo_cultural": 6
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 6,
+      "rotacao_resistencia": 3
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 1,
+      "fases": 3,
+      "severidade": 6,
+      "condicoes_favoraveis": 6,
+      "limiares_especificos": 6,
+      "observacoes": 6,
+      "icone": 6,
+      "ativo": 6
+    },
+    "total_organismos": 6
+  },
+  "Batata": {
+    "campos_presentes": {
+      "id": 3,
+      "nome": 3,
+      "nome_cientifico": 3,
+      "categoria": 3,
+      "sintomas": 3,
+      "dano_economico": 3,
+      "partes_afetadas": 3,
+      "fenologia": 3,
+      "nivel_acao": 3,
+      "manejo_quimico": 3,
+      "manejo_biologico": 3,
+      "manejo_cultural": 3
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "rotacao_resistencia": 2,
+      "controle_biologico_detalhado": 3
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 2,
+      "severidade": 3,
+      "condicoes_favoraveis": 3,
+      "observacoes": 3,
+      "icone": 3,
+      "ativo": 3
+    },
+    "total_organismos": 3
+  },
+  "Cana-de-açúcar": {
+    "campos_presentes": {
+      "id": 9,
+      "nome": 9,
+      "nome_cientifico": 9,
+      "categoria": 9,
+      "sintomas": 9,
+      "dano_economico": 9,
+      "partes_afetadas": 9,
+      "fenologia": 9,
+      "nivel_acao": 9,
+      "manejo_quimico": 9,
+      "manejo_biologico": 9,
+      "manejo_cultural": 9
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 9,
+      "rotacao_resistencia": 6
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 1,
+      "fases": 3,
+      "severidade": 9,
+      "niveis_infestacao": 3,
+      "condicoes_favoraveis": 9,
+      "limiares_especificos": 9,
+      "observacoes": 9,
+      "icone": 9,
+      "ativo": 9
+    },
+    "total_organismos": 9
+  },
+  "Feijão": {
+    "campos_presentes": {
+      "id": 33,
+      "nome": 33,
+      "nome_cientifico": 33,
+      "categoria": 33,
+      "sintomas": 33,
+      "dano_economico": 33,
+      "partes_afetadas": 33,
+      "fenologia": 33,
+      "nivel_acao": 33,
+      "manejo_quimico": 33,
+      "manejo_biologico": 33,
+      "manejo_cultural": 33
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 33,
+      "rotacao_resistencia": 16
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 1,
+      "fases": 13,
+      "severidade": 27,
+      "condicoes_favoraveis": 27,
+      "limiares_especificos": 27,
+      "observacoes": 33,
+      "icone": 33,
+      "ativo": 33,
+      "niveis_infestacao": 1
+    },
+    "total_organismos": 33
+  },
+  "Gergelim": {
+    "campos_presentes": {
+      "id": 11,
+      "nome": 11,
+      "nome_cientifico": 11,
+      "categoria": 11,
+      "sintomas": 11,
+      "dano_economico": 11,
+      "partes_afetadas": 11,
+      "fenologia": 11,
+      "nivel_acao": 11,
+      "manejo_quimico": 11,
+      "manejo_biologico": 11,
+      "manejo_cultural": 11
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 11,
+      "rotacao_resistencia": 6
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 1,
+      "fases": 5,
+      "severidade": 11,
+      "condicoes_favoraveis": 11,
+      "limiares_especificos": 11,
+      "observacoes": 11,
+      "icone": 11,
+      "ativo": 11,
+      "niveis_infestacao": 2
+    },
+    "total_organismos": 11
+  },
+  "Girassol": {
+    "campos_presentes": {
+      "id": 3,
+      "nome": 3,
+      "nome_cientifico": 3,
+      "categoria": 3,
+      "sintomas": 3,
+      "dano_economico": 3,
+      "partes_afetadas": 3,
+      "fenologia": 3,
+      "nivel_acao": 3,
+      "manejo_quimico": 3,
+      "manejo_biologico": 3,
+      "manejo_cultural": 3
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 3,
+      "rotacao_resistencia": 1
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 1,
+      "fases": 2,
+      "severidade": 3,
+      "condicoes_favoraveis": 3,
+      "limiares_especificos": 3,
+      "observacoes": 3,
+      "icone": 3,
+      "ativo": 3,
+      "niveis_infestacao": 1
+    },
+    "total_organismos": 3
+  },
+  "Milho": {
+    "campos_presentes": {
+      "id": 32,
+      "nome": 32,
+      "nome_cientifico": 32,
+      "categoria": 32,
+      "sintomas": 32,
+      "dano_economico": 32,
+      "partes_afetadas": 32,
+      "fenologia": 32,
+      "nivel_acao": 32,
+      "manejo_quimico": 32,
+      "manejo_biologico": 32,
+      "manejo_cultural": 32
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 32,
+      "rotacao_resistencia": 15
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 1,
+      "fases": 16,
+      "severidade": 30,
+      "niveis_infestacao": 6,
+      "condicoes_favoraveis": 30,
+      "limiares_especificos": 30,
+      "observacoes": 32,
+      "icone": 32,
+      "ativo": 32
+    },
+    "total_organismos": 32
+  },
+  "Soja": {
+    "campos_presentes": {
+      "id": 50,
+      "nome": 50,
+      "nome_cientifico": 50,
+      "categoria": 50,
+      "sintomas": 50,
+      "dano_economico": 50,
+      "partes_afetadas": 50,
+      "fenologia": 50,
+      "nivel_acao": 50,
+      "manejo_quimico": 50,
+      "manejo_biologico": 50,
+      "manejo_cultural": 50
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 50,
+      "rotacao_resistencia": 25
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 13,
+      "fases": 20,
+      "severidade": 42,
+      "niveis_infestacao": 9,
+      "condicoes_favoraveis": 42,
+      "limiares_especificos": 42,
+      "observacoes": 50,
+      "icone": 50,
+      "ativo": 50
+    },
+    "total_organismos": 50
+  },
+  "Sorgo": {
+    "campos_presentes": {
+      "id": 22,
+      "nome": 22,
+      "nome_cientifico": 22,
+      "categoria": 22,
+      "sintomas": 22,
+      "dano_economico": 22,
+      "partes_afetadas": 22,
+      "fenologia": 22,
+      "nivel_acao": 22,
+      "manejo_quimico": 22,
+      "manejo_biologico": 22,
+      "manejo_cultural": 22
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 22,
+      "rotacao_resistencia": 11
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 1,
+      "fases": 8,
+      "severidade": 17,
+      "niveis_infestacao": 3,
+      "condicoes_favoraveis": 17,
+      "limiares_especificos": 17,
+      "observacoes": 22,
+      "icone": 22,
+      "ativo": 22
+    },
+    "total_organismos": 22
+  },
+  "Tomate": {
+    "campos_presentes": {
+      "id": 25,
+      "nome": 25,
+      "nome_cientifico": 25,
+      "categoria": 25,
+      "sintomas": 25,
+      "dano_economico": 25,
+      "partes_afetadas": 25,
+      "fenologia": 25,
+      "nivel_acao": 25,
+      "manejo_quimico": 25,
+      "manejo_biologico": 25,
+      "manejo_cultural": 25
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 25,
+      "rotacao_resistencia": 12
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 1,
+      "fases": 6,
+      "severidade": 12,
+      "niveis_infestacao": 13,
+      "condicoes_favoraveis": 18,
+      "limiares_especificos": 18,
+      "observacoes": 19,
+      "icone": 19,
+      "ativo": 19
+    },
+    "total_organismos": 25
+  },
+  "Trigo": {
+    "campos_presentes": {
+      "id": 7,
+      "nome": 7,
+      "nome_cientifico": 7,
+      "categoria": 7,
+      "sintomas": 7,
+      "dano_economico": 7,
+      "partes_afetadas": 7,
+      "fenologia": 7,
+      "nivel_acao": 7,
+      "manejo_quimico": 7,
+      "manejo_biologico": 7,
+      "manejo_cultural": 7
+    },
+    "campos_faltantes": {},
+    "campos_novos_faltantes": {
+      "controle_biologico_detalhado": 7,
+      "rotacao_resistencia": 5
+    },
+    "campos_opcionais_presentes": {
+      "doses_defensivos": 2,
+      "fases": 2,
+      "severidade": 7,
+      "niveis_infestacao": 2,
+      "condicoes_favoraveis": 7,
+      "limiares_especificos": 7,
+      "observacoes": 7,
+      "icone": 7,
+      "ativo": 7
+    },
+    "total_organismos": 7
+  },
+  "_estatisticas_globais": {
+    "campos_presentes_global": {
+      "id": 241,
+      "nome": 241,
+      "nome_cientifico": 241,
+      "categoria": 241,
+      "sintomas": 241,
+      "dano_economico": 241,
+      "partes_afetadas": 241,
+      "fenologia": 241,
+      "nivel_acao": 241,
+      "manejo_quimico": 241,
+      "manejo_biologico": 241,
+      "manejo_cultural": 241
+    },
+    "campos_faltantes_global": {},
+    "campos_novos_faltantes_global": {
+      "controle_biologico_detalhado": 241,
+      "rotacao_resistencia": 117
+    }
+  }
+}

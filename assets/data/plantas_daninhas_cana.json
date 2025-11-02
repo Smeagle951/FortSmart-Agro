@@ -1,0 +1,51 @@
+{
+  "cultura": "Cana-de-açúcar",
+  "plantas_daninhas": [
+    {
+      "id": "cana_capim_coloniao",
+      "nome": "Capim-colonião",
+      "nome_cientifico": "Panicum maximum",
+      "categoria": "Planta Daninha",
+      "familia": "Poaceae",
+      "ciclo": "Perene",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição severa por recursos",
+        "Formação de touceiras",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R6",
+      "densidade_critica": "1 touceira/10m²",
+      "manejo": {
+        "pre_emergencia": ["Glyphosate", "2,4-D"],
+        "pos_emergencia": ["Glyphosate", "2,4-D", "Aminopyralid"],
+        "cultural": ["Gradagem", "Rotação com pastagem", "Roçada"]
+      },
+      "observacoes": "Principal problema na cana",
+      "icone": "🌱"
+    },
+    {
+      "id": "cana_braquiaria",
+      "nome": "Braquiária",
+      "nome_cientifico": "Urochloa spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Poaceae",
+      "ciclo": "Perene",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por recursos",
+        "Formação de touceiras",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R6",
+      "densidade_critica": "1 touceira/5m²",
+      "manejo": {
+        "pre_emergencia": ["Glyphosate", "2,4-D"],
+        "pos_emergencia": ["Glyphosate", "Aminopyralid", "Triclopyr"],
+        "cultural": ["Gradagem", "Roçada", "Rotação"]
+      },
+      "observacoes": "Muito comum em áreas de pastagem",
+      "icone": "🌾"
+    }
+  ]
+}

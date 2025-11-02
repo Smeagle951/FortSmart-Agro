@@ -1,0 +1,2012 @@
+import 'package:flutter/material.dart';
+import '../../models/crop_management.dart' as crop_mgmt;
+import '../../models/pest.dart';
+import '../../models/disease.dart';
+import '../../models/weed.dart' as weed_model;
+import '../../models/crop_variety.dart';
+import '../../database/models/crop.dart' as db_crop;
+import '../../repositories/crop_management_repository.dart';
+import '../../services/crop_sync_service.dart';
+import '../../services/culture_import_service.dart';
+import '../../widgets/loading_indicator.dart';
+import '../../widgets/empty_state.dart';
+import '../../theme/premium_theme.dart' as theme;
+
+/// Tela para gerenciamento de culturas da fazenda
+class FarmCropsScreen extends StatefulWidget {
+  const FarmCropsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<FarmCropsScreen> createState() => _FarmCropsScreenState();
+}
+
+class _FarmCropsScreenState extends State<FarmCropsScreen> {
+  final CropManagementRepository _repository = CropManagementRepository();
+  final CultureImportService _importService = CultureImportService();
+  
+  bool _isLoading = true;
+  bool _isInitializing = false;
+  String? _errorMessage;
+  List<dynamic> _crops = [];
+  Map<String, List<Pest>> _pestsByCrop = {};
+  Map<String, List<Disease>> _diseasesByCrop = {};
+  Map<String, List<weed_model.Weed>> _weedsByCrop = {};
+  Map<String, List<CropVariety>> _varietiesByCrop = {};
+
+  @override
+  void initState() {
+    super.initState();
+    print('DEBUG: initState FarmCropsScreen');
+    _initializeAndLoadData();
+  }
+  
+  Future<void> _initializeAndLoadData() async {
+    setState(() {
+      _isInitializing = true;
+      _errorMessage = null;
+    });
+    print('DEBUG: Iniciando carregamento de culturas...');
+    try {
+      // Inicializar o serviço de importação
+      await _importService.initialize();
+      print('DEBUG: Serviço de importação inicializado');
+      // Carregar dados
+      await _loadAllData();
+      setState(() {
+        _isInitializing = false;
+        _isLoading = false;
+      });
+      print('DEBUG: Carregamento de culturas finalizado');
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Erro ao inicializar: $e';
+        _isInitializing = false;
+        _isLoading = false;
+      });
+      print('Erro ao inicializar FarmCropsScreen: $e');
+    }
+  }
+
+  Future<void> _loadAllData() async {
+    print('DEBUG: _loadAllData chamado');
+    try {
+      // Carregar culturas
+      final crops = await _importService.getAllCrops();
+      print('DEBUG: Culturas carregadas: ${crops.length}');
+      
+      // Verificar se temos todas as 9 culturas principais
+      final expectedCrops = ['Soja', 'Milho', 'Sorgo', 'Algodão', 'Feijão', 'Girassol', 'Aveia', 'Trigo', 'Gergelim'];
+      bool hasAllCrops = expectedCrops.every((expectedName) => 
+        crops.any((crop) => crop.name.toLowerCase() == expectedName.toLowerCase())
+      );
+      
+      // Verificar se as culturas têm pragas e doenças associadas
+      bool hasCompleteData = false;
+      if (crops.isNotEmpty) {
+        for (var crop in crops) {
+          if (crop.id != null) {
+            final pests = await _importService.getPestsByCrop(crop.id!);
+            final diseases = await _importService.getDiseasesByCrop(crop.id!);
+            if (pests.isNotEmpty || diseases.isNotEmpty) {
+              hasCompleteData = true;
+              break;
+            }
+          }
+        }
+      }
+      
+      // Se não há todas as culturas ou não há dados completos, criar exemplos
+      if (crops.isEmpty || !hasAllCrops || !hasCompleteData) {
+        print('DEBUG: Dados incompletos ou faltando culturas, criando exemplos completos...');
+        await _createSampleCrops();
+        final newCrops = await _importService.getAllCrops();
+        setState(() {
+          _crops = newCrops;
+        });
+        print('DEBUG: Culturas completas criadas: ${newCrops.length}');
+      } else {
+        setState(() {
+          _crops = crops;
+        });
+      }
+      // Carregar dados relacionados para cada cultura
+      final Map<String, List<Pest>> pestsByCrop = {};
+      final Map<String, List<Disease>> diseasesByCrop = {};
+      final Map<String, List<weed_model.Weed>> weedsByCrop = {};
+      final Map<String, List<CropVariety>> varietiesByCrop = {};
+      for (var crop in _crops) {
+        if (crop.id != null) {
+          try {
+            pestsByCrop[crop.id.toString()] = await _importService.getPestsByCrop(crop.id!);
+            diseasesByCrop[crop.id.toString()] = await _importService.getDiseasesByCrop(crop.id!);
+            weedsByCrop[crop.id.toString()] = await _importService.getWeedsByCrop(crop.id!);
+            varietiesByCrop[crop.id.toString()] = await _importService.getVarietiesByCrop(crop.id.toString());
+          } catch (e) {
+            pestsByCrop[crop.id.toString()] = [];
+            diseasesByCrop[crop.id.toString()] = [];
+            weedsByCrop[crop.id.toString()] = [];
+            varietiesByCrop[crop.id.toString()] = [];
+            print('Erro ao carregar dados relacionados para cultura ${crop.id}: $e');
+          }
+        }
+      }
+      setState(() {
+        _pestsByCrop = pestsByCrop;
+        _diseasesByCrop = diseasesByCrop;
+        _weedsByCrop = weedsByCrop;
+        _varietiesByCrop = varietiesByCrop;
+      });
+      print('DEBUG: Dados relacionados carregados');
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Erro ao carregar dados: $e';
+      });
+      print('Erro ao carregar culturas: $e');
+    }
+  }
+
+  Future<void> _createSampleCrops() async {
+    try {
+      print('DEBUG: Criando culturas completas com pragas e doenças...');
+      
+      // Criar culturas principais
+      final sojaId = (await _importService.addCrop('Soja', description: 'Cultura principal de verão')).toString();
+      final milhoId = (await _importService.addCrop('Milho', description: 'Cultura de segunda safra')).toString();
+      final sorgoId = (await _importService.addCrop('Sorgo', description: 'Cultura forrageira')).toString();
+      final algodaoId = (await _importService.addCrop('Algodão', description: 'Cultura de fibra')).toString();
+      final feijaoId = (await _importService.addCrop('Feijão', description: 'Cultura de inverno')).toString();
+      final girassolId = (await _importService.addCrop('Girassol', description: 'Cultura oleaginosa')).toString();
+      final aveiaId = (await _importService.addCrop('Aveia', description: 'Cultura de inverno')).toString();
+      final trigoId = (await _importService.addCrop('Trigo', description: 'Cultura de inverno')).toString();
+      final gergelimId = (await _importService.addCrop('Gergelim', description: 'Cultura oleaginosa')).toString();
+      
+      // Adicionar pragas e doenças para cada cultura
+      await _addSojaPestsAndDiseases(sojaId);
+      await _addMilhoPestsAndDiseases(milhoId);
+      await _addSorgoPestsAndDiseases(sorgoId);
+      await _addAlgodaoPestsAndDiseases(algodaoId);
+      await _addFeijaoPestsAndDiseases(feijaoId);
+      await _addGirassolPestsAndDiseases(girassolId);
+      await _addAveiaPestsAndDiseases(aveiaId);
+      await _addTrigoPestsAndDiseases(trigoId);
+      await _addGergelimPestsAndDiseases(gergelimId);
+      
+      print('DEBUG: Culturas completas criadas com sucesso!');
+    } catch (e) {
+      print('Erro ao criar culturas de exemplo: $e');
+    }
+  }
+  
+  // Métodos para adicionar pragas e doenças específicas por cultura
+  Future<void> _addSojaPestsAndDiseases(String cropId) async {
+    // Pragas da Soja
+    final sojaPests = [
+      'Percevejo-marrom (Euschistus heros)',
+      'Percevejo-pequeno (Piezodorus guildinii)',
+      'Percevejo-verde (Nezara viridula)',
+      'Lagarta-da-soja (Chrysodeixis includens)',
+      'Helicoverpa armigera',
+      'Spodoptera frugiperda',
+      'Mosca-branca (Bemisia tabaci)',
+      'Ácaro-rajado (Tetranychus urticae)',
+      'Trips (Caliothrips phaseoli)',
+    ];
+    
+    // Doenças da Soja
+    final sojaDiseases = [
+      'Ferrugem-asiática (Phakopsora pachyrhizi)',
+      'Mancha-alvo (Corynespora cassiicola)',
+      'Antracnose (Colletotrichum truncatum)',
+      'Mofo-branco (Sclerotinia sclerotiorum)',
+      'Oídio (Erysiphe diffusa)',
+      'Septoriose (Septoria glycines)',
+      'Podridão radicular por Phytophthora sojae',
+      'Podridão por Rhizoctonia solani',
+      'Míldio (Peronospora manshurica)',
+    ];
+    
+    // Plantas daninhas da Soja
+    final sojaWeeds = [
+      'Buva (Conyza spp.)',
+      'Capim-amargoso (Digitaria insularis)',
+      'Capim-branco (Chloris polydactyla)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+      'Trapoeraba (Commelina benghalensis)',
+    ];
+    
+    // Variedades da Soja
+    final sojaVarieties = [
+      'BRS 1074 IPRO',
+      'BRS 1079 IPRO',
+      'BRS 1080 IPRO',
+      'BRS 1081 IPRO',
+      'BRS 1082 IPRO',
+      'BRS 1083 IPRO',
+      'BRS 1084 IPRO',
+      'BRS 1085 IPRO',
+    ];
+    
+    await _addPestsToCrop(cropId, sojaPests);
+    await _addDiseasesToCrop(cropId, sojaDiseases);
+    await _addWeedsToCrop(cropId, sojaWeeds);
+    await _addVarietiesToCrop(cropId, sojaVarieties);
+  }
+  
+  Future<void> _addMilhoPestsAndDiseases(String cropId) async {
+    // Pragas do Milho
+    final milhoPests = [
+      'Lagarta-do-cartucho (Spodoptera frugiperda)',
+      'Cigarrinha-do-milho (Dalbulus maidis) – (enfezamentos)',
+      'Percevejo-barriga-verde (Dichelops furcatus)',
+      'Pulgão-do-milho (Rhopalosiphum maidis)',
+      'Broca-do-colmo (Diatraea saccharalis)',
+      'Helicoverpa armigera',
+      'Corós (Scarabaeidae, várias spp.)',
+    ];
+    
+    // Doenças do Milho
+    final milhoDiseases = [
+      'Ferrugem comum (Puccinia sorghi)',
+      'Ferrugem tropical (Puccinia polysora)',
+      'Mancha branca (Phaeosphaeria maydis complex)',
+      'Cercosporiose (Cercospora zeae-maydis)',
+      'Enfezamento vermelho/pálido (Mollicutes)',
+      'Podridões de colmo/espiga (Fusarium, Diplodia, Aspergillus)',
+      'Míldio (Peronosclerospora spp.) – mais comum em algumas regiões',
+    ];
+    
+    // Plantas daninhas do Milho
+    final milhoWeeds = [
+      'Capim-amargoso (Digitaria insularis)',
+      'Capim-branco (Chloris polydactyla)',
+      'Capim-colchão (Digitaria horizontalis)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+      'Trapoeraba (Commelina benghalensis)',
+    ];
+    
+    // Variedades do Milho
+    final milhoVarieties = [
+      'BRS 1055',
+      'BRS 1060',
+      'BRS 1061',
+      'BRS 1062',
+      'BRS 1063',
+      'BRS 1064',
+      'BRS 1065',
+      'BRS 1066',
+    ];
+    
+    await _addPestsToCrop(cropId, milhoPests);
+    await _addDiseasesToCrop(cropId, milhoDiseases);
+    await _addWeedsToCrop(cropId, milhoWeeds);
+    await _addVarietiesToCrop(cropId, milhoVarieties);
+  }
+    
+    // Doenças do Milho
+    final milhoDiseases = [
+      'Ferrugem comum (Puccinia sorghi)',
+      'Ferrugem tropical (Puccinia polysora)',
+      'Mancha branca (Phaeosphaeria maydis complex)',
+      'Cercosporiose (Cercospora zeae-maydis)',
+      'Enfezamento vermelho/pálido (Mollicutes)',
+      'Podridões de colmo/espiga (Fusarium, Diplodia, Aspergillus)',
+      'Míldio (Peronosclerospora spp.)',
+    ];
+    
+    // Plantas daninhas do Milho
+    final milhoWeeds = [
+      'Capim-amargoso (Digitaria insularis)',
+      'Capim-branco (Chloris polydactyla)',
+      'Capim-colchão (Digitaria horizontalis)',
+      'Capim-pé-de-galinha (Eleusine indica)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+    ];
+    
+    // Variedades do Milho
+    final milhoVarieties = [
+      'BRS 1055',
+      'BRS 1060',
+      'BRS 1061',
+      'BRS 1062',
+      'BRS 1063',
+      'BRS 1064',
+      'BRS 1065',
+      'BRS 1066',
+    ];
+    
+    await _addPestsToCrop(cropId, milhoPests);
+    await _addDiseasesToCrop(cropId, milhoDiseases);
+    await _addWeedsToCrop(cropId, milhoWeeds);
+    await _addVarietiesToCrop(cropId, milhoVarieties);
+  }
+  
+  Future<void> _addSorgoPestsAndDiseases(String cropId) async {
+    // Pragas do Sorgo
+    final sorgoPests = [
+      'Pulgão-do-sorgo (Melanaphis sacchari)',
+      'Pulgão-verde (Schizaphis graminum)',
+      'Lagartas (Spodoptera frugiperda, Helicoverpa spp.)',
+      'Percevejos (várias spp.)',
+      'Corós',
+    ];
+    
+    // Doenças do Sorgo
+    final sorgoDiseases = [
+      'Antracnose (Colletotrichum graminicola)',
+      'Helmintosporiose / Exserohilum (Exserohilum turcicum)',
+      'Ferrugens (várias Puccinia spp.)',
+      'Míldio (Peronosclerospora sorghi)',
+      'Mancha de Cercospora spp.',
+    ];
+    
+    // Plantas daninhas do Sorgo
+    final sorgoWeeds = [
+      'Capim-amargoso (Digitaria insularis)',
+      'Capim-branco (Chloris polydactyla)',
+      'Capim-colchão (Digitaria horizontalis)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+      'Trapoeraba (Commelina benghalensis)',
+    ];
+    
+    // Variedades do Sorgo
+    final sorgoVarieties = [
+      'BRS 310',
+      'BRS 308',
+      'BRS 309',
+      'BRS 311',
+      'BRS 312',
+      'BRS 313',
+    ];
+    
+    await _addPestsToCrop(cropId, sorgoPests);
+    await _addDiseasesToCrop(cropId, sorgoDiseases);
+    await _addWeedsToCrop(cropId, sorgoWeeds);
+    await _addVarietiesToCrop(cropId, sorgoVarieties);
+  }
+  
+  Future<void> _addAlgodaoPestsAndDiseases(String cropId) async {
+    // Pragas do Algodão
+    final algodaoPests = [
+      'Bicudo-do-algodoeiro (Anthonomus grandis)',
+      'Mosca-branca (Bemisia tabaci)',
+      'Lagartas (Helicoverpa armigera, Spodoptera frugiperda, Alabama argillacea)',
+      'Ácaro-rajado (Tetranychus urticae)',
+      'Pulgão-do-algodoeiro (Aphis gossypii)',
+      'Trips (Thrips palmi, Frankliniella schultzei)',
+    ];
+    
+    // Doenças do Algodão
+    final algodaoDiseases = [
+      'Ramulose (Colletotrichum gossypii var. cephalosporioides)',
+      'Ramularia (Ramularia areola)',
+      'Mancha angular (Xanthomonas citri pv. malvacearum)',
+      'Fusariose (Fusarium oxysporum f. sp. vasinfectum)',
+      'Verticiliose (Verticillium dahliae)',
+      'Alternária (Alternaria alternata)',
+    ];
+    
+    // Plantas daninhas do Algodão
+    final algodaoWeeds = [
+      'Capim-amargoso (Digitaria insularis)',
+      'Capim-branco (Chloris polydactyla)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+      'Trapoeraba (Commelina benghalensis)',
+      'Corda-de-viola (Ipomoea spp.)',
+    ];
+    
+    // Variedades do Algodão
+    final algodaoVarieties = [
+      'BRS 286',
+      'BRS 293',
+      'BRS 294',
+      'BRS 295',
+      'BRS 296',
+      'BRS 297',
+    ];
+    
+    await _addPestsToCrop(cropId, algodaoPests);
+    await _addDiseasesToCrop(cropId, algodaoDiseases);
+    await _addWeedsToCrop(cropId, algodaoWeeds);
+    await _addVarietiesToCrop(cropId, algodaoVarieties);
+  }
+  
+  Future<void> _addFeijaoPestsAndDiseases(String cropId) async {
+    // Pragas do Feijão
+    final feijaoPests = [
+      'Mosca-branca (Bemisia tabaci)',
+      'Pulgões (Aphis craccivora, A. gossypii)',
+      'Trips (Caliothrips phaseoli)',
+      'Vaquinha (Diabrotica speciosa)',
+      'Percevejos (ex.: Euschistus heros)',
+    ];
+    
+    // Doenças do Feijão
+    final feijaoDiseases = [
+      'Antracnose (Colletotrichum lindemuthianum)',
+      'Ferrugem (Uromyces appendiculatus)',
+      'Mancha-angular (Pseudocercospora griseola)',
+      'Mofo-branco (Sclerotinia sclerotiorum)',
+      'Murcha de Fusarium (Fusarium oxysporum)',
+      'Oídio (Erysiphe polygoni)',
+      'Vírus do mosaico comum (BCMV)',
+      'Mosaico dourado (transmitido por B. tabaci)',
+    ];
+    
+    // Plantas daninhas do Feijão
+    final feijaoWeeds = [
+      'Capim-amargoso (Digitaria insularis)',
+      'Capim-branco (Chloris polydactyla)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+      'Trapoeraba (Commelina benghalensis)',
+      'Corda-de-viola (Ipomoea spp.)',
+    ];
+    
+    // Variedades do Feijão
+    final feijaoVarieties = [
+      'BRS Estilo',
+      'BRS Pérola',
+      'BRS Valente',
+      'BRS Agreste',
+      'BRS Notável',
+      'BRS Supremo',
+    ];
+    
+    await _addPestsToCrop(cropId, feijaoPests);
+    await _addDiseasesToCrop(cropId, feijaoDiseases);
+    await _addWeedsToCrop(cropId, feijaoWeeds);
+    await _addVarietiesToCrop(cropId, feijaoVarieties);
+  }
+  
+  Future<void> _addGirassolPestsAndDiseases(String cropId) async {
+    // Pragas do Girassol
+    final girassolPests = [
+      'Pulgões (ex.: Aphis gossypii)',
+      'Lagartas (Spodoptera spp., Helicoverpa spp.)',
+      'Percevejos (ex.: Nezara viridula)',
+      'Corós',
+    ];
+    
+    // Doenças do Girassol
+    final girassolDiseases = [
+      'Míldio (Plasmopara halstedii)',
+      'Mancha de Alternaria (Alternaria helianthi)',
+      'Mofo-branco (Sclerotinia sclerotiorum)',
+      'Ferrugem (Puccinia helianthi)',
+      'Podridões de raiz/haste por Phoma/Phomopsis',
+    ];
+    
+    // Plantas daninhas do Girassol
+    final girassolWeeds = [
+      'Capim-amargoso (Digitaria insularis)',
+      'Capim-branco (Chloris polydactyla)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+      'Trapoeraba (Commelina benghalensis)',
+      'Corda-de-viola (Ipomoea spp.)',
+    ];
+    
+    // Variedades do Girassol
+    final girassolVarieties = [
+      'BRS 323',
+      'BRS 324',
+      'BRS 325',
+      'BRS 326',
+      'BRS 327',
+      'BRS 328',
+    ];
+    
+    await _addPestsToCrop(cropId, girassolPests);
+    await _addDiseasesToCrop(cropId, girassolDiseases);
+    await _addWeedsToCrop(cropId, girassolWeeds);
+    await _addVarietiesToCrop(cropId, girassolVarieties);
+  }
+  
+  Future<void> _addAveiaPestsAndDiseases(String cropId) async {
+    // Pragas da Aveia
+    final aveiaPests = [
+      'Pulgões (ex.: Rhopalosiphum padi, Sitobion avenae)',
+      'Lagartas cortadeiras',
+      'Percevejo-barriga-verde (em cereais de inverno)',
+    ];
+    
+    // Doenças da Aveia
+    final aveiaDiseases = [
+      'Ferrugem da folha (Puccinia coronata f. sp. avenae)',
+      'Mancha foliar de Drechslera avenae (Helminthosporium)',
+      'Oídio (Blumeria graminis)',
+      'Giberela (Fusarium graminearum) – em espigas/grãos',
+    ];
+    
+    // Plantas daninhas da Aveia
+    final aveiaWeeds = [
+      'Azevém (Lolium multiflorum)',
+      'Nabo (Raphanus raphanistrum)',
+      'Erva-de-santa-maria (Chenopodium album)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+      'Trapoeraba (Commelina benghalensis)',
+    ];
+    
+    // Variedades da Aveia
+    final aveiaVarieties = [
+      'BRS Centauro',
+      'BRS Centauro II',
+      'BRS Centauro III',
+      'BRS Centauro IV',
+      'BRS Centauro V',
+      'BRS Centauro VI',
+    ];
+    
+    await _addPestsToCrop(cropId, aveiaPests);
+    await _addDiseasesToCrop(cropId, aveiaDiseases);
+    await _addWeedsToCrop(cropId, aveiaWeeds);
+    await _addVarietiesToCrop(cropId, aveiaVarieties);
+  }
+  
+  Future<void> _addTrigoPestsAndDiseases(String cropId) async {
+    // Pragas do Trigo
+    final trigoPests = [
+      'Pulgão-do-trigo (Schizaphis graminum, Rhopalosiphum padi)',
+      'Percevejo-barriga-verde (Dichelops furcatus)',
+      'Lagarta-do-trigo (Pseudaletia sequax)',
+      'Corós',
+    ];
+    
+    // Doenças do Trigo
+    final trigoDiseases = [
+      'Brusone do trigo (Magnaporthe oryzae patótipo Triticum)',
+      'Ferrugem da folha (Puccinia triticina)',
+      'Ferrugem do colmo (Puccinia graminis)',
+      'Ferrugem amarela (Puccinia striiformis)',
+      'Mancha amarela (Pyrenophora tritici-repentis)',
+      'Septoriose da folha (Zymoseptoria tritici)',
+      'Oídio (Blumeria graminis f. sp. tritici)',
+      'Giberela (Fusarium graminearum)',
+    ];
+    
+    // Plantas daninhas do Trigo
+    final trigoWeeds = [
+      'Azevém (Lolium multiflorum)',
+      'Nabo (Raphanus raphanistrum)',
+      'Erva-de-santa-maria (Chenopodium album)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+      'Trapoeraba (Commelina benghalensis)',
+    ];
+    
+    // Variedades do Trigo
+    final trigoVarieties = [
+      'BRS 264',
+      'BRS 265',
+      'BRS 266',
+      'BRS 267',
+      'BRS 268',
+      'BRS 269',
+    ];
+    
+    await _addPestsToCrop(cropId, trigoPests);
+    await _addDiseasesToCrop(cropId, trigoDiseases);
+    await _addWeedsToCrop(cropId, trigoWeeds);
+    await _addVarietiesToCrop(cropId, trigoVarieties);
+  }
+  
+  Future<void> _addGergelimPestsAndDiseases(String cropId) async {
+    // Pragas do Gergelim
+    final gergelimPests = [
+      'Mosca-branca (Bemisia tabaci)',
+      'Trips (Thrips tabaci)',
+      'Pulgões (Aphis gossypii)',
+      'Percevejos (várias spp.)',
+      'Lagartas desfolhadoras',
+    ];
+    
+    // Doenças do Gergelim
+    final gergelimDiseases = [
+      'Murcha de Fusarium (F. oxysporum f. sp. sesami)',
+      'Mancha de Cercospora sesami',
+      'Alternariose (Alternaria sesami)',
+      'Murcha bacteriana (Xanthomonas campestris pv. sesami)',
+      'Fitoplasmas (phyllody)',
+    ];
+    
+    // Plantas daninhas do Gergelim
+    final gergelimWeeds = [
+      'Capim-amargoso (Digitaria insularis)',
+      'Capim-branco (Chloris polydactyla)',
+      'Caruru (Amaranthus spp.)',
+      'Picão-preto (Bidens pilosa)',
+      'Trapoeraba (Commelina benghalensis)',
+      'Corda-de-viola (Ipomoea spp.)',
+    ];
+    
+    // Variedades do Gergelim
+    final gergelimVarieties = [
+      'BRS Seda',
+      'BRS Anahí',
+      'BRS Morena',
+      'BRS 323',
+      'BRS 324',
+      'BRS 325',
+    ];
+    
+    await _addPestsToCrop(cropId, gergelimPests);
+    await _addDiseasesToCrop(cropId, gergelimDiseases);
+    await _addWeedsToCrop(cropId, gergelimWeeds);
+    await _addVarietiesToCrop(cropId, gergelimVarieties);
+  }
+  
+  // Métodos auxiliares para adicionar pragas, doenças, plantas daninhas e variedades
+  Future<void> _addPestsToCrop(String cropId, List<String> pests) async {
+    final cropIdInt = int.tryParse(cropId) ?? 0;
+    for (final pestName in pests) {
+      try {
+        // Extrair nome científico se disponível
+        String name = pestName;
+        String scientificName = '';
+        
+        if (pestName.contains('(') && pestName.contains(')')) {
+          final parts = pestName.split('(');
+          name = parts[0].trim();
+          scientificName = parts[1].replaceAll(')', '').trim();
+        }
+        
+        await _importService.addPest(name, scientificName, cropIdInt, description: 'Praga específica da cultura');
+      } catch (e) {
+        print('Erro ao adicionar praga $pestName: $e');
+      }
+    }
+  }
+  
+  Future<void> _addDiseasesToCrop(String cropId, List<String> diseases) async {
+    final cropIdInt = int.tryParse(cropId) ?? 0;
+    for (final diseaseName in diseases) {
+      try {
+        // Extrair nome científico se disponível
+        String name = diseaseName;
+        String scientificName = '';
+        
+        if (diseaseName.contains('(') && diseaseName.contains(')')) {
+          final parts = diseaseName.split('(');
+          name = parts[0].trim();
+          scientificName = parts[1].replaceAll(')', '').trim();
+        }
+        
+        await _importService.addDisease(name, scientificName, cropIdInt, description: 'Doença específica da cultura');
+      } catch (e) {
+        print('Erro ao adicionar doença $diseaseName: $e');
+      }
+    }
+  }
+  
+  Future<void> _addWeedsToCrop(String cropId, List<String> weeds) async {
+    final cropIdInt = int.tryParse(cropId) ?? 0;
+    for (final weedName in weeds) {
+      try {
+        // Extrair nome científico se disponível
+        String name = weedName;
+        String scientificName = '';
+        
+        if (weedName.contains('(') && weedName.contains(')')) {
+          final parts = weedName.split('(');
+          name = parts[0].trim();
+          scientificName = parts[1].replaceAll(')', '').trim();
+        }
+        
+        await _importService.addWeed(name, scientificName, cropIdInt, description: 'Planta daninha específica da cultura');
+      } catch (e) {
+        print('Erro ao adicionar planta daninha $weedName: $e');
+      }
+    }
+  }
+  
+  Future<void> _addVarietiesToCrop(String cropId, List<String> varieties) async {
+    for (final varietyName in varieties) {
+      try {
+        await _importService.addVariety(cropId, varietyName, description: 'Variedade da cultura');
+      } catch (e) {
+        print('Erro ao adicionar variedade $varietyName: $e');
+      }
+    }
+  }
+
+  Future<void> _loadCrops() async {
+    try {
+      final crops = await _importService.getAllCrops();
+      setState(() {
+        _crops = crops;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Erro ao carregar culturas: $e';
+      });
+    }
+  }
+
+  Future<void> _syncAllCrops() async {
+    try {
+      await CropSyncService().syncAllCrops();
+      await _loadCrops();
+      _showSnackBar('Sincronização concluída com sucesso!', Colors.green);
+    } catch (e) {
+      _showSnackBar('Erro na sincronização: $e', Colors.red);
+    }
+  }
+  
+  Future<void> _recriarDadosCompletos() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      
+      // Limpar dados existentes
+      await _importService.clearAllData();
+      print('DEBUG: Dados antigos removidos');
+      
+      // Recriar dados completos
+      await _createSampleCrops();
+      print('DEBUG: Dados completos recriados');
+      
+      // Recarregar dados
+      await _loadAllData();
+      
+      _showSnackBar('Dados completos recriados com sucesso!', Colors.green);
+    } catch (e) {
+      print('Erro ao recriar dados: $e');
+      _showSnackBar('Erro ao recriar dados: $e', Colors.red);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _addCrop() async {
+    final result = await _showAddCropDialog();
+    if (result != null) {
+      try {
+        await _importService.addCrop(result['name'] ?? '', description: result['description'] ?? '');
+        await _loadCrops();
+        _showSnackBar('Cultura adicionada com sucesso!', Colors.green);
+      } catch (e) {
+        _showSnackBar('Erro ao adicionar cultura: $e', Colors.red);
+      }
+    }
+  }
+
+  Future<void> _editCrop(dynamic crop) async {
+    final result = await _showEditCropDialog(crop);
+    if (result != null) {
+      try {
+        // Converter para o modelo de banco de dados
+        final dbCrop = db_crop.Crop(
+          id: int.tryParse(crop.id) ?? 0,
+          name: result['name'] ?? '',
+          description: result['description'] ?? '',
+        );
+        await _importService.updateCrop(dbCrop);
+        await _loadCrops();
+        _showSnackBar('Cultura atualizada com sucesso!', Colors.green);
+      } catch (e) {
+        _showSnackBar('Erro ao atualizar cultura: $e', Colors.red);
+      }
+    }
+  }
+
+  Future<void> _deleteCrop(dynamic crop) async {
+    final confirmed = await _showDeleteConfirmation(crop.name);
+    if (confirmed) {
+      try {
+        final cropId = int.tryParse(crop.id) ?? 0;
+        await _importService.deleteCrop(cropId);
+        await _loadCrops();
+        _showSnackBar('Cultura removida com sucesso!', Colors.green);
+      } catch (e) {
+        _showSnackBar('Erro ao remover cultura: $e', Colors.red);
+      }
+    }
+  }
+
+  void _showPestsAndDiseases(dynamic crop) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CropDetailsScreen(
+          crop: crop,
+          pests: _pestsByCrop[crop.id] ?? [],
+          diseases: _diseasesByCrop[crop.id] ?? [],
+          weeds: _weedsByCrop[crop.id] ?? [],
+          varieties: _varietiesByCrop[crop.id] ?? [],
+        ),
+      ),
+    );
+  }
+
+  Future<Map<String, String>?> _showAddCropDialog() async {
+    final nameController = TextEditingController();
+    final descriptionController = TextEditingController();
+
+    return showDialog<Map<String, String>>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Adicionar Cultura'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Nome da Cultura',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Descrição',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (nameController.text.isNotEmpty) {
+                Navigator.pop(context, {
+                  'name': nameController.text,
+                  'description': descriptionController.text,
+                });
+              }
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<Map<String, String>?> _showEditCropDialog(dynamic crop) async {
+    final nameController = TextEditingController(text: crop.name);
+    final descriptionController = TextEditingController(text: crop.description ?? '');
+
+    return showDialog<Map<String, String>>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Editar Cultura'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Nome da Cultura',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Descrição',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (nameController.text.isNotEmpty) {
+                Navigator.pop(context, {
+                  'name': nameController.text,
+                  'description': descriptionController.text,
+                });
+              }
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _showDeleteConfirmation(String cropName) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar Exclusão'),
+        content: Text('Tem certeza que deseja excluir a cultura "$cropName"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        title: const Text('Culturas da Fazenda'),
+        backgroundColor: theme.PremiumTheme.primary,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _recriarDadosCompletos,
+            tooltip: 'Recriar dados completos',
+          ),
+          IconButton(
+            icon: const Icon(Icons.sync),
+            onPressed: _syncAllCrops,
+            tooltip: 'Sincronizar',
+          ),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+              ? _buildErrorState()
+              : _crops.isEmpty
+                  ? _buildEmptyState()
+                  : _buildCropsList(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addCrop,
+        backgroundColor: theme.PremiumTheme.primary,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: Colors.red.shade300,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Erro ao carregar dados',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.red.shade700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _errorMessage ?? 'Erro desconhecido',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey.shade600),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _initializeAndLoadData,
+            child: const Text('Tentar Novamente'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.agriculture,
+            size: 64,
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Nenhuma cultura cadastrada',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Adicione suas primeiras culturas para começar',
+            style: TextStyle(color: Colors.grey.shade600),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _addCrop,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.PremiumTheme.primary,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Adicionar Cultura'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCropsList() {
+    return RefreshIndicator(
+      onRefresh: _loadAllData,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _crops.length,
+        itemBuilder: (context, index) {
+          final crop = _crops[index];
+          return _buildCropCard(crop);
+        },
+      ),
+    );
+  }
+
+  Widget _buildCropCard(dynamic crop) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () => _showPestsAndDiseases(crop),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: theme.PremiumTheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.eco,
+                      color: theme.PremiumTheme.primary,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          crop.name,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Origem: ${crop.description ?? 'Padrão'}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  PopupMenuButton<String>(
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'edit':
+                          _editCrop(crop);
+                          break;
+                        case 'delete':
+                          _deleteCrop(crop);
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit),
+                            SizedBox(width: 8),
+                            Text('Editar'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete, color: Colors.red),
+                            SizedBox(width: 8),
+                            Text('Excluir', style: TextStyle(color: Colors.red)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  _buildInfoChip(
+                    'Pragas',
+                    _pestsByCrop[crop.id]?.length ?? 0,
+                    Icons.bug_report,
+                    Colors.orange,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildInfoChip(
+                    'Doenças',
+                    _diseasesByCrop[crop.id]?.length ?? 0,
+                    Icons.healing,
+                    Colors.red,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildInfoChip(
+                    'Plantas Daninhas',
+                    _weedsByCrop[crop.id]?.length ?? 0,
+                    Icons.grass,
+                    Colors.green,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoChip(String label, int count, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 4),
+          Text(
+            '$count',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Tela de detalhes da cultura com pragas, doenças e plantas daninhas
+class CropDetailsScreen extends StatefulWidget {
+  final dynamic crop;
+  final List<Pest> pests;
+  final List<Disease> diseases;
+  final List<weed_model.Weed> weeds;
+  final List<CropVariety> varieties;
+
+  const CropDetailsScreen({
+    Key? key,
+    required this.crop,
+    required this.pests,
+    required this.diseases,
+    required this.weeds,
+    required this.varieties,
+  }) : super(key: key);
+
+  @override
+  State<CropDetailsScreen> createState() => _CropDetailsScreenState();
+}
+
+class _CropDetailsScreenState extends State<CropDetailsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Detalhes - ${widget.crop.name}'),
+        backgroundColor: theme.PremiumTheme.primary,
+        foregroundColor: Colors.white,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Pragas'),
+            Tab(text: 'Doenças'),
+            Tab(text: 'Plantas Daninhas'),
+            Tab(text: 'Variedades'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildPestsTab(),
+          _buildDiseasesTab(),
+          _buildWeedsTab(),
+          _buildVarietiesTab(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPestsTab() {
+    return Column(
+      children: [
+        // Botão para adicionar nova praga
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: ElevatedButton.icon(
+            onPressed: () => _showAddPestDialog(),
+            icon: const Icon(Icons.add),
+            label: const Text('Adicionar Nova Praga'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.PremiumTheme.primary,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ),
+        // Lista de pragas
+        Expanded(
+          child: widget.pests.isEmpty
+              ? _buildEmptyTab('Nenhuma praga cadastrada', Icons.bug_report)
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: widget.pests.length,
+                  itemBuilder: (context, index) {
+                    final pest = widget.pests[index];
+                    return _buildEditableListItem(
+                      pest.name,
+                      pest.description ?? '',
+                      pest.scientificName ?? '',
+                      onEdit: () => _showEditPestDialog(pest),
+                      onDelete: () => _showDeletePestDialog(pest),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDiseasesTab() {
+    return Column(
+      children: [
+        // Botão para adicionar nova doença
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: ElevatedButton.icon(
+            onPressed: () => _showAddDiseaseDialog(),
+            icon: const Icon(Icons.add),
+            label: const Text('Adicionar Nova Doença'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.PremiumTheme.primary,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ),
+        // Lista de doenças
+        Expanded(
+          child: widget.diseases.isEmpty
+              ? _buildEmptyTab('Nenhuma doença cadastrada', Icons.healing)
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: widget.diseases.length,
+                  itemBuilder: (context, index) {
+                    final disease = widget.diseases[index];
+                    return _buildEditableListItem(
+                      disease.name,
+                      disease.description ?? '',
+                      disease.scientificName ?? '',
+                      onEdit: () => _showEditDiseaseDialog(disease),
+                      onDelete: () => _showDeleteDiseaseDialog(disease),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWeedsTab() {
+    return Column(
+      children: [
+        // Botão para adicionar nova planta daninha
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: ElevatedButton.icon(
+            onPressed: () => _showAddWeedDialog(),
+            icon: const Icon(Icons.add),
+            label: const Text('Adicionar Nova Planta Daninha'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.PremiumTheme.primary,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ),
+        // Lista de plantas daninhas
+        Expanded(
+          child: widget.weeds.isEmpty
+              ? _buildEmptyTab('Nenhuma planta daninha cadastrada', Icons.grass)
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: widget.weeds.length,
+                  itemBuilder: (context, index) {
+                    final weed = widget.weeds[index];
+                    return _buildEditableListItem(
+                      weed.name,
+                      weed.description ?? '',
+                      weed.scientificName ?? '',
+                      onEdit: () => _showEditWeedDialog(weed),
+                      onDelete: () => _showDeleteWeedDialog(weed),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVarietiesTab() {
+    return Column(
+      children: [
+        // Botão para adicionar nova variedade
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: ElevatedButton.icon(
+            onPressed: () => _showAddVarietyDialog(),
+            icon: const Icon(Icons.add),
+            label: const Text('Adicionar Nova Variedade'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.PremiumTheme.primary,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ),
+        // Lista de variedades
+        Expanded(
+          child: widget.varieties.isEmpty
+              ? _buildEmptyTab('Nenhuma variedade cadastrada', Icons.category)
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: widget.varieties.length,
+                  itemBuilder: (context, index) {
+                    final variety = widget.varieties[index];
+                    return _buildEditableListItem(
+                      variety.name,
+                      variety.description ?? '',
+                      variety.company ?? '',
+                      onEdit: () => _showEditVarietyDialog(variety),
+                      onDelete: () => _showDeleteVarietyDialog(variety),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyTab(String message, IconData icon) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 64,
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListItem(String title, String subtitle) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        title: Text(title),
+        subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
+        trailing: const Icon(Icons.chevron_right),
+      ),
+    );
+  }
+  
+  Widget _buildEditableListItem(String title, String subtitle, String scientificName, {
+    required VoidCallback onEdit,
+    required VoidCallback onDelete,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        title: Text(title),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (subtitle.isNotEmpty) Text(subtitle),
+            if (scientificName.isNotEmpty) 
+              Text(
+                scientificName,
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                ),
+              ),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.blue),
+              onPressed: onEdit,
+              tooltip: 'Editar',
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: onDelete,
+              tooltip: 'Excluir',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  // Métodos para adicionar pragas
+  void _showAddPestDialog() {
+    final nameController = TextEditingController();
+    final scientificNameController = TextEditingController();
+    final descriptionController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Adicionar Nova Praga'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nome da Praga'),
+            ),
+            TextField(
+              controller: scientificNameController,
+              decoration: const InputDecoration(labelText: 'Nome Científico'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Descrição'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar adição de praga
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showEditPestDialog(Pest pest) {
+    final nameController = TextEditingController(text: pest.name);
+    final scientificNameController = TextEditingController(text: pest.scientificName ?? '');
+    final descriptionController = TextEditingController(text: pest.description ?? '');
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Editar Praga'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nome da Praga'),
+            ),
+            TextField(
+              controller: scientificNameController,
+              decoration: const InputDecoration(labelText: 'Nome Científico'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Descrição'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar edição de praga
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showDeletePestDialog(Pest pest) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar Exclusão'),
+        content: Text('Deseja realmente excluir a praga "${pest.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar exclusão de praga
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  // Métodos para adicionar doenças
+  void _showAddDiseaseDialog() {
+    final nameController = TextEditingController();
+    final scientificNameController = TextEditingController();
+    final descriptionController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Adicionar Nova Doença'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nome da Doença'),
+            ),
+            TextField(
+              controller: scientificNameController,
+              decoration: const InputDecoration(labelText: 'Nome Científico'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Descrição'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar adição de doença
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showEditDiseaseDialog(Disease disease) {
+    final nameController = TextEditingController(text: disease.name);
+    final scientificNameController = TextEditingController(text: disease.scientificName ?? '');
+    final descriptionController = TextEditingController(text: disease.description ?? '');
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Editar Doença'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nome da Doença'),
+            ),
+            TextField(
+              controller: scientificNameController,
+              decoration: const InputDecoration(labelText: 'Nome Científico'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Descrição'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar edição de doença
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showDeleteDiseaseDialog(Disease disease) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar Exclusão'),
+        content: Text('Deseja realmente excluir a doença "${disease.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar exclusão de doença
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  // Métodos para adicionar plantas daninhas
+  void _showAddWeedDialog() {
+    final nameController = TextEditingController();
+    final scientificNameController = TextEditingController();
+    final descriptionController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Adicionar Nova Planta Daninha'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nome da Planta Daninha'),
+            ),
+            TextField(
+              controller: scientificNameController,
+              decoration: const InputDecoration(labelText: 'Nome Científico'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Descrição'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar adição de planta daninha
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showEditWeedDialog(weed_model.Weed weed) {
+    final nameController = TextEditingController(text: weed.name);
+    final scientificNameController = TextEditingController(text: weed.scientificName ?? '');
+    final descriptionController = TextEditingController(text: weed.description ?? '');
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Editar Planta Daninha'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nome da Planta Daninha'),
+            ),
+            TextField(
+              controller: scientificNameController,
+              decoration: const InputDecoration(labelText: 'Nome Científico'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Descrição'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar edição de planta daninha
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showDeleteWeedDialog(weed_model.Weed weed) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar Exclusão'),
+        content: Text('Deseja realmente excluir a planta daninha "${weed.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar exclusão de planta daninha
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  // Métodos para adicionar variedades
+  void _showAddVarietyDialog() {
+    final nameController = TextEditingController();
+    final companyController = TextEditingController();
+    final descriptionController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Adicionar Nova Variedade'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nome da Variedade'),
+            ),
+            TextField(
+              controller: companyController,
+              decoration: const InputDecoration(labelText: 'Empresa'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Descrição'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar adição de variedade
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showEditVarietyDialog(CropVariety variety) {
+    final nameController = TextEditingController(text: variety.name);
+    final companyController = TextEditingController(text: variety.company ?? '');
+    final descriptionController = TextEditingController(text: variety.description ?? '');
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Editar Variedade'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nome da Variedade'),
+            ),
+            TextField(
+              controller: companyController,
+              decoration: const InputDecoration(labelText: 'Empresa'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Descrição'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar edição de variedade
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showDeleteVarietyDialog(CropVariety variety) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar Exclusão'),
+        content: Text('Deseja realmente excluir a variedade "${variety.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Implementar exclusão de variedade
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Funcionalidade em desenvolvimento')),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+  }
+}

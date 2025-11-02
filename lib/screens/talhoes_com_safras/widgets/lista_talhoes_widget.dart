@@ -70,8 +70,6 @@ class _ListaTalhoesWidgetState extends State<ListaTalhoesWidget> {
             );
           },
         );
-      },
-    );
   }
   
   Widget _buildTalhaoCard(BuildContext context, TalhaoSafraModel talhao) {

@@ -1,0 +1,51 @@
+{
+  "cultura": "Feijão",
+  "plantas_daninhas": [
+    {
+      "id": "feijao_caruru",
+      "nome": "Caruru",
+      "nome_cientifico": "Amaranthus spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Amaranthaceae",
+      "ciclo": "Anual",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por recursos",
+        "Redução da produtividade",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R3",
+      "densidade_critica": "2-4 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["S-metolacloro", "Dimetenamida"],
+        "pos_emergencia": ["Bentazona", "Imazethapyr", "Fomesafen"],
+        "cultural": ["Rotação de culturas", "Plantio direto", "Cobertura do solo"]
+      },
+      "observacoes": "Principal problema no feijão",
+      "icone": "🌿"
+    },
+    {
+      "id": "feijao_buva",
+      "nome": "Buva",
+      "nome_cientifico": "Conyza spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Asteraceae",
+      "ciclo": "Bienal",
+      "tipo_germinacao": "Outono-Inverno",
+      "sintomas": [
+        "Competição severa por recursos",
+        "Redução significativa na produtividade",
+        "Dificuldade na colheita"
+      ],
+      "periodo_critico": "V2 a R3",
+      "densidade_critica": "1-2 plantas/m²",
+      "manejo": {
+        "pre_emergencia": ["S-metolacloro", "Dimetenamida"],
+        "pos_emergencia": ["Glyphosate + 2,4-D", "Paraquat"],
+        "cultural": ["Plantio direto", "Cobertura do solo", "Rotação"]
+      },
+      "observacoes": "Resistente em várias regiões",
+      "icone": "🌾"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:4326"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "talhao_001",
+      "properties": {
+        "nome": "Talhão Norte",
+        "area": 12.5,
+        "hectares": 12.5,
+        "cultura_id": "1",
+        "cultura": "Soja",
+        "fazenda_id": "1",
+        "fazenda": "Fazenda FortSmart",
+        "variedade": "BMX Potência RR",
+        "data_plantio": "2024-10-15",
+        "densidade": 250000,
+        "produtividade_esperada": 60
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-47.9292, -15.7801],
+          [-47.9282, -15.7801],
+          [-47.9282, -15.7791],
+          [-47.9292, -15.7791],
+          [-47.9292, -15.7801]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "talhao_002",
+      "properties": {
+        "nome": "Talhão Sul",
+        "area": 8.3,
+        "hectares": 8.3,
+        "cultura_id": "2",
+        "cultura": "Milho",
+        "fazenda_id": "1",
+        "fazenda": "Fazenda FortSmart",
+        "variedade": "AG 9025",
+        "data_plantio": "2024-10-20",
+        "densidade": 55000,
+        "produtividade_esperada": 120
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-47.9292, -15.7791],
+          [-47.9282, -15.7791],
+          [-47.9282, -15.7781],
+          [-47.9292, -15.7781],
+          [-47.9292, -15.7791]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "talhao_003",
+      "properties": {
+        "nome": "Talhão Leste",
+        "area": 15.2,
+        "hectares": 15.2,
+        "cultura_id": "1",
+        "cultura": "Soja",
+        "fazenda_id": "1",
+        "fazenda": "Fazenda FortSmart",
+        "variedade": "BMX Potência RR",
+        "data_plantio": "2024-10-18",
+        "densidade": 240000,
+        "produtividade_esperada": 65
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-47.9282, -15.7801],
+          [-47.9272, -15.7801],
+          [-47.9272, -15.7791],
+          [-47.9282, -15.7791],
+          [-47.9282, -15.7801]
+        ]]
+      }
+    }
+  ]
+}

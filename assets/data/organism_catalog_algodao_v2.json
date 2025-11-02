@@ -1,0 +1,200 @@
+{
+  "version": "2.0",
+  "last_updated": "2025-10-17",
+  "culture": "algodao",
+  "culture_id": "custom_algodao",
+  "scientific_name": "Gossypium hirsutum",
+  "common_name": "Algodão",
+  
+  "phenological_stages": {
+    "vegetative": ["V1", "V2", "V3", "V4", "V5"],
+    "reproductive": ["B1", "B2", "B3", "B4", "F1", "F2", "F3", "A1"],
+    "critical_stages": ["B1", "F1", "F2"]
+  },
+  
+  "susceptibility_curve": {
+    "V3": { "damage_potential": 60, "recovery_capacity": 50 },
+    "V5": { "damage_potential": 50, "recovery_capacity": 60 },
+    "B1": { "damage_potential": 85, "recovery_capacity": 30 },
+    "B3": { "damage_potential": 90, "recovery_capacity": 20 },
+    "F1": { "damage_potential": 95, "recovery_capacity": 10 },
+    "F2": { "damage_potential": 95, "recovery_capacity": 10 },
+    "A1": { "damage_potential": 40, "recovery_capacity": 0 }
+  },
+  
+  "organisms": {
+    "pests": [
+      {
+        "id": "algodao_bicudo",
+        "name": "Bicudo",
+        "scientific_name": "Anthonomus grandis",
+        "unit": "adultos/planta",
+        "monitoring_method": "Inspeção em 20 plantas/ponto",
+        
+        "phenological_thresholds": {
+          "V3-V5": {
+            "low": 1,
+            "medium": 2,
+            "high": 3,
+            "critical": 5,
+            "damage_potential": 50,
+            "damage_type": "Alimentação em folhas e ponteiros",
+            "economic_loss": "< 10%"
+          },
+          "B1-B2": {
+            "low": 0.5,
+            "medium": 1,
+            "high": 2,
+            "critical": 3,
+            "damage_potential": 90,
+            "damage_type": "Oviposição em botões - aborto crítico",
+            "economic_loss": "30-50%",
+            "action_window_hours": 24
+          },
+          "B3-B4": {
+            "low": 0,
+            "medium": 0.5,
+            "high": 1,
+            "critical": 2,
+            "damage_potential": 95,
+            "damage_type": "Perfuração de botões - perda massiva",
+            "economic_loss": "40-70%",
+            "action_window_hours": 12
+          },
+          "F1-F3": {
+            "low": 0,
+            "medium": 0.5,
+            "high": 1,
+            "critical": 1.5,
+            "damage_potential": 95,
+            "damage_type": "Ataque a flores e maçãs - redução drástica",
+            "economic_loss": "50-80%",
+            "action_window_hours": 24
+          },
+          "A1": {
+            "low": 1,
+            "medium": 2,
+            "high": 3,
+            "critical": 5,
+            "damage_potential": 30,
+            "damage_type": "Capulhos já abertos - menor impacto",
+            "economic_loss": "< 5%"
+          }
+        },
+        
+        "management_recommendations": {
+          "B1-F3": {
+            "action": "Controle OBRIGATÓRIO - praga quarentenária",
+            "products": [
+              {
+                "active_ingredient": "Chlorantraniliprole",
+                "dose": "30-40 ml/ha",
+                "applications": "Sequencial a cada 5-7 dias",
+                "spray_volume": "150-200 L/ha"
+              }
+            ],
+            "cultural_practices": [
+              "Destruição de soqueira pós-colheita",
+              "Vazio sanitário rigoroso",
+              "Remoção manual de adultos",
+              "Armadilhas de feromônio para monitoramento",
+              "Rotação de culturas"
+            ]
+          }
+        },
+        
+        "regional_variations": {
+          "brazil_central": {
+            "base_threshold_multiplier": 1.0,
+            "notes": "Controle intensivo necessário - 8-12 aplicações/safra"
+          }
+        }
+      },
+      {
+        "id": "algodao_lagarta_rosada",
+        "name": "Lagarta-rosada",
+        "scientific_name": "Pectinophora gossypiella",
+        "unit": "lagartas/maçã",
+        "monitoring_method": "Inspeção de maçãs - 20 por ponto",
+        
+        "phenological_thresholds": {
+          "F1-F3": {
+            "low": 0.1,
+            "medium": 0.3,
+            "high": 0.5,
+            "critical": 1.0,
+            "damage_potential": 90,
+            "damage_type": "Perfura maçãs - alimenta-se de sementes",
+            "economic_loss": "20-40%"
+          },
+          "A1": {
+            "low": 0.5,
+            "medium": 1,
+            "high": 2,
+            "critical": 3,
+            "damage_potential": 70,
+            "damage_type": "Dano em fibras - redução de qualidade",
+            "economic_loss": "10-20%"
+          }
+        }
+      },
+      {
+        "id": "algodao_curuquere",
+        "name": "Curuquerê-do-algodoeiro",
+        "scientific_name": "Alabama argillacea",
+        "unit": "lagartas/planta",
+        "monitoring_method": "Contagem em 20 plantas",
+        
+        "phenological_thresholds": {
+          "V3-B1": {
+            "low": 2,
+            "medium": 4,
+            "high": 6,
+            "critical": 10,
+            "damage_potential": 70,
+            "damage_type": "Desfolha intensa",
+            "economic_loss": "15-30%"
+          },
+          "B2-F3": {
+            "low": 4,
+            "medium": 8,
+            "high": 12,
+            "critical": 20,
+            "damage_potential": 50,
+            "damage_type": "Desfolha - planta compensa parcialmente",
+            "economic_loss": "5-15%"
+          }
+        }
+      },
+      {
+        "id": "algodao_pulgao",
+        "name": "Pulgão-do-algodoeiro",
+        "scientific_name": "Aphis gossypii",
+        "unit": "colônias/planta",
+        "monitoring_method": "Inspeção visual de colônias",
+        
+        "phenological_thresholds": {
+          "V3-B2": {
+            "low": 0.5,
+            "medium": 1,
+            "high": 2,
+            "critical": 4,
+            "damage_potential": 60,
+            "damage_type": "Sugamento - deformação foliar",
+            "economic_loss": "10-20%"
+          },
+          "B3-F3": {
+            "low": 1,
+            "medium": 2,
+            "high": 4,
+            "critical": 8,
+            "damage_potential": 40,
+            "damage_type": "Sugamento e fumagina - redução fotossíntese",
+            "economic_loss": "5-15%"
+          }
+        }
+      }
+    ]
+  }
+}
+

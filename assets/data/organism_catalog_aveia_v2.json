@@ -1,0 +1,85 @@
+{
+  "version": "2.0",
+  "last_updated": "2025-10-17",
+  "culture": "aveia",
+  "culture_id": "custom_aveia",
+  "scientific_name": "Avena sativa",
+  "common_name": "Aveia",
+  
+  "phenological_stages": {
+    "vegetative": ["V1", "V2", "V3", "V4"],
+    "reproductive": ["R1", "R2", "R3", "R4", "R5"],
+    "critical_stages": ["R1", "R2", "R3"]
+  },
+  
+  "susceptibility_curve": {
+    "V2": { "damage_potential": 70, "recovery_capacity": 40 },
+    "V4": { "damage_potential": 50, "recovery_capacity": 60 },
+    "R1": { "damage_potential": 85, "recovery_capacity": 20 },
+    "R3": { "damage_potential": 90, "recovery_capacity": 10 },
+    "R5": { "damage_potential": 20, "recovery_capacity": 0 }
+  },
+  
+  "organisms": {
+    "pests": [
+      {
+        "id": "aveia_pulgao",
+        "name": "Pulgão-verde-dos-cereais",
+        "scientific_name": "Rhopalosiphum padi",
+        "unit": "adultos/planta",
+        "monitoring_method": "Contagem em 20 plantas",
+        
+        "phenological_thresholds": {
+          "V1-V4": {
+            "low": 5,
+            "medium": 10,
+            "high": 20,
+            "critical": 30,
+            "damage_potential": 60,
+            "damage_type": "Sugamento - redução de crescimento",
+            "economic_loss": "10-20%"
+          },
+          "R1-R3": {
+            "low": 3,
+            "medium": 8,
+            "high": 15,
+            "critical": 25,
+            "damage_potential": 80,
+            "damage_type": "Transmissão de vírus - perdas severas",
+            "economic_loss": "20-40%",
+            "action_window_hours": 48
+          }
+        }
+      },
+      {
+        "id": "aveia_lagarta_militar",
+        "name": "Lagarta-militar",
+        "scientific_name": "Spodoptera frugiperda",
+        "unit": "lagartas/m²",
+        "monitoring_method": "Contagem por área",
+        
+        "phenological_thresholds": {
+          "V1-V2": {
+            "low": 2,
+            "medium": 5,
+            "high": 10,
+            "critical": 15,
+            "damage_potential": 80,
+            "damage_type": "Desfolha severa em plântulas",
+            "economic_loss": "20-30%"
+          },
+          "V3-R1": {
+            "low": 5,
+            "medium": 10,
+            "high": 20,
+            "critical": 30,
+            "damage_potential": 50,
+            "damage_type": "Desfolha - planta se recupera",
+            "economic_loss": "< 10%"
+          }
+        }
+      }
+    ]
+  }
+}
+

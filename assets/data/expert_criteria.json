@@ -1,0 +1,200 @@
+{
+  "version": "1.0",
+  "last_updated": "2024-12-19",
+  "expert_criteria": {
+    "pest": {
+      "description": "Critérios para pragas agrícolas",
+      "limits": {
+        "min": 1,
+        "max": 100,
+        "recommended_ranges": {
+          "low": [1, 10],
+          "medium": [11, 30],
+          "high": [31, 100]
+        }
+      },
+      "preferred_units": ["indivíduos/m²", "insetos/m²", "%", "unidades"],
+      "validation_rules": {
+        "scientific_name_format": true,
+        "description_required": true,
+        "action_limits_required": true
+      },
+      "common_issues": [
+        "Limites muito baixos podem gerar alertas desnecessários",
+        "Limites muito altos podem permitir danos econômicos",
+        "Unidade de medida deve ser consistente com método de monitoramento"
+      ]
+    },
+    "disease": {
+      "description": "Critérios para doenças agrícolas",
+      "limits": {
+        "min": 1,
+        "max": 100,
+        "recommended_ranges": {
+          "low": [1, 15],
+          "medium": [16, 40],
+          "high": [41, 100]
+        }
+      },
+      "preferred_units": ["%", "folhas/m²", "plantas/m²", "unidades"],
+      "validation_rules": {
+        "scientific_name_format": true,
+        "description_required": true,
+        "action_limits_required": true
+      },
+      "common_issues": [
+        "Doenças se espalham rapidamente, limites devem ser conservadores",
+        "Percentual é a unidade mais comum para doenças",
+        "Descrição deve incluir sintomas visuais"
+      ]
+    },
+    "weed": {
+      "description": "Critérios para plantas daninhas",
+      "limits": {
+        "min": 1,
+        "max": 50,
+        "recommended_ranges": {
+          "low": [1, 5],
+          "medium": [6, 15],
+          "high": [16, 50]
+        }
+      },
+      "preferred_units": ["plantas/m²", "%", "indivíduos/m²", "unidades"],
+      "validation_rules": {
+        "scientific_name_format": true,
+        "description_required": true,
+        "action_limits_required": true
+      },
+      "common_issues": [
+        "Plantas daninhas competem por recursos, limites devem ser baixos",
+        "Densidade por área é mais importante que percentual",
+        "Considerar estágio de desenvolvimento da cultura"
+      ]
+    }
+  },
+  "crop_specific_criteria": {
+    "soja": {
+      "pest": {
+        "lagarta_da_soja": {
+          "limits": {"low": 5, "medium": 15, "high": 30},
+          "unit": "indivíduos/m²",
+          "notes": "Monitorar principalmente em V2-V6 e R1-R6"
+        },
+        "percevejo_verde": {
+          "limits": {"low": 2, "medium": 6, "high": 12},
+          "unit": "indivíduos/m²",
+          "notes": "Crítico no enchimento de grãos (R5-R6)"
+        }
+      },
+      "disease": {
+        "ferrugem_asiatica": {
+          "limits": {"low": 5, "medium": 15, "high": 30},
+          "unit": "%",
+          "notes": "Condições favoráveis: temperatura 18-26°C, umidade >90%"
+        }
+      }
+    },
+    "milho": {
+      "pest": {
+        "lagarta_do_cartucho": {
+          "limits": {"low": 8, "medium": 20, "high": 40},
+          "unit": "indivíduos/m²",
+          "notes": "Monitorar em V3-V8 e R1-R3"
+        }
+      },
+      "disease": {
+        "helmintosporiose": {
+          "limits": {"low": 10, "medium": 25, "high": 50},
+          "unit": "%",
+          "notes": "Favorecida por alta umidade e temperatura"
+        }
+      }
+    },
+    "algodao": {
+      "pest": {
+        "bicudo_do_algodoeiro": {
+          "limits": {"low": 2, "medium": 5, "high": 10},
+          "unit": "indivíduos/m²",
+          "notes": "Praga quarentenária, controle rigoroso necessário"
+        }
+      },
+      "disease": {
+        "ramulose": {
+          "limits": {"low": 5, "medium": 15, "high": 30},
+          "unit": "%",
+          "notes": "Favorecida por alta umidade e baixa temperatura"
+        }
+      }
+    }
+  },
+  "validation_guidelines": {
+    "scientific_naming": {
+      "format": "Gênero espécie",
+      "examples": [
+        "Anthonomus grandis",
+        "Helicoverpa armigera",
+        "Phakopsora pachyrhizi"
+      ],
+      "common_mistakes": [
+        "Usar nomes comuns como nomes científicos",
+        "Não capitalizar o gênero",
+        "Incluir autor ou data"
+      ]
+    },
+    "action_limits": {
+      "principles": [
+        "Limite baixo: início do monitoramento intensificado",
+        "Limite médio: aplicação de controle preventivo",
+        "Limite alto: aplicação de controle curativo urgente"
+      ],
+      "calculation_methods": [
+        "Baseado em danos econômicos",
+        "Considerando custo-benefício do controle",
+        "Ajustado para condições locais"
+      ]
+    },
+    "units_of_measurement": {
+      "pest": {
+        "density": "indivíduos/m²",
+        "percentage": "%",
+        "count": "unidades"
+      },
+      "disease": {
+        "severity": "%",
+        "incidence": "%",
+        "density": "folhas/m²"
+      },
+      "weed": {
+        "density": "plantas/m²",
+        "coverage": "%",
+        "count": "unidades"
+      }
+    }
+  },
+  "quality_standards": {
+    "minimum_description_length": 20,
+    "required_fields": [
+      "name",
+      "scientific_name",
+      "type",
+      "crop_name",
+      "unit",
+      "low_limit",
+      "medium_limit",
+      "high_limit"
+    ],
+    "recommended_fields": [
+      "description",
+      "symptoms",
+      "economic_damage",
+      "favorable_conditions",
+      "control_measures"
+    ],
+    "data_consistency_checks": [
+      "Limits must be in ascending order",
+      "Scientific name must follow binomial nomenclature",
+      "Unit must be appropriate for organism type",
+      "Description should be informative and specific"
+    ]
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "cultura": "Café",
+  "plantas_daninhas": [
+    {
+      "id": "cafe_capim_coloniao",
+      "nome": "Capim-colonião",
+      "nome_cientifico": "Panicum maximum",
+      "categoria": "Planta Daninha",
+      "familia": "Poaceae",
+      "ciclo": "Perene",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por recursos",
+        "Formação de touceiras",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R6",
+      "densidade_critica": "1 touceira/10m²",
+      "manejo": {
+        "pre_emergencia": ["Glyphosate"],
+        "pos_emergencia": ["Glyphosate", "Clethodim"],
+        "cultural": ["Roçada", "Gradagem", "Rotação"]
+      },
+      "observacoes": "Principal problema no café",
+      "icone": "🌱"
+    },
+    {
+      "id": "cafe_braquiaria",
+      "nome": "Braquiária",
+      "nome_cientifico": "Urochloa spp.",
+      "categoria": "Planta Daninha",
+      "familia": "Poaceae",
+      "ciclo": "Perene",
+      "tipo_germinacao": "Primavera-Verão",
+      "sintomas": [
+        "Competição por recursos",
+        "Formação de touceiras",
+        "Interferência na colheita"
+      ],
+      "periodo_critico": "V1 a R6",
+      "densidade_critica": "1 touceira/5m²",
+      "manejo": {
+        "pre_emergencia": ["Glyphosate"],
+        "pos_emergencia": ["Glyphosate", "Aminopyralid"],
+        "cultural": ["Roçada", "Gradagem", "Rotação"]
+      },
+      "observacoes": "Muito comum em áreas de pastagem",
+      "icone": "🌾"
+    }
+  ]
+}

@@ -1,0 +1,249 @@
+{
+  "Algodão": {
+    "total_organismos": 28,
+    "tamanho_arquivo_bytes": 78780,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 17,
+      "organismos_com_severidade": 25,
+      "organismos_com_doses": 1,
+      "organismos_com_condicoes": 25,
+      "organismos_com_fenologia": 28,
+      "percentual_fases": "60.7",
+      "percentual_severidade": "89.3",
+      "percentual_doses": "3.6"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 25,
+      "organismos_incompletos": 3,
+      "score_medio_completude": "89.3"
+    }
+  },
+  "Arroz": {
+    "total_organismos": 12,
+    "tamanho_arquivo_bytes": 37485,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 5,
+      "organismos_com_severidade": 12,
+      "organismos_com_doses": 3,
+      "organismos_com_condicoes": 12,
+      "organismos_com_fenologia": 12,
+      "percentual_fases": "41.7",
+      "percentual_severidade": "100.0",
+      "percentual_doses": "25.0"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 12,
+      "organismos_incompletos": 0,
+      "score_medio_completude": "100.0"
+    }
+  },
+  "Aveia": {
+    "total_organismos": 6,
+    "tamanho_arquivo_bytes": 19175,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 3,
+      "organismos_com_severidade": 6,
+      "organismos_com_doses": 1,
+      "organismos_com_condicoes": 6,
+      "organismos_com_fenologia": 6,
+      "percentual_fases": "50.0",
+      "percentual_severidade": "100.0",
+      "percentual_doses": "16.7"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 6,
+      "organismos_incompletos": 0,
+      "score_medio_completude": "100.0"
+    }
+  },
+  "Batata": {
+    "total_organismos": 3,
+    "tamanho_arquivo_bytes": 6914,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 0,
+      "organismos_com_severidade": 0,
+      "organismos_com_doses": 2,
+      "organismos_com_condicoes": 1,
+      "organismos_com_fenologia": 3,
+      "percentual_fases": "0.0",
+      "percentual_severidade": "0.0",
+      "percentual_doses": "66.7"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 2,
+      "organismos_incompletos": 1,
+      "score_medio_completude": "66.7"
+    }
+  },
+  "Cana-de-açúcar": {
+    "total_organismos": 9,
+    "tamanho_arquivo_bytes": 33412,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 3,
+      "organismos_com_severidade": 9,
+      "organismos_com_doses": 1,
+      "organismos_com_condicoes": 9,
+      "organismos_com_fenologia": 9,
+      "percentual_fases": "33.3",
+      "percentual_severidade": "100.0",
+      "percentual_doses": "11.1"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 9,
+      "organismos_incompletos": 0,
+      "score_medio_completude": "100.0"
+    }
+  },
+  "Feijão": {
+    "total_organismos": 33,
+    "tamanho_arquivo_bytes": 83303,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 13,
+      "organismos_com_severidade": 27,
+      "organismos_com_doses": 1,
+      "organismos_com_condicoes": 27,
+      "organismos_com_fenologia": 33,
+      "percentual_fases": "39.4",
+      "percentual_severidade": "81.8",
+      "percentual_doses": "3.0"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 27,
+      "organismos_incompletos": 6,
+      "score_medio_completude": "81.8"
+    }
+  },
+  "Gergelim": {
+    "total_organismos": 11,
+    "tamanho_arquivo_bytes": 36640,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 5,
+      "organismos_com_severidade": 11,
+      "organismos_com_doses": 1,
+      "organismos_com_condicoes": 11,
+      "organismos_com_fenologia": 11,
+      "percentual_fases": "45.5",
+      "percentual_severidade": "100.0",
+      "percentual_doses": "9.1"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 11,
+      "organismos_incompletos": 0,
+      "score_medio_completude": "100.0"
+    }
+  },
+  "Girassol": {
+    "total_organismos": 3,
+    "tamanho_arquivo_bytes": 13663,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 2,
+      "organismos_com_severidade": 3,
+      "organismos_com_doses": 1,
+      "organismos_com_condicoes": 3,
+      "organismos_com_fenologia": 3,
+      "percentual_fases": "66.7",
+      "percentual_severidade": "100.0",
+      "percentual_doses": "33.3"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 3,
+      "organismos_incompletos": 0,
+      "score_medio_completude": "100.0"
+    }
+  },
+  "Milho": {
+    "total_organismos": 32,
+    "tamanho_arquivo_bytes": 91785,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 16,
+      "organismos_com_severidade": 30,
+      "organismos_com_doses": 1,
+      "organismos_com_condicoes": 30,
+      "organismos_com_fenologia": 32,
+      "percentual_fases": "50.0",
+      "percentual_severidade": "93.8",
+      "percentual_doses": "3.1"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 30,
+      "organismos_incompletos": 2,
+      "score_medio_completude": "93.8"
+    }
+  },
+  "Soja": {
+    "total_organismos": 50,
+    "tamanho_arquivo_bytes": 133394,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 19,
+      "organismos_com_severidade": 42,
+      "organismos_com_doses": 13,
+      "organismos_com_condicoes": 42,
+      "organismos_com_fenologia": 50,
+      "percentual_fases": "38.0",
+      "percentual_severidade": "84.0",
+      "percentual_doses": "26.0"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 42,
+      "organismos_incompletos": 8,
+      "score_medio_completude": "84.0"
+    }
+  },
+  "Sorgo": {
+    "total_organismos": 22,
+    "tamanho_arquivo_bytes": 60014,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 8,
+      "organismos_com_severidade": 17,
+      "organismos_com_doses": 1,
+      "organismos_com_condicoes": 17,
+      "organismos_com_fenologia": 22,
+      "percentual_fases": "36.4",
+      "percentual_severidade": "77.3",
+      "percentual_doses": "4.5"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 17,
+      "organismos_incompletos": 5,
+      "score_medio_completude": "77.3"
+    }
+  },
+  "Tomate": {
+    "total_organismos": 25,
+    "tamanho_arquivo_bytes": 64696,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 6,
+      "organismos_com_severidade": 12,
+      "organismos_com_doses": 1,
+      "organismos_com_condicoes": 18,
+      "organismos_com_fenologia": 25,
+      "percentual_fases": "24.0",
+      "percentual_severidade": "48.0",
+      "percentual_doses": "4.0"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 12,
+      "organismos_incompletos": 13,
+      "score_medio_completude": "48.0"
+    }
+  },
+  "Trigo": {
+    "total_organismos": 7,
+    "tamanho_arquivo_bytes": 29299,
+    "estrutura_detalhada": {
+      "organismos_com_fases": 2,
+      "organismos_com_severidade": 7,
+      "organismos_com_doses": 2,
+      "organismos_com_condicoes": 7,
+      "organismos_com_fenologia": 7,
+      "percentual_fases": "28.6",
+      "percentual_severidade": "100.0",
+      "percentual_doses": "28.6"
+    },
+    "qualidade_dados": {
+      "organismos_completos": 7,
+      "organismos_incompletos": 0,
+      "score_medio_completude": "100.0"
+    }
+  }
+}
