@@ -519,46 +519,65 @@ class MonitoringCardDataService {
           recomendacoes.add('=== ${organismo.nome.toUpperCase()} - Risco ${organismo.nivelRisco} ===');
           recomendacoes.add('');
           
-          // ✅ CONTROLE QUÍMICO COM DOSES E MÉTODOS
-          final quimico = dadosControle['recomendacoes_controle']?['quimico'] as List?;
+          // ✅ CONTROLE QUÍMICO COM DOSES E MÉTODOS (usar campos corretos do JSON!)
+          final quimico = dadosControle['manejo_quimico'] as List? ?? 
+                         dadosControle['recomendacoes_controle']?['quimico'] as List?;
           if (quimico != null && quimico.isNotEmpty) {
-            recomendacoes.add('CONTROLE QUIMICO:');
+            recomendacoes.add('💊 CONTROLE QUIMICO:');
             for (var i = 0; i < quimico.length && i < 4; i++) {
               var rec = quimico[i].toString();
-              // Sanitizar string para evitar UTF-16 errors
               rec = _sanitizarTexto(rec);
-              recomendacoes.add('${i + 1}. $rec');
+              recomendacoes.add('   ${i + 1}. $rec');
             }
+            recomendacoes.add('');
+          }
+          
+          // ✅ DOSES DETALHADAS DOS DEFENSIVOS
+          final dosesDefensivos = dadosControle['doses_defensivos'] as Map?;
+          if (dosesDefensivos != null && dosesDefensivos.isNotEmpty) {
+            recomendacoes.add('📋 DOSES RECOMENDADAS:');
+            int count = 0;
+            for (final entry in dosesDefensivos.entries.take(3)) {
+              count++;
+              final produto = entry.key.toString().replaceAll('_', ' ').toUpperCase();
+              final info = entry.value as Map<String, dynamic>;
+              final dose = info['dose']?.toString() ?? 'Consultar bula';
+              recomendacoes.add('   $count. $produto: $dose');
+            }
+            recomendacoes.add('');
           }
           
           // ✅ CONTROLE BIOLÓGICO COM DETALHES
-          final biologico = dadosControle['recomendacoes_controle']?['biologico'] as List?;
+          final biologico = dadosControle['manejo_biologico'] as List? ?? 
+                           dadosControle['recomendacoes_controle']?['biologico'] as List?;
           if (biologico != null && biologico.isNotEmpty) {
-            recomendacoes.add('');
-            recomendacoes.add('CONTROLE BIOLOGICO:');
+            recomendacoes.add('🦠 CONTROLE BIOLOGICO:');
             for (var i = 0; i < biologico.length && i < 3; i++) {
-              recomendacoes.add('${i + 1}. ${_sanitizarTexto(biologico[i].toString())}');
+              recomendacoes.add('   ${i + 1}. ${_sanitizarTexto(biologico[i].toString())}');
             }
+            recomendacoes.add('');
           }
           
           // ✅ PRÁTICAS CULTURAIS DETALHADAS
-          final cultural = dadosControle['recomendacoes_controle']?['cultural'] as List?;
+          final cultural = dadosControle['manejo_cultural'] as List? ??
+                          dadosControle['recomendacoes_controle']?['cultural'] as List?;
           if (cultural != null && cultural.isNotEmpty) {
-            recomendacoes.add('');
-            recomendacoes.add('PRATICAS CULTURAIS:');
+            recomendacoes.add('🌾 PRATICAS CULTURAIS:');
             for (var i = 0; i < cultural.length && i < 3; i++) {
-              recomendacoes.add('${i + 1}. ${_sanitizarTexto(cultural[i].toString())}');
+              recomendacoes.add('   ${i + 1}. ${_sanitizarTexto(cultural[i].toString())}');
             }
+            recomendacoes.add('');
           }
           
-          // ✅ OBSERVAÇÕES DE MANEJO - MUITO IMPORTANTE
-          final observacoes = dadosControle['observacoes_manejo'] as List?;
+          // ✅ OBSERVAÇÕES DE MANEJO
+          final observacoes = dadosControle['observacoes_importantes'] as List? ??
+                             dadosControle['observacoes_manejo'] as List?;
           if (observacoes != null && observacoes.isNotEmpty) {
-            recomendacoes.add('');
-            recomendacoes.add('OBSERVACOES IMPORTANTES:');
-            for (var i = 0; i < observacoes.length && i < 4; i++) {
-              recomendacoes.add('- ${_sanitizarTexto(observacoes[i].toString())}');
+            recomendacoes.add('⚠️ OBSERVACOES IMPORTANTES:');
+            for (var i = 0; i < observacoes.length && i < 3; i++) {
+              recomendacoes.add('   - ${_sanitizarTexto(observacoes[i].toString())}');
             }
+            recomendacoes.add('');
           }
           
           // ✅ INFORMAÇÕES TÉCNICAS (se disponível)

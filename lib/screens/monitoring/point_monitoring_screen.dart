@@ -381,25 +381,25 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
         _isFreeMonitoring = args?['isFreeMonitoring'] as bool? ?? true; // ✅ ASSUMIR livre se não tem pontos
         
         Logger.info('✅ [POINT_MON] Monitoramento LIVRE detectado - criando ponto virtual');
-        
-        // Criar um ponto virtual para monitoramento livre
-        final latitude = args?['latitude'] as double? ?? 0.0;
-        final longitude = args?['longitude'] as double? ?? 0.0;
-        
-        final pontoVirtual = PontoMonitoramentoModel(
-          id: widget.pontoId,
-          talhaoId: talhaoId,
-          ordem: 1,
-          latitude: latitude,
-          longitude: longitude,
-          dataHoraInicio: DateTime.now(),
-          observacoesGerais: 'Monitoramento livre - ponto criado automaticamente',
-        );
-        
-        _allPoints = [pontoVirtual];
-        _currentPoint = pontoVirtual;
-        _currentPointIndex = 0;
-        
+          
+          // Criar um ponto virtual para monitoramento livre
+          final latitude = args?['latitude'] as double? ?? 0.0;
+          final longitude = args?['longitude'] as double? ?? 0.0;
+          
+          final pontoVirtual = PontoMonitoramentoModel(
+            id: widget.pontoId,
+            talhaoId: talhaoId,
+            ordem: 1,
+            latitude: latitude,
+            longitude: longitude,
+            dataHoraInicio: DateTime.now(),
+            observacoesGerais: 'Monitoramento livre - ponto criado automaticamente',
+          );
+          
+          _allPoints = [pontoVirtual];
+          _currentPoint = pontoVirtual;
+          _currentPointIndex = 0;
+          
         Logger.info('✅ [POINT_MON] Ponto virtual criado para monitoramento livre');
       }
       
@@ -918,7 +918,7 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
       Logger.info('🟡 [SAVE_OCC] Percentual: $numeroInfestacao%');
       Logger.info('🟡 [SAVE_OCC] Session ID: $_sessionId');
       Logger.info('🟡 [SAVE_OCC] ==========================================');
-      
+
       final position = _currentPosition;
       if (position == null) {
         Logger.error('❌ [SAVE_OCC] Posição GPS não disponível!');
@@ -930,7 +930,7 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
       // Usar os IDs reais passados para a tela
       final talhaoId = widget.talhaoId;
       final pontoId = widget.pontoId;
-
+      
       // Normaliza quantidade: aceita tanto quantidadeBruta quanto quantidade
       final int? quantidadeEfetiva = quantidadeBruta ?? quantidade;
       
@@ -2197,7 +2197,7 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
         try {
           // Criar ID do ponto
           final pointId = '${_sessionId}_point_${i + 1}';
-          
+      
           // Verificar se o ponto já existe
           final existingPoints = await db.query(
             'monitoring_points',
@@ -2219,10 +2219,10 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
               'manual_entry': 0,
               'observacoes': ponto.observacoesGerais,
               'sync_state': 'pending',
-              'created_at': DateTime.now().toIso8601String(),
-              'updated_at': DateTime.now().toIso8601String(),
-            });
-            
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+      
             Logger.info('✅ Ponto ${i + 1} salvo: ID=$pointId');
           } else {
             Logger.info('ℹ️ Ponto ${i + 1} já existe: ID=$pointId');
@@ -2824,7 +2824,6 @@ class _PointMonitoringScreenState extends State<PointMonitoringScreen> {
       Logger.info('      - Percentual: $percentual');
       Logger.info('      - Terço da Planta: $tercoPlanta');
       Logger.info('      - 📸 FOTO_PATHS: $fotoPaths (${fotoPaths.length} imagem(ns))');  // ✅ NOVO
-      Logger.info('      - 📸 DETALHES DAS FOTOS: ${fotoPaths.map((f) => "\"$f\"").join(", ")}'); // ✅ Debug detalhado
       if (temperature != null) Logger.info('      - 🌡️ Temperatura: ${temperature}°C');
       if (humidity != null) Logger.info('      - 💧 Umidade: ${humidity}%');
       if (previousManagement != null) Logger.info('      - 🌾 Manejo Anterior: $previousManagement');

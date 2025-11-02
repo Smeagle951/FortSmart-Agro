@@ -356,11 +356,8 @@ class _ProfessionalMonitoringCardState extends State<ProfessionalMonitoringCard>
   /// 🐛 TILE DE ORGANISMO
   Widget _buildOrganismTile(OrganismSummary org) {
     final nome = org.nome;
-    // ✅ CORRIGIDO: Mostrar MÉDIA por ponto ao invés de TOTAL
-    final quantidadeMedia = org.quantidadeMedia.toStringAsFixed(1);
+    final quantidade = org.quantidadeTotal.toStringAsFixed(0);
     final nivelRisco = org.nivelRisco;
-    final pontosAfetados = org.pontosAfetados;
-    final totalPontos = org.totalPontos;
     
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -401,7 +398,7 @@ class _ProfessionalMonitoringCardState extends State<ProfessionalMonitoringCard>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Qtd Média: $quantidadeMedia • $pontosAfetados/$totalPontos pontos',
+                  'Quantidade: $quantidade',
                   style: TextStyle(
                     fontSize: 11,
                     color: Colors.grey[600],

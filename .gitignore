@@ -116,3 +116,7 @@ logs/
 # Temporary files
 tmp/
 temp/
+
+# APK files (built apps)
+*.apk
+*.aab

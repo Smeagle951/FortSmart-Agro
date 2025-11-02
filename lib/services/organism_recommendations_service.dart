@@ -135,66 +135,63 @@ class OrganismRecommendationsService {
   ) {
     final recomendacoes = <String>[];
     
-    // ✅ BUSCAR MANEJO DO CAMINHO CORRETO (manejo.quimico ao invés de manejo_quimico)
-    final manejo = dadosControle['manejo'] as Map<String, dynamic>?;
-    
     // 1. MANEJO QUÍMICO
-    final manejoQuimico = manejo?['quimico'] as List<dynamic>? ?? 
-                         dadosControle['manejo_quimico'] as List<dynamic>? ?? [];
+    final manejoQuimico = dadosControle['manejo_quimico'] as List<dynamic>? ?? [];
     if (manejoQuimico.isNotEmpty) {
-      recomendacoes.add('💊 PRODUTOS QUÍMICOS RECOMENDADOS:');
-      for (var i = 0; i < manejoQuimico.length; i++) {
-        final produto = manejoQuimico[i].toString();
-        recomendacoes.add('   ${i + 1}. $produto');
+      recomendacoes.add('🧪 Controle Químico Recomendado:');
+      for (final produto in manejoQuimico) {
+        recomendacoes.add('   • $produto');
       }
-      recomendacoes.add('');
     }
     
     // 2. DOSES DETALHADAS
     final dosesDefensivos = dadosControle['doses_defensivos'] as Map<String, dynamic>?;
     if (dosesDefensivos != null && dosesDefensivos.isNotEmpty) {
-      recomendacoes.add('📋 DOSAGENS ESPECÍFICAS:');
+      recomendacoes.add('');
+      recomendacoes.add('📋 Detalhamento de Dosagens:');
       
       dosesDefensivos.forEach((produto, detalhes) {
         final det = detalhes as Map<String, dynamic>;
-        final nomeProduto = produto.replaceAll('_', ' ').toUpperCase();
-        recomendacoes.add('   • $nomeProduto:');
-        if (det['dose'] != null) recomendacoes.add('     - Dose: ${det['dose']}');
-        if (det['volume_calda'] != null) recomendacoes.add('     - Volume de calda: ${det['volume_calda']}');
-        if (det['intervalo_seguranca'] != null) recomendacoes.add('     - Carência: ${det['intervalo_seguranca']} dias');
+        recomendacoes.add('   • ${produto.replaceAll('_', ' ').toUpperCase()}:');
+        recomendacoes.add('     - Dose: ${det['dose'] ?? 'N/A'}');
+        recomendacoes.add('     - Volume de calda: ${det['volume_calda'] ?? 'N/A'}');
+        recomendacoes.add('     - Intervalo de segurança: ${det['intervalo_seguranca'] ?? 'N/A'}');
         
         // Ajustar dose conforme nível de risco
         if (nivelRisco.toLowerCase() == 'crítico' || nivelRisco.toLowerCase() == 'critico') {
-          recomendacoes.add('     - ⚠️ Usar DOSE MÁXIMA (nível crítico)');
+          recomendacoes.add('     - ⚠️ Usar DOSE MÁXIMA (nível crítico detectado)');
         } else if (nivelRisco.toLowerCase() == 'alto') {
           recomendacoes.add('     - Usar dose média-alta');
+        } else {
+          recomendacoes.add('     - Usar dose padrão recomendada');
         }
         
-        if (det['adjuvante'] != null) recomendacoes.add('     - Adjuvante: ${det['adjuvante']}');
+        if (det['adjuvante'] != null && (det['adjuvante'] as String).isNotEmpty) {
+          recomendacoes.add('     - Adjuvante: ${det['adjuvante']}');
+        }
+        if (det['observacoes'] != null && (det['observacoes'] as String).isNotEmpty) {
+          recomendacoes.add('     - Obs: ${det['observacoes']}');
+        }
+        recomendacoes.add('');
       });
-      recomendacoes.add('');
     }
     
     // 3. MANEJO BIOLÓGICO
-    final manejoBiologico = manejo?['biologico'] as List<dynamic>? ?? 
-                           dadosControle['manejo_biologico'] as List<dynamic>? ?? [];
+    final manejoBiologico = dadosControle['manejo_biologico'] as List<dynamic>? ?? [];
     if (manejoBiologico.isNotEmpty) {
-      recomendacoes.add('🦋 CONTROLE BIOLÓGICO (Complementar):');
-      for (var i = 0; i < manejoBiologico.length; i++) {
-        final bio = manejoBiologico[i].toString();
-        recomendacoes.add('   ${i + 1}. $bio');
+      recomendacoes.add('🦋 Controle Biológico (Complementar):');
+      for (final bio in manejoBiologico) {
+        recomendacoes.add('   • $bio');
       }
       recomendacoes.add('');
     }
     
     // 4. MANEJO CULTURAL
-    final manejoCultural = manejo?['cultural'] as List<dynamic>? ?? 
-                          dadosControle['manejo_cultural'] as List<dynamic>? ?? [];
-    if (manejoCultural.isNotEmpty) {
-      recomendacoes.add('🌾 PRÁTICAS CULTURAIS:');
-      for (var i = 0; i < manejoCultural.length; i++) {
-        final cultural = manejoCultural[i].toString();
-        recomendacoes.add('   ${i + 1}. $cultural');
+    final manejoCultural = dadosControle['manejo_cultural'] as List<dynamic>? ?? [];
+    if (manejoCultural != null && manejoCultural.isNotEmpty) {
+      recomendacoes.add('🌾 Práticas Culturais Recomendadas:');
+      for (final cultural in manejoCultural) {
+        recomendacoes.add('   • $cultural');
       }
       recomendacoes.add('');
     }
