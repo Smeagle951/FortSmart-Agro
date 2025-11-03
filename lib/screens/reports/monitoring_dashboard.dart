@@ -22,6 +22,7 @@ import '../../widgets/empty_state_widget.dart';
 import '../../widgets/error_state_widget.dart';
 import '../../widgets/talhao_card_widget.dart';
 import '../../widgets/professional_monitoring_card.dart'; // ✅ NOVO CARD PROFISSIONAL
+import '../../widgets/image_gallery_view.dart'; // ✅ GALERIA DE IMAGENS
 import '../../services/monitoring_card_data_service.dart'; // ✅ NOVO SERVIÇO
 import 'monitoring_dashboard_methods.dart'; // ✅ Métodos auxiliares
 import 'monitoring_dashboard_widgets_professional.dart'; // ✅ Widgets profissionais
@@ -1783,10 +1784,10 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
                 children: [
                     // 1. Sistema FortSmart
                     _buildNewAnaliseSection('Sistema FortSmart Agro', [
-                      _buildInfoRow('Análise Inteligente', 'FortSmart v3.0 + PhenologicalInfestationService'),
+                      _buildInfoRow('Análise Inteligente', 'FortSmart v3.0'),
                       _buildInfoRow('Confiança nos Dados', '${(cardData.confiancaDados * 100).toStringAsFixed(1)}%'),
                       _buildInfoRow('Data', cardData.dataInicio),
-                      _buildInfoRow('Módulo', 'Análise Agronômica Avançada c/ JSONs'),
+                      _buildInfoRow('Módulo', 'Análise Agronômica Avançada'),
                     ]),
                     
                     const SizedBox(height: 20),
@@ -4785,20 +4786,84 @@ class _MonitoringDashboardState extends State<MonitoringDashboard> {
               itemCount: imagensPaths.length,
               itemBuilder: (context, index) {
                 final imagePath = imagensPaths[index];
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    File(imagePath),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.broken_image, color: Colors.grey),
-                    ),
+                final file = File(imagePath);
+                final fileExists = file.existsSync();
+                
+                return GestureDetector(
+                  onTap: fileExists ? () => _showPhotoGallery(context, imagensPaths, index) : null,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: fileExists 
+                      ? Image.file(
+                          file,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: Colors.grey[200],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            Logger.error('❌ Erro ao carregar imagem: $imagePath - $error');
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Icon(Icons.broken_image, color: Colors.grey, size: 24),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 24),
+                        ),
                   ),
                 );
               },
             ),
         ],
+      ),
+    );
+  }
+  
+  /// 📸 MOSTRAR GALERIA DE FOTOS
+  void _showPhotoGallery(BuildContext context, List<String> imagePaths, int initialIndex) {
+    // Filtrar apenas imagens que existem
+    final validImages = imagePaths.where((path) {
+      final file = File(path);
+      return file.existsSync();
+    }).toList();
+    
+    if (validImages.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nenhuma imagem válida encontrada'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+    
+    // Ajustar índice inicial para a lista filtrada
+    int adjustedIndex = 0;
+    if (initialIndex < imagePaths.length) {
+      final selectedPath = imagePaths[initialIndex];
+      adjustedIndex = validImages.indexOf(selectedPath);
+      if (adjustedIndex < 0) adjustedIndex = 0;
+    }
+    
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ImageGalleryView(
+          imagePaths: validImages,
+          initialIndex: adjustedIndex,
+        ),
       ),
     );
   }
